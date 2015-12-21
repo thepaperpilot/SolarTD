@@ -16,6 +16,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -23,6 +24,7 @@ import com.thepaperpilot.solar.Entities.Tower;
 import com.thepaperpilot.solar.Main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Level implements Screen {
     private final static Json json = new Json();
@@ -35,15 +37,15 @@ public class Level implements Screen {
     private final Stage stage;
     private final Stage ui;
     private final boolean placingTower = true;
-    private final Point[] path;
+    private final Vector2[] path;
     private Tower selected;
 
     public Level(LevelPrototype levelPrototype) {
         width = levelPrototype.width;
         height = levelPrototype.height;
-        path = new Point[levelPrototype.path.length];
-        for (int i = 0; i < path.length; i++) {
-            path[i] = new Point(levelPrototype.path[i]);
+        path = new Vector2[levelPrototype.path.length / 2];
+        for (int i = 0; i < levelPrototype.path.length - 1; i += 2) {
+            path[i / 2] = new Vector2(levelPrototype.path[i], levelPrototype.path[i + 1]);
         }
 
         batch = new SpriteBatch();
@@ -54,7 +56,7 @@ public class Level implements Screen {
             if (i != 0) pathParticles.getEmitters().add(new ParticleEmitter(pathParticles.getEmitters().first()));
             ParticleEmitter emitter = pathParticles.getEmitters().get(i);
             emitter.getTint().setColors(new float[]{0, 0, 1f});
-            emitter.getAngle().setHigh(new Vector2(path[i + 1].x - path[i].x, path[i + 1].y - path[i].y).angle());
+            emitter.getAngle().setHigh(path[i+1].cpy().sub(path[i]).angle());
             emitter.setPosition(path[i].x, path[i].y);
             emitter.getLife().setHigh(10 * Vector2.len(path[i + 1].x - path[i].x, path[i + 1].y - path[i].y));
         }
@@ -72,6 +74,7 @@ public class Level implements Screen {
 
         stage.addListener(new ClickListener(Input.Buttons.LEFT) {
             public void clicked(InputEvent event, float x, float y) {
+                if(stage.stageToScreenCoordinates(new Vector2(x, stage.getHeight() - y)).y < 132 + Main.TOWER_RADIUS) return;
                 selected = null;
                 Vector2 coords = new Vector2(x, y);
                 if (placingTower) {
@@ -92,7 +95,13 @@ public class Level implements Screen {
             }
         });
 
-        // TODO ui
+        // add an inventory table to the ui
+        Table table = new Table(Main.skin);
+        table.setSize(ui.getWidth(), 128);
+        table.setBackground(Main.skin.getDrawable("default-round"));
+        table.pad(2);
+
+        ui.addActor(table);
 
         // TODO enemies
 
@@ -136,7 +145,7 @@ public class Level implements Screen {
             Gdx.gl20.glLineWidth(1);
         }
 
-        if (placingTower) {
+        if (placingTower && Gdx.input.getY() < Gdx.graphics.getHeight() - 132 - Main.TOWER_RADIUS) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.setColor(1, 1, 1, .2f);
             for (Tower tower : towers)
@@ -164,7 +173,7 @@ public class Level implements Screen {
     public void resize(int width, int height) {
         // TODO not working properly
         stage.getViewport().update(width, height);
-        ui.getViewport().update(width, height, true);
+        ui.getViewport().update(width, height);
     }
 
     @Override
@@ -195,7 +204,7 @@ public class Level implements Screen {
         public float width;
         public float height;
 
-        public Point.PointPrototype[] path;
+        public float[] path;
         Wave.WavePrototype[] waves;
 
         public LevelPrototype() {

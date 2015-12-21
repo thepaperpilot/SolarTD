@@ -53,10 +53,6 @@ project(":html") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
         compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
         compile "net.dermetfan.libgdx-utils:libgdx-utils:0.13.2:sources"
-        compile "com.kotcrab.vis:vis-ui:0.9.4:sources"
-        compile "com.kotcrab.vis:vis-runtime-gwt:0.3.0"
-        compile "com.kotcrab.vis:vis-runtime-gwt:0.3.0:sources"
-        compile "com.kotcrab.vis:vis-runtime:0.3.0:sources"
     }
 }
 
@@ -67,8 +63,6 @@ project(":core") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "net.dermetfan.libgdx-utils:libgdx-utils:0.13.2"
-        compile "com.kotcrab.vis:vis-ui:0.9.4"
-        compile "com.kotcrab.vis:vis-runtime:0.3.0"
     }
 }
 
