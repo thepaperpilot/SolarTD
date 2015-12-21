@@ -11,9 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.thepaperpilot.solar.Levels.Level;
 
 public class Main extends Game implements Screen {
 	public static final AssetManager manager = new AssetManager();
+	public static final float TOWER_RADIUS = 10;
 	public static Skin skin;
 	public static boolean paused;
 	private static Main instance;
@@ -72,6 +74,10 @@ public class Main extends Game implements Screen {
 
 			// go to the menu screen
 			//setScreen(new MenuScreen());
+			Level.LevelPrototype levelPrototype = new Level.LevelPrototype();
+			levelPrototype.width = 980;
+			levelPrototype.height = 540;
+			setScreen(new Level(levelPrototype));
 		}
 	}
 
