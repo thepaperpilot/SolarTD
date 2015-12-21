@@ -10,7 +10,7 @@ public class Wave {
     public static class WavePrototype {
         Enemy.EnemyPrototype[] enemies;
 
-        public WavePrototype(){
+        public WavePrototype() {
 
         }
     }

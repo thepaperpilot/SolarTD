@@ -11,7 +11,7 @@ public class Enemy {
         int health;
         float speed;
 
-        public EnemyPrototype(){
+        public EnemyPrototype() {
 
         }
     }

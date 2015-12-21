@@ -10,7 +10,10 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -22,18 +25,18 @@ import com.thepaperpilot.solar.Main;
 import java.util.ArrayList;
 
 public class Level implements Screen {
-    Batch batch;
     private final static Json json = new Json();
+    private final Batch batch;
     private final ParticleEffect pathParticles;
-    ArrayList<Tower> towers = new ArrayList<>();
-    ShapeRenderer shapeRenderer = new ShapeRenderer();
-    float width;
-    float height;
-    Stage stage;
-    Stage ui;
-    private boolean placingTower = true;
+    private final ArrayList<Tower> towers = new ArrayList<>();
+    private final ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private final float width;
+    private final float height;
+    private final Stage stage;
+    private final Stage ui;
+    private final boolean placingTower = true;
+    private final Point[] path;
     private Tower selected;
-    private Point[] path;
 
     public Level(LevelPrototype levelPrototype) {
         width = levelPrototype.width;
@@ -48,12 +51,12 @@ public class Level implements Screen {
         pathParticles = new ParticleEffect();
         pathParticles.load(Gdx.files.internal("particles/path.p"), Gdx.files.internal("particles/"));
         for (int i = 0; i < path.length - 1; i++) {
-            if(i != 0) pathParticles.getEmitters().add(new ParticleEmitter(pathParticles.getEmitters().first()));
+            if (i != 0) pathParticles.getEmitters().add(new ParticleEmitter(pathParticles.getEmitters().first()));
             ParticleEmitter emitter = pathParticles.getEmitters().get(i);
             emitter.getTint().setColors(new float[]{0, 0, 1f});
-            emitter.getAngle().setHigh(new Vector2(path[i+1].x - path[i].x, path[i+1].y - path[i].y).angle());
+            emitter.getAngle().setHigh(new Vector2(path[i + 1].x - path[i].x, path[i + 1].y - path[i].y).angle());
             emitter.setPosition(path[i].x, path[i].y);
-            emitter.getLife().setHigh(10 * Vector2.len(path[i+1].x - path[i].x, path[i+1].y - path[i].y));
+            emitter.getLife().setHigh(10 * Vector2.len(path[i + 1].x - path[i].x, path[i + 1].y - path[i].y));
         }
         pathParticles.getEmitters().first().getTint().setColors(new float[]{0, 1f, 0, 0, 0, 1f});
         pathParticles.getEmitters().first().getTint().setTimeline(new float[]{0, 1});
@@ -71,15 +74,15 @@ public class Level implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 selected = null;
                 Vector2 coords = new Vector2(x, y);
-                if(placingTower) {
+                if (placingTower) {
                     // TODO placingTower = false;
                     for (Tower tower : towers) {
-                        if(tower.area.overlaps(new Circle(coords, Main.TOWER_RADIUS))) { // TODO Make a selected tower thing, and look up its radius
+                        if (tower.area.overlaps(new Circle(coords, Main.TOWER_RADIUS))) { // TODO Make a selected tower thing, and look up its radius
                             return;
                         }
                     }
                     for (int i = 0; i < path.length - 1; i++) {
-                        if(Intersector.distanceSegmentPoint(path[i].x, path[i].y, path[i+1].x, path[i+1].y, x, y) < Main.TOWER_RADIUS + 8) {
+                        if (Intersector.distanceSegmentPoint(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y, x, y) < Main.TOWER_RADIUS + 8) {
                             return;
                         }
                     }
@@ -195,7 +198,7 @@ public class Level implements Screen {
         public Point.PointPrototype[] path;
         Wave.WavePrototype[] waves;
 
-        public LevelPrototype(){
+        public LevelPrototype() {
 
         }
     }

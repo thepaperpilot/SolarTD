@@ -1,8 +1,8 @@
 package com.thepaperpilot.solar.Levels;
 
 public class Point {
-    int x;
-    int y;
+    final int x;
+    final int y;
 
     public Point(PointPrototype pointPrototype) {
         x = pointPrototype.x;
@@ -13,7 +13,7 @@ public class Point {
         public int x;
         public int y;
 
-        public PointPrototype(){
+        public PointPrototype() {
 
         }
     }
