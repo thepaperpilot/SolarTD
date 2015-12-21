@@ -108,8 +108,8 @@ highMax: 1.0
 relative: false
 scalingCount: 4
 scaling0: 0.0
-scaling1: 1.0
-scaling2: 1.0
+scaling1: 0.25
+scaling2: 0.25
 scaling3: 0.0
 timelineCount: 4
 timeline0: 0.0

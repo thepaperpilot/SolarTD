@@ -5,28 +5,34 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.thepaperpilot.solar.Levels.Level;
 
 public class Main extends Game implements Screen {
     public static final float TOWER_RADIUS = 10;
-    private static final AssetManager manager = new AssetManager();
+    public static final AssetManager manager = new AssetManager();
+    public static Skin skin;
     private static Main instance;
     private static SpriteBatch batch;
-    public static Skin skin;
-    public static boolean paused;
-
     private Stage loadingStage;
 
     public static void changeScreen(Screen screen) {
         if (screen == null)
             return;
         instance.setScreen(screen);
+    }
+
+    // TODO TextureAtlas
+    public static Drawable getDrawable(String name) {
+        return new Image(Main.manager.get(name + ".png", Texture.class)).getDrawable();
     }
 
     @Override
@@ -39,6 +45,18 @@ public class Main extends Game implements Screen {
 
         // start loading all our assets
         manager.load("skin.json", Skin.class);
+        manager.load("towers/red.png", Texture.class);
+        manager.load("towers/blue.png", Texture.class);
+        manager.load("towers/yellow.png", Texture.class);
+        manager.load("towers/redStore.png", Texture.class);
+        manager.load("towers/blueStore.png", Texture.class);
+        manager.load("towers/yellowStore.png", Texture.class);
+        manager.load("towers/redStoreDown.png", Texture.class);
+        manager.load("towers/blueStoreDown.png", Texture.class);
+        manager.load("towers/yellowStoreDown.png", Texture.class);
+        manager.load("towers/redUp.png", Texture.class);
+        manager.load("towers/blueUp.png", Texture.class);
+        manager.load("towers/yellowUp.png", Texture.class);
 
         // show this screen while it loads
         setScreen(this);

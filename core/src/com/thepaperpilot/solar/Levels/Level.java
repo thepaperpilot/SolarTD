@@ -15,8 +15,11 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -24,7 +27,6 @@ import com.thepaperpilot.solar.Entities.Tower;
 import com.thepaperpilot.solar.Main;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Level implements Screen {
     private final static Json json = new Json();
@@ -36,9 +38,10 @@ public class Level implements Screen {
     private final float height;
     private final Stage stage;
     private final Stage ui;
-    private final boolean placingTower = true;
     private final Vector2[] path;
+    private boolean placingTower;
     private Tower selected;
+    private boolean paused;
 
     public Level(LevelPrototype levelPrototype) {
         width = levelPrototype.width;
@@ -72,15 +75,18 @@ public class Level implements Screen {
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         ui = new Stage(new StretchViewport(1920, 1080));
 
+        final Button red = new Button(Main.getDrawable("towers/redStore"), Main.getDrawable("towers/redStoreDown"), Main.getDrawable("towers/redStoreDown"));
+        final Button blue = new Button(Main.getDrawable("towers/blueStore"), Main.getDrawable("towers/blueStoreDown"), Main.getDrawable("towers/blueStoreDown"));
+        final Button yellow = new Button(Main.getDrawable("towers/yellowStore"), Main.getDrawable("towers/yellowStoreDown"), Main.getDrawable("towers/yellowStoreDown"));
+
         stage.addListener(new ClickListener(Input.Buttons.LEFT) {
             public void clicked(InputEvent event, float x, float y) {
                 if(stage.stageToScreenCoordinates(new Vector2(x, stage.getHeight() - y)).y < 132 + Main.TOWER_RADIUS) return;
                 selected = null;
                 Vector2 coords = new Vector2(x, y);
                 if (placingTower) {
-                    // TODO placingTower = false;
                     for (Tower tower : towers) {
-                        if (tower.area.overlaps(new Circle(coords, Main.TOWER_RADIUS))) { // TODO Make a selected tower thing, and look up its radius
+                        if (tower.area.overlaps(new Circle(coords, Main.TOWER_RADIUS))) {
                             return;
                         }
                     }
@@ -90,22 +96,85 @@ public class Level implements Screen {
                         }
                     }
                     // TODO check for resources
+                    if (!(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))) {
+                        placingTower = false;
+                        red.setChecked(false);
+                        blue.setChecked(false);
+                        yellow.setChecked(false);
+                    }
                     towers.add(new Tower(new Circle(coords, Main.TOWER_RADIUS)));
                 }
             }
         });
 
-        // add an inventory table to the ui
         Table table = new Table(Main.skin);
         table.setSize(ui.getWidth(), 128);
         table.setBackground(Main.skin.getDrawable("default-round"));
-        table.pad(2);
+        table.pad(8);
+
+        Table table1 = new Table(Main.skin);
+        Button menuToggle = new TextButton("MENU", Main.skin, "large");
+        menuToggle.pad(10);
+        table1.add(menuToggle).expandY().fill().spaceBottom(4).row();
+        final Button pause = new Button(Main.skin);
+        pause.pad(10);
+        pause.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                paused = !paused;
+            }
+        });
+        table1.add(pause).expandY().fill();
+        table.left().add(table1).fillY().expandY();
+
+        red.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                if (red.isChecked()) {
+                    blue.setChecked(false);
+                    yellow.setChecked(false);
+                }
+                placingTower = red.isChecked();
+            }
+        });
+        blue.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                if (blue.isChecked()) {
+                    red.setChecked(false);
+                    yellow.setChecked(false);
+                }
+                placingTower = blue.isChecked();
+            }
+        });
+        yellow.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                if (yellow.isChecked()) {
+                    red.setChecked(false);
+                    blue.setChecked(false);
+                }
+                placingTower = yellow.isChecked();
+            }
+        });
+
+        Table table2 = new Table(Main.skin);
+        table2.setBackground(Main.skin.getDrawable("default-round"));
+        table2.add(red).size(96);
+        table2.add(blue).size(96);
+        table2.add(yellow).size(96);
+        table.add(table2).spaceLeft(16);
 
         ui.addActor(table);
 
         // TODO enemies
 
         // TODO resources
+
+        stage.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.SPACE)
+                    paused = !paused;
+                return true;
+            }
+        });
     }
 
     public static Level readLevel(String fileName) {
