@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.thepaperpilot.solar.Levels.Level;
+import com.thepaperpilot.solar.Levels.Point;
 
 public class Main extends Game implements Screen {
 	public static final AssetManager manager = new AssetManager();
@@ -77,6 +78,24 @@ public class Main extends Game implements Screen {
 			Level.LevelPrototype levelPrototype = new Level.LevelPrototype();
 			levelPrototype.width = 980;
 			levelPrototype.height = 540;
+			Point.PointPrototype[] path = new Point.PointPrototype[4];
+			Point.PointPrototype point = new Point.PointPrototype();
+			point.x = 0;
+			point.y = 0;
+			path[0] = point;
+			point = new Point.PointPrototype();
+			point.x = 400;
+			point.y = 150;
+			path[1] = point;
+			point = new Point.PointPrototype();
+			point.x = 300;
+			point.y = 50;
+			path[2] = point;
+			point = new Point.PointPrototype();
+			point.x = 980;
+			point.y = 50;
+			path[3] = point;
+			levelPrototype.path = path;
 			setScreen(new Level(levelPrototype));
 		}
 	}
