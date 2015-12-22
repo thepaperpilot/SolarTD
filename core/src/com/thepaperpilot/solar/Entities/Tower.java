@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -62,14 +63,14 @@ public class Tower extends Image {
                 break;
             case BLUE:
                 setDrawable(Main.getDrawable("towers/blue"));
-                damage = 0;
-                speed = 3;
+                damage = 6;
+                speed = 1;
                 range = 300;
                 break;
             case YELLOW:
                 setDrawable(Main.getDrawable("towers/yellow"));
-                damage = 1;
-                speed = 3;
+                damage = .2f;
+                speed = 6;
                 range = 100;
                 effect = yellowPool.obtain();
                 break;
@@ -112,6 +113,7 @@ public class Tower extends Image {
                     effect = ability ? red2Pool.obtain() : redPool.obtain();
                     effect.setPosition(target.getX() + Main.ENEMY_SIZE / 2, target.getY() + Main.ENEMY_SIZE / 2);
                     level.particles.add(effect);
+                    target.hit(damage);
                 }
                 break;
             case BLUE:
@@ -122,21 +124,25 @@ public class Tower extends Image {
                     level.particles.add(effect);
                     final Enemy finalTarget = target;
                     level.stage.addActor(new ParticleEffectActor(effect, getX() + Main.TOWER_RADIUS, getY() + Main.TOWER_RADIUS) {
-                        float angle;
+                        float angle = new Vector2(finalTarget.getX() - getX(), finalTarget.getY() - getY()).angle();
 
                         public void act(float delta) {
                             Enemy target = finalTarget;
-                            if (!level.enemies.contains(target)) {
-                                float dist = 0;
-                                for (Enemy enemy : level.enemies) {
-                                    float length = enemy.getPosition().cpy().sub(getX(), getY()).len();
-                                    if (length <= range) {
-                                        if (!level.enemies.contains(target) || length < dist) {
-                                            target = enemy;
-                                            dist = length;
-                                        }
+                            float dist = -1;
+                            for (Enemy enemy : level.enemies) {
+                                float length = enemy.getPosition().cpy().sub(getX(), getY()).len();
+                                if (length <= range) {
+                                    if (dist == -1 || length < dist) {
+                                        target = enemy;
+                                        dist = length;
                                     }
                                 }
+                            }
+                            if (dist != -1 && dist < Main.BULLET_SPEED * delta) {
+                                target.slowed = damage;
+                                remove();
+                                effect.allowCompletion();
+                                return;
                             }
                             if (level.enemies.contains(target)) {
                                 float newAngle = new Vector2(target.getX() - getX(), target.getY() - getY()).angle();
@@ -162,6 +168,26 @@ public class Tower extends Image {
                 effect.getEmitters().first().getAngle().setHigh(angle - 45, angle + 45);
                 effect.getEmitters().first().getAngle().setLow(angle);
                 effect.getEmitters().first().getLife().setHigh(range * 10);
+                while (time >= Main.TOWER_SPEED) {
+                    time -= Main.TOWER_SPEED;
+                    Polygon area = new Polygon(new float[]{
+                            getX() + Main.TOWER_RADIUS,
+                            getY() + Main.TOWER_RADIUS,
+
+                            getX() + Main.TOWER_RADIUS + range * MathUtils.cosDeg(angle - 45),
+                            getY() + Main.TOWER_RADIUS + range * MathUtils.sinDeg(angle - 45),
+
+                            getX() + Main.TOWER_RADIUS + range * MathUtils.cosDeg(angle + 45),
+                            getY() + Main.TOWER_RADIUS + range * MathUtils.sinDeg(angle + 45)});
+
+                    for (int i = 0; i < level.enemies.size(); ) {
+                        Enemy enemy = level.enemies.get(i);
+                        if (area.contains(enemy.getPosition())) {
+                            if (enemy.hit(damage)) continue;
+                        }
+                        i++;
+                    }
+                }
                 break;
         }
     }

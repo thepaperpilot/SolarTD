@@ -11,11 +11,9 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Json;
@@ -29,6 +27,7 @@ import java.util.ArrayList;
 public class Level implements Screen {
     private final static Json json = new Json();
     public final Stage stage;
+    public final Vector2[] path;
     private final Batch batch;
     private final ParticleEffect pathParticles;
     private final ArrayList<Tower> towers = new ArrayList<>();
@@ -36,7 +35,6 @@ public class Level implements Screen {
     private final float width;
     private final float height;
     private final Stage ui;
-    private final Vector2[] path;
     private final Wave[] waves;
     public Tower selected;
     public boolean placingTower;
@@ -213,7 +211,7 @@ public class Level implements Screen {
             if (time >= waves[currWave].enemyDistance) {
                 time -= waves[currWave].enemyDistance;
                 // TODO enemy pool
-                final Enemy enemy = waves[currWave].getEnemy();
+                final Enemy enemy = waves[currWave].getEnemy(this);
                 if (waves[currWave].isEmpty()) {
                     currWave++;
                     time -= 10;
@@ -234,7 +232,7 @@ public class Level implements Screen {
             }
             if (time >= finalWave.enemyDistance) {
                 time -= finalWave.enemyDistance;
-                final Enemy enemy = finalWave.getEnemy();
+                final Enemy enemy = finalWave.getEnemy(this);
                 if (finalWave.isEmpty()) {
                     currWave++;
                     time -= 10;
@@ -303,21 +301,6 @@ public class Level implements Screen {
     private void addEnemy(final Enemy enemy) {
         stage.addActor(enemy);
         enemy.setPosition(path[0].x, path[0].y);
-        Action[] actions = new Action[path.length];
-        for (int i = 0; i < path.length - 1; i++) {
-            actions[i] = Actions.moveTo(path[i + 1].x, path[i + 1].y, new Vector2(path[i + 1].x - path[i].x, path[i + 1].y - path[i].y).len() / Main.ENEMY_SPEED);
-        }
-        actions[path.length - 1] = Actions.run(new Runnable() {
-            @Override
-            public void run() {
-                if (enemies.contains(enemy)) {
-                    enemies.remove(enemy);
-                    enemy.remove();
-                    // TODO take away life
-                }
-            }
-        });
-        enemy.addAction(Actions.sequence(actions));
         enemies.add(enemy);
     }
 

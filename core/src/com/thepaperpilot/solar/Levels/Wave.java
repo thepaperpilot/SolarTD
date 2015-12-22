@@ -17,8 +17,8 @@ public class Wave {
         return currEnemyType >= enemies.length;
     }
 
-    public Enemy getEnemy() {
-        Enemy enemy = new Enemy(enemies[currEnemyType]);
+    public Enemy getEnemy(Level level) {
+        Enemy enemy = new Enemy(enemies[currEnemyType], level);
         currEnemyCount++;
         if (currEnemyCount == enemies[currEnemyType].count) {
             currEnemyType++;
