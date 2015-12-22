@@ -3,8 +3,9 @@ package com.thepaperpilot.solar.Levels;
 import com.thepaperpilot.solar.Entities.Enemy;
 
 public class Wave {
-    public Enemy.EnemyPrototype[] enemies;
-    public float enemyDistance;
+    private final Enemy.EnemyPrototype[] enemies;
+    private final Enemy.EnemyPrototype[] enemies;
+    public final float enemyDistance;
     private int currEnemyType;
     private int currEnemyCount;
 

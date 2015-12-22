@@ -32,6 +32,8 @@ public class Level implements Screen {
     private final static Json json = new Json();
     public final Stage stage;
     public final Vector2[] path;
+    public final ArrayList<Enemy> enemies = new ArrayList<>();
+    public final ArrayList<ParticleEffect> particles = new ArrayList<>();
     private final Batch batch;
     private final ParticleEffect pathParticles;
     private final ArrayList<Building> buildings = new ArrayList<>();
@@ -53,8 +55,6 @@ public class Level implements Screen {
     private final Label timeLabel;
     public Building selected;
     public boolean placingBuilding;
-    public ArrayList<Enemy> enemies = new ArrayList<>();
-    public ArrayList<ParticleEffect> particles = new ArrayList<>();
     public int redResource = 25;
     public int blueResource = 25;
     public int yellowResource = 25;

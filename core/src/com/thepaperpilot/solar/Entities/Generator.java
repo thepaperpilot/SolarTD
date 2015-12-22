@@ -78,6 +78,4 @@ public class Generator extends Building {
         BLUE,
         YELLOW
     }
-
-    ;
 }

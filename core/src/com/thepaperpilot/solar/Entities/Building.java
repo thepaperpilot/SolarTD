@@ -7,7 +7,7 @@ public class Building extends Image {
 
     public final Circle area;
 
-    public Building(float x, float y, float radius) {
+    Building(float x, float y, float radius) {
         this.area = new Circle(x + radius, y + radius, radius);
         setPosition(x, y);
         setSize(radius * 2, radius * 2);

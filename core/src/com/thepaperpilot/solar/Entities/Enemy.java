@@ -10,7 +10,7 @@ import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Main;
 
 public class Enemy extends Image {
-    static ParticleEffectPool deathPool;
+    private static final ParticleEffectPool deathPool;
 
     static {
         ParticleEffect particleEffect = new ParticleEffect();
@@ -18,11 +18,11 @@ public class Enemy extends Image {
         deathPool = new ParticleEffectPool(particleEffect, 0, 100);
     }
 
+    private final float speed;
+    private final Level level;
     public float slowed;
     private float health;
-    private float speed;
     private int path;
-    private Level level;
 
     public Enemy(EnemyPrototype enemyPrototype, Level level) {
         setDrawable(Main.getDrawable(enemyPrototype.name));

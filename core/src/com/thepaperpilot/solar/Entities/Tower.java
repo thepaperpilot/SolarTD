@@ -12,10 +12,10 @@ import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Main;
 
 public class Tower extends Building {
-    static ParticleEffectPool redPool;
-    static ParticleEffectPool red2Pool;
-    static ParticleEffectPool yellowPool;
-    static ParticleEffectPool bluePool;
+    private static final ParticleEffectPool redPool;
+    private static final ParticleEffectPool red2Pool;
+    private static final ParticleEffectPool yellowPool;
+    private static final ParticleEffectPool bluePool;
 
     static {
         ParticleEffect particleEffect = new ParticleEffect();
@@ -38,9 +38,9 @@ public class Tower extends Building {
     private final Type type;
     public float range;
     boolean comboUpgrade;
-    boolean ability;
-    float damage;
-    float speed;
+    private boolean ability;
+    private float damage;
+    private float speed;
     private float time;
     private Level level;
     private ParticleEffect effect;
