@@ -3,17 +3,15 @@ package com.thepaperpilot.solar.Entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Main;
 
-public class Tower extends Image {
+public class Tower extends Building {
     static ParticleEffectPool redPool;
     static ParticleEffectPool red2Pool;
     static ParticleEffectPool yellowPool;
@@ -37,7 +35,6 @@ public class Tower extends Image {
         bluePool = new ParticleEffectPool(particleEffect, 0, 100);
     }
 
-    public final Circle area;
     private final Type type;
     public float range;
     boolean comboUpgrade;
@@ -49,8 +46,7 @@ public class Tower extends Image {
     private ParticleEffect effect;
 
     public Tower(float x, float y, Type type, final Level level) {
-        area = new Circle(x + Main.TOWER_RADIUS, y + Main.TOWER_RADIUS, Main.TOWER_RADIUS);
-        setPosition(x, y);
+        super(x, y, Main.TOWER_RADIUS);
         this.type = type;
         this.level = level;
         switch (type) {
@@ -69,17 +65,16 @@ public class Tower extends Image {
                 break;
             case YELLOW:
                 setDrawable(Main.getDrawable("towers/yellow"));
-                damage = .2f;
+                damage = 1;
                 speed = 6;
                 range = 50;
                 effect = yellowPool.obtain();
                 break;
         }
-        setSize(Main.TOWER_RADIUS * 2, Main.TOWER_RADIUS * 2);
 
         addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                if (!level.placingTower) level.selected = (level.selected == Tower.this ? null : Tower.this);
+                if (!level.placingBuilding) level.selected = (level.selected == Tower.this ? null : Tower.this);
                 event.reset();
             }
         });
@@ -140,7 +135,7 @@ public class Tower extends Image {
                                 }
                             }
                             if (dist != -1 && dist < Main.BULLET_SPEED * delta) {
-                                target.slowed = damage;
+                                target.hit(damage);
                                 remove();
                                 effect.allowCompletion();
                                 return;
@@ -169,6 +164,7 @@ public class Tower extends Image {
                 effect.getEmitters().first().getAngle().setHigh(angle - 45, angle + 45);
                 effect.getEmitters().first().getAngle().setLow(angle);
                 effect.getEmitters().first().getLife().setHigh(range * 10);
+                effect.getEmitters().first().getEmission().setHigh(range);
                 while (time >= Main.TOWER_SPEED) {
                     time -= Main.TOWER_SPEED;
                     Polygon area = new Polygon(new float[]{
@@ -184,7 +180,7 @@ public class Tower extends Image {
                     for (int i = 0; i < level.enemies.size(); ) {
                         Enemy enemy = level.enemies.get(i);
                         if (area.contains(enemy.getPosition())) {
-                            if (enemy.hit(damage)) continue;
+                            enemy.slowed = damage;
                         }
                         i++;
                     }

@@ -63,6 +63,15 @@ public class Main extends Game implements Screen {
         manager.load("towers/redUp.png", Texture.class);
         manager.load("towers/blueUp.png", Texture.class);
         manager.load("towers/yellowUp.png", Texture.class);
+        manager.load("towers/redGen.png", Texture.class);
+        manager.load("towers/blueGen.png", Texture.class);
+        manager.load("towers/yellowGen.png", Texture.class);
+        manager.load("towers/redGenStore.png", Texture.class);
+        manager.load("towers/blueGenStore.png", Texture.class);
+        manager.load("towers/yellowGenStore.png", Texture.class);
+        manager.load("towers/redGenStoreDown.png", Texture.class);
+        manager.load("towers/blueGenStoreDown.png", Texture.class);
+        manager.load("towers/yellowGenStoreDown.png", Texture.class);
         manager.load("bg.png", Texture.class);
         manager.load("alien.png", Texture.class);
 
