@@ -14,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.thepaperpilot.solar.Entities.Enemy;
 import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Levels.Wave;
 
@@ -23,6 +22,9 @@ public class Main extends Game implements Screen {
     public static final float ENEMY_SIZE = 8;
     public static final AssetManager manager = new AssetManager();
     public static final float ENEMY_SPEED = 32;
+    public static final float TOWER_SPEED = 8;
+    public static final float BULLET_SPEED = 64;
+    public static final float TURN_RADIUS = 10;
     public static Skin skin;
     private static Main instance;
     private static SpriteBatch batch;
@@ -103,15 +105,7 @@ public class Main extends Game implements Screen {
             levelPrototype.width = 980;
             levelPrototype.height = 540;
             levelPrototype.path = new float[]{980, 200, 500, 200, 300, 300, 300, 200, 100, 400, 980, 400};
-            Wave.WavePrototype wavePrototype = new Wave.WavePrototype();
-            wavePrototype.enemyDistance = 1;
-            Enemy.EnemyPrototype enemyPrototype = new Enemy.EnemyPrototype();
-            enemyPrototype.name = "alien";
-            enemyPrototype.count = 10;
-            enemyPrototype.health = 1;
-            enemyPrototype.speed = 1;
-            wavePrototype.enemies = new Enemy.EnemyPrototype[]{enemyPrototype};
-            levelPrototype.waves = new Wave.WavePrototype[]{wavePrototype};
+            levelPrototype.waves = new Wave.WavePrototype[]{};
             setScreen(new Level(levelPrototype));
         }
     }

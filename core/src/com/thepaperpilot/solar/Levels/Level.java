@@ -28,23 +28,24 @@ import java.util.ArrayList;
 
 public class Level implements Screen {
     private final static Json json = new Json();
+    public final Stage stage;
     private final Batch batch;
     private final ParticleEffect pathParticles;
     private final ArrayList<Tower> towers = new ArrayList<>();
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
     private final float width;
     private final float height;
-    private final Stage stage;
     private final Stage ui;
     private final Vector2[] path;
     private final Wave[] waves;
     public Tower selected;
     public boolean placingTower;
+    public ArrayList<Enemy> enemies = new ArrayList<>();
+    public ArrayList<ParticleEffect> particles = new ArrayList<>();
     private Wave finalWave;
     private boolean paused;
     private float time = -10;
     private int currWave;
-    private ArrayList<Enemy> enemies = new ArrayList<>();
 
     public Level(LevelPrototype levelPrototype) {
         width = levelPrototype.width;
@@ -186,8 +187,10 @@ public class Level implements Screen {
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.SPACE)
+                if (keycode == Input.Keys.SPACE) {
                     paused = !paused;
+                    pause.setText(paused ? "RESUME" : "PAUSE");
+                }
                 return true;
             }
         });
@@ -249,7 +252,16 @@ public class Level implements Screen {
         transform.scale(Gdx.graphics.getWidth() / width, Gdx.graphics.getHeight() / height, 1);
         batch.setTransformMatrix(transform);
         batch.begin();
-        pathParticles.draw(batch, delta * .2f);
+        pathParticles.draw(batch, paused ? 0 : delta * .2f);
+        for (int i = 0; i < particles.size(); ) {
+            ParticleEffect effect = particles.get(i);
+            effect.draw(batch, paused ? 0 : delta);
+            if (effect.isComplete() && !effect.getEmitters().first().isContinuous()) {
+                particles.remove(effect);
+                if (effect instanceof ParticleEffectPool.PooledEffect)
+                    ((ParticleEffectPool.PooledEffect) effect).free();
+            } else i++;
+        }
         batch.end();
 
         Gdx.gl.glEnable(GL20.GL_BLEND);

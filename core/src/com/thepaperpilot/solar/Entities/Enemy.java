@@ -1,5 +1,6 @@
 package com.thepaperpilot.solar.Entities;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.thepaperpilot.solar.Main;
 
@@ -12,6 +13,10 @@ public class Enemy extends Image {
         setSize(Main.ENEMY_SIZE, Main.ENEMY_SIZE);
         this.health = enemyPrototype.health;
         this.speed = enemyPrototype.speed;
+    }
+
+    public Vector2 getPosition() {
+        return new Vector2(getX(), getY());
     }
 
     public static class EnemyPrototype {
