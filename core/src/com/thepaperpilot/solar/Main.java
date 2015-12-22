@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.thepaperpilot.solar.Levels.Level;
 
 public class Main extends Game implements Screen {
-    public static final float TOWER_RADIUS = 10;
+    public static final float TOWER_RADIUS = 16;
     public static final AssetManager manager = new AssetManager();
     public static Skin skin;
     private static Main instance;
@@ -57,6 +57,7 @@ public class Main extends Game implements Screen {
         manager.load("towers/redUp.png", Texture.class);
         manager.load("towers/blueUp.png", Texture.class);
         manager.load("towers/yellowUp.png", Texture.class);
+        manager.load("bg.png", Texture.class);
 
         // show this screen while it loads
         setScreen(this);
@@ -88,8 +89,8 @@ public class Main extends Game implements Screen {
         if (manager.update()) {
             // set some stuff we need universally, now that their assets are loaded
             skin = manager.get("skin.json", Skin.class);
-            skin.getFont("large").getData().setScale(.5f);
-            skin.getFont("font").getData().setScale(.25f);
+            //skin.getFont("large").getData().setScale(.5f);
+            skin.getFont("font").getData().setScale(.5f);
 
             // go to the menu screen
             //setScreen(new MenuScreen());
@@ -145,7 +146,7 @@ public class Main extends Game implements Screen {
     @Override
     public void render() {
         // we're a passthrough!
-        Gdx.gl.glClearColor(34 / 256f, 34 / 256f, 34 / 256f, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         getScreen().render(Gdx.graphics.getDeltaTime());

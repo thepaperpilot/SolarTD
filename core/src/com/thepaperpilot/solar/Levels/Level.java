@@ -17,9 +17,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -39,8 +37,8 @@ public class Level implements Screen {
     private final Stage stage;
     private final Stage ui;
     private final Vector2[] path;
+    public Tower selected;
     private boolean placingTower;
-    private Tower selected;
     private boolean paused;
 
     public Level(LevelPrototype levelPrototype) {
@@ -73,7 +71,9 @@ public class Level implements Screen {
 
         stage = new Stage(new StretchViewport(width, height));
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        ui = new Stage(new StretchViewport(1920, 1080));
+        ui = new Stage(new StretchViewport(1280, 720));
+
+        stage.addActor(new Image(Main.getDrawable("bg")));
 
         final Button red = new Button(Main.getDrawable("towers/redStore"), Main.getDrawable("towers/redStoreDown"), Main.getDrawable("towers/redStoreDown"));
         final Button blue = new Button(Main.getDrawable("towers/blueStore"), Main.getDrawable("towers/blueStoreDown"), Main.getDrawable("towers/blueStoreDown"));
@@ -96,13 +96,21 @@ public class Level implements Screen {
                         }
                     }
                     // TODO check for resources
+                    Tower.Type type = null;
+                    if (red.isChecked()) type = Tower.Type.RED;
+                    else if (blue.isChecked()) type = Tower.Type.BLUE;
+                    else if (yellow.isChecked()) type = Tower.Type.YELLOW;
+                    if (type != null) {
+                        Tower tower = new Tower(coords.x - Main.TOWER_RADIUS, coords.y - Main.TOWER_RADIUS, type, Level.this);
+                        towers.add(tower);
+                        stage.addActor(tower);
+                    }
                     if (!(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))) {
                         placingTower = false;
                         red.setChecked(false);
                         blue.setChecked(false);
                         yellow.setChecked(false);
                     }
-                    towers.add(new Tower(new Circle(coords, Main.TOWER_RADIUS)));
                 }
             }
         });
@@ -156,10 +164,11 @@ public class Level implements Screen {
 
         Table table2 = new Table(Main.skin);
         table2.setBackground(Main.skin.getDrawable("default-round"));
-        table2.add(red).size(96);
-        table2.add(blue).size(96);
-        table2.add(yellow).size(96);
-        table.add(table2).spaceLeft(16);
+        table2.add(new Label("Towers", Main.skin, "large")).colspan(3).spaceBottom(12).row();
+        table2.add(red).size(64);
+        table2.add(blue).size(64);
+        table2.add(yellow).size(64);
+        table.add(table2).spaceLeft(16).expandY().fill();
 
         ui.addActor(table);
 
@@ -206,6 +215,7 @@ public class Level implements Screen {
         shapeRenderer.setTransformMatrix(transform);
 
         if (selected != null) {
+            System.out.println("!");
             Gdx.gl20.glLineWidth(4);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(1, 1, 1, .5f);
@@ -216,19 +226,19 @@ public class Level implements Screen {
 
         if (placingTower && Gdx.input.getY() < Gdx.graphics.getHeight() - 132 - Main.TOWER_RADIUS) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            shapeRenderer.setColor(1, 1, 1, .2f);
+            shapeRenderer.setColor(1, 1, 1, .5f);
             for (Tower tower : towers)
                 shapeRenderer.circle(tower.area.x, tower.area.y, tower.area.radius);
-            shapeRenderer.setColor(0, 1, 0, .4f);
+            shapeRenderer.setColor(0, 1, 0, .5f);
             Vector2 coords = stage.screenToStageCoordinates(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             for (Tower tower : towers)
                 if (tower.area.overlaps(new Circle(coords, Main.TOWER_RADIUS))) {
-                    shapeRenderer.setColor(1, 0, 0, .4f);
+                    shapeRenderer.setColor(1, 0, 0, .5f);
                     break;
                 }
             for (int i = 0; i < path.length - 1; i++)
                 if (Intersector.distanceSegmentPoint(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y, coords.x, coords.y) < Main.TOWER_RADIUS + 8) {
-                    shapeRenderer.setColor(1, 0, 0, .4f);
+                    shapeRenderer.setColor(1, 0, 0, .5f);
                     break;
                 }
             shapeRenderer.circle(coords.x, coords.y, Main.TOWER_RADIUS);
@@ -240,7 +250,7 @@ public class Level implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        // TODO not working properly
+        // TODO making non-actors render in wrong spot
         stage.getViewport().update(width, height);
         ui.getViewport().update(width, height);
     }
