@@ -39,11 +39,11 @@ public class Tower extends Image {
 
     public final Circle area;
     private final Type type;
+    public float range;
     boolean comboUpgrade;
     boolean ability;
     float damage;
     float speed;
-    float range;
     private float time;
     private Level level;
     private ParticleEffect effect;
@@ -59,19 +59,19 @@ public class Tower extends Image {
                 setDrawable(Main.getDrawable("towers/red"));
                 damage = 3;
                 speed = 2;
-                range = 200;
+                range = 100;
                 break;
             case BLUE:
                 setDrawable(Main.getDrawable("towers/blue"));
                 damage = 6;
                 speed = 1;
-                range = 300;
+                range = 150;
                 break;
             case YELLOW:
                 setDrawable(Main.getDrawable("towers/yellow"));
                 damage = .2f;
                 speed = 6;
-                range = 100;
+                range = 50;
                 effect = yellowPool.obtain();
                 break;
         }
@@ -80,6 +80,7 @@ public class Tower extends Image {
         addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 if (!level.placingTower) level.selected = (level.selected == Tower.this ? null : Tower.this);
+                event.reset();
             }
         });
     }

@@ -36,6 +36,9 @@ public class Level implements Screen {
     private final float height;
     private final Stage ui;
     private final Wave[] waves;
+    private final Button red;
+    private final Button blue;
+    private final Button yellow;
     public Tower selected;
     public boolean placingTower;
     public ArrayList<Enemy> enemies = new ArrayList<>();
@@ -83,13 +86,14 @@ public class Level implements Screen {
 
         stage.addActor(new Image(Main.getDrawable("bg")));
 
-        final Button red = new Button(Main.getDrawable("towers/redStore"), Main.getDrawable("towers/redStoreDown"), Main.getDrawable("towers/redStoreDown"));
-        final Button blue = new Button(Main.getDrawable("towers/blueStore"), Main.getDrawable("towers/blueStoreDown"), Main.getDrawable("towers/blueStoreDown"));
-        final Button yellow = new Button(Main.getDrawable("towers/yellowStore"), Main.getDrawable("towers/yellowStoreDown"), Main.getDrawable("towers/yellowStoreDown"));
+        red = new Button(Main.getDrawable("towers/redStore"), Main.getDrawable("towers/redStoreDown"), Main.getDrawable("towers/redStoreDown"));
+        blue = new Button(Main.getDrawable("towers/blueStore"), Main.getDrawable("towers/blueStoreDown"), Main.getDrawable("towers/blueStoreDown"));
+        yellow = new Button(Main.getDrawable("towers/yellowStore"), Main.getDrawable("towers/yellowStoreDown"), Main.getDrawable("towers/yellowStoreDown"));
 
         stage.addListener(new ClickListener(Input.Buttons.LEFT) {
             public void clicked(InputEvent event, float x, float y) {
                 if(stage.stageToScreenCoordinates(new Vector2(x, stage.getHeight() - y)).y < 132 + Main.TOWER_RADIUS) return;
+                selected = null;
                 Vector2 coords = new Vector2(x, y);
                 if (placingTower) {
                     for (Tower tower : towers) {
@@ -243,8 +247,6 @@ public class Level implements Screen {
 
         if (!paused) stage.act(delta);
         stage.draw();
-        ui.act(delta);
-        ui.draw();
 
         Matrix4 transform = new Matrix4();
         transform.scale(Gdx.graphics.getWidth() / width, Gdx.graphics.getHeight() / height, 1);
@@ -266,21 +268,33 @@ public class Level implements Screen {
         shapeRenderer.setTransformMatrix(transform);
 
         if (selected != null) {
-            Gdx.gl20.glLineWidth(4);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-            shapeRenderer.setColor(1, 1, 1, .5f);
-            shapeRenderer.circle(selected.area.x, selected.area.y, Main.TOWER_RADIUS + 4);
+            shapeRenderer.setColor(0, 1, 0, .5f);
+            shapeRenderer.circle(selected.area.x, selected.area.y, selected.range);
             shapeRenderer.end();
-            Gdx.gl20.glLineWidth(1);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(0, 1, 0, .25f);
+            shapeRenderer.circle(selected.area.x, selected.area.y, selected.range);
+            shapeRenderer.end();
         }
 
         if (placingTower && Gdx.input.getY() < Gdx.graphics.getHeight() - 132 - Main.TOWER_RADIUS) {
+            Vector2 coords = stage.screenToStageCoordinates(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+            float range = 0;
+            if (red.isChecked()) range = 100; // TODO sync this with the value in Tower
+            else if (blue.isChecked()) range = 150;
+            else if (yellow.isChecked()) range = 50;
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setColor(1, 1, 1, .5f);
+            shapeRenderer.circle(coords.x, coords.y, range);
+            shapeRenderer.end();
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(1, 1, 1, .25f);
+            shapeRenderer.circle(coords.x, coords.y, range);
             shapeRenderer.setColor(1, 1, 1, .5f);
             for (Tower tower : towers)
                 shapeRenderer.circle(tower.area.x, tower.area.y, tower.area.radius);
             shapeRenderer.setColor(0, 1, 0, .5f);
-            Vector2 coords = stage.screenToStageCoordinates(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             for (Tower tower : towers)
                 if (tower.area.overlaps(new Circle(coords, Main.TOWER_RADIUS))) {
                     shapeRenderer.setColor(1, 0, 0, .5f);
@@ -296,6 +310,9 @@ public class Level implements Screen {
         }
 
         Gdx.gl.glDisable(GL20.GL_BLEND);
+
+        ui.act(delta);
+        ui.draw();
     }
 
     private void addEnemy(final Enemy enemy) {
