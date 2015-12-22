@@ -5,22 +5,22 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.thepaperpilot.solar.Entities.Enemy;
 import com.thepaperpilot.solar.Entities.Tower;
 import com.thepaperpilot.solar.Main;
 
@@ -37,9 +37,14 @@ public class Level implements Screen {
     private final Stage stage;
     private final Stage ui;
     private final Vector2[] path;
+    private final Wave[] waves;
     public Tower selected;
     public boolean placingTower;
+    private Wave finalWave;
     private boolean paused;
+    private float time = -10;
+    private int currWave;
+    private ArrayList<Enemy> enemies = new ArrayList<>();
 
     public Level(LevelPrototype levelPrototype) {
         width = levelPrototype.width;
@@ -47,6 +52,10 @@ public class Level implements Screen {
         path = new Vector2[levelPrototype.path.length / 2];
         for (int i = 0; i < levelPrototype.path.length - 1; i += 2) {
             path[i / 2] = new Vector2(levelPrototype.path[i], levelPrototype.path[i + 1]);
+        }
+        waves = new Wave[levelPrototype.waves.length];
+        for (int i = 0; i < levelPrototype.waves.length; i++) {
+            waves[i] = new Wave(levelPrototype.waves[i]);
         }
 
         batch = new SpriteBatch();
@@ -90,7 +99,7 @@ public class Level implements Screen {
                         }
                     }
                     for (int i = 0; i < path.length - 1; i++) {
-                        if (Intersector.distanceSegmentPoint(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y, x, y) < Main.TOWER_RADIUS + 8) {
+                        if (Intersector.distanceSegmentPoint(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y, x, y) < Main.TOWER_RADIUS + Main.ENEMY_SIZE) {
                             return;
                         }
                     }
@@ -123,14 +132,15 @@ public class Level implements Screen {
         Button menuToggle = new TextButton("MENU", Main.skin, "large");
         menuToggle.pad(10);
         table1.add(menuToggle).expandY().fill().spaceBottom(4).row();
-        final Button pause = new Button(Main.skin);
+        final TextButton pause = new TextButton("PAUSE", Main.skin, "large");
         pause.pad(10);
         pause.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 paused = !paused;
+                pause.setText(paused ? "RESUME" : "PAUSE");
             }
         });
-        table1.add(pause).expandY().fill();
+        table1.add(pause).width(new GlyphLayout(Main.skin.getFont("large"), "RESUME").width + 10).expandY().fill();
         table.left().add(table1).fillY().expandY();
 
         red.addListener(new ClickListener() {
@@ -171,8 +181,6 @@ public class Level implements Screen {
 
         ui.addActor(table);
 
-        // TODO enemies
-
         // TODO resources
 
         stage.addListener(new InputListener() {
@@ -197,8 +205,42 @@ public class Level implements Screen {
 
     @Override
     public void render(float delta) {
-        // update and render everything
-        stage.act(delta);
+        time += delta;
+        if (currWave < waves.length) {
+            if (time >= waves[currWave].enemyDistance) {
+                time -= waves[currWave].enemyDistance;
+                // TODO enemy pool
+                final Enemy enemy = waves[currWave].getEnemy();
+                if (waves[currWave].isEmpty()) {
+                    currWave++;
+                    time -= 10;
+                }
+                addEnemy(enemy);
+            }
+        } else {
+            if (finalWave == null || finalWave.isEmpty()) {
+                Wave.WavePrototype wavePrototype = new Wave.WavePrototype();
+                wavePrototype.enemyDistance = 1;
+                Enemy.EnemyPrototype enemyPrototype = new Enemy.EnemyPrototype();
+                enemyPrototype.speed = 1;
+                enemyPrototype.health = (int) Math.pow(currWave, 2);
+                enemyPrototype.count = 10;
+                enemyPrototype.name = "alien";
+                wavePrototype.enemies = new Enemy.EnemyPrototype[]{enemyPrototype};
+                finalWave = new Wave(wavePrototype);
+            }
+            if (time >= finalWave.enemyDistance) {
+                time -= finalWave.enemyDistance;
+                final Enemy enemy = finalWave.getEnemy();
+                if (finalWave.isEmpty()) {
+                    currWave++;
+                    time -= 10;
+                }
+                addEnemy(enemy);
+            }
+        }
+
+        if (!paused) stage.act(delta);
         stage.draw();
         ui.act(delta);
         ui.draw();
@@ -214,7 +256,6 @@ public class Level implements Screen {
         shapeRenderer.setTransformMatrix(transform);
 
         if (selected != null) {
-            System.out.println("!");
             Gdx.gl20.glLineWidth(4);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(1, 1, 1, .5f);
@@ -236,7 +277,7 @@ public class Level implements Screen {
                     break;
                 }
             for (int i = 0; i < path.length - 1; i++)
-                if (Intersector.distanceSegmentPoint(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y, coords.x, coords.y) < Main.TOWER_RADIUS + 8) {
+                if (Intersector.distanceSegmentPoint(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y, coords.x, coords.y) < Main.TOWER_RADIUS + Main.ENEMY_SIZE) {
                     shapeRenderer.setColor(1, 0, 0, .5f);
                     break;
                 }
@@ -245,6 +286,27 @@ public class Level implements Screen {
         }
 
         Gdx.gl.glDisable(GL20.GL_BLEND);
+    }
+
+    private void addEnemy(final Enemy enemy) {
+        stage.addActor(enemy);
+        enemy.setPosition(path[0].x, path[0].y);
+        Action[] actions = new Action[path.length];
+        for (int i = 0; i < path.length - 1; i++) {
+            actions[i] = Actions.moveTo(path[i + 1].x, path[i + 1].y, new Vector2(path[i + 1].x - path[i].x, path[i + 1].y - path[i].y).len() / Main.ENEMY_SPEED);
+        }
+        actions[path.length - 1] = Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                if (enemies.contains(enemy)) {
+                    enemies.remove(enemy);
+                    enemy.remove();
+                    // TODO take away life
+                }
+            }
+        });
+        enemy.addAction(Actions.sequence(actions));
+        enemies.add(enemy);
     }
 
     @Override
@@ -283,10 +345,6 @@ public class Level implements Screen {
         public float height;
 
         public float[] path;
-        Wave.WavePrototype[] waves;
-
-        public LevelPrototype() {
-
-        }
+        public Wave.WavePrototype[] waves;
     }
 }
