@@ -35,7 +35,7 @@ public class Tower extends Image {
 
         addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                level.selected = Tower.this;
+                if (!level.placingTower) level.selected = (level.selected == Tower.this ? null : Tower.this);
             }
         });
     }

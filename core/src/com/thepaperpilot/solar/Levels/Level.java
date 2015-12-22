@@ -38,7 +38,7 @@ public class Level implements Screen {
     private final Stage ui;
     private final Vector2[] path;
     public Tower selected;
-    private boolean placingTower;
+    public boolean placingTower;
     private boolean paused;
 
     public Level(LevelPrototype levelPrototype) {
@@ -82,7 +82,6 @@ public class Level implements Screen {
         stage.addListener(new ClickListener(Input.Buttons.LEFT) {
             public void clicked(InputEvent event, float x, float y) {
                 if(stage.stageToScreenCoordinates(new Vector2(x, stage.getHeight() - y)).y < 132 + Main.TOWER_RADIUS) return;
-                selected = null;
                 Vector2 coords = new Vector2(x, y);
                 if (placingTower) {
                     for (Tower tower : towers) {
