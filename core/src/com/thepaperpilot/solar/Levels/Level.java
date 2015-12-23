@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -47,20 +49,27 @@ public class Level implements Screen {
     private final Label redRes;
     private final Label blueRes;
     private final Label yellowRes;
+    private final Label redCost;
+    private final Label blueCost;
+    private final Label yellowCost;
     private final Label livesLabel;
     private final Label wavesLabel;
     private final Label timeLabel;
-    public Building selected;
+    private final Table cost;
+    private final Table resourcesTable;
+    public Building selectedBuilding;
     public boolean placingBuilding;
-    public int redResource = 25;
-    public int blueResource = 25;
-    public int yellowResource = 25;
+    public int redResource = 100;
+    public int blueResource = 100;
+    public int yellowResource = 100;
     public int population = 1;
     private Wave finalWave;
     private boolean paused;
     private float time = -10;
     private float resourceTime = -10;
     private int currWave;
+    private Resource selectedResource = Resource.RED;
+    private int selectedType = 1; // 1 is tower, 2 is generator
 
     public Level(LevelPrototype levelPrototype) {
         path = new Vector2[levelPrototype.path.length / 2];
@@ -103,111 +112,68 @@ public class Level implements Screen {
         blueGen = new Button(Main.getDrawable("towers/blueGenStore"), Main.getDrawable("towers/blueGenStoreDown"), Main.getDrawable("towers/blueGenStoreDown"));
         yellowGen = new Button(Main.getDrawable("towers/yellowGenStore"), Main.getDrawable("towers/yellowGenStoreDown"), Main.getDrawable("towers/yellowGenStoreDown"));
         redRes = new Label("" + redResource, Main.skin);
+        redRes.setColor(.5f, 0, 0, 1);
         blueRes = new Label("" + blueResource, Main.skin);
+        blueRes.setColor(0, 0, .5f, 1);
         yellowRes = new Label("" + yellowResource, Main.skin);
+        yellowRes.setColor(.5f, .5f, 0, 1);
+        redCost = new Label("0", Main.skin);
+        blueCost = new Label("0", Main.skin);
+        yellowCost = new Label("0", Main.skin);
         livesLabel = new Label("" + population, Main.skin);
         wavesLabel = new Label("" + currWave, Main.skin);
         timeLabel = new Label("" + Math.abs(time), Main.skin);
 
         stage.addListener(new ClickListener(Input.Buttons.LEFT) {
             public void clicked(InputEvent event, float x, float y) {
-                Tower.Type type = null;
-                Generator.Type type1 = null;
-                if (red.isChecked()) type = Tower.Type.RED;
-                else if (blue.isChecked()) type = Tower.Type.BLUE;
-                else if (yellow.isChecked()) type = Tower.Type.YELLOW;
-                else if (redGen.isChecked()) type1 = Generator.Type.RED;
-                else if (blueGen.isChecked()) type1 = Generator.Type.BLUE;
-                else if (yellowGen.isChecked()) type1 = Generator.Type.YELLOW;
-                if (type == null && type1 == null) return;
-                if (stage.stageToScreenCoordinates(new Vector2(x, stage.getHeight() - y)).y < 256 + (type == null ? 2 : 1) * Main.TOWER_RADIUS)
+                if (!placingBuilding) return;
+                if (stage.stageToScreenCoordinates(new Vector2(x, stage.getHeight() - y)).y < 256 + selectedType * Main.TOWER_RADIUS)
                     return;
-                selected = null;
+                selectedBuilding = null;
                 Vector2 coords = new Vector2(x, y);
-                if (placingBuilding) {
-                    for (Building building : buildings) {
-                        if (building.area.overlaps(new Circle(coords, (type == null ? 2 : 1) * Main.TOWER_RADIUS))) {
-                            return;
-                        }
-                    }
-                    for (int i = 0; i < path.length - 1; i++) {
-                        if (Intersector.distanceSegmentPoint(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y, x, y) < (type == null ? 2 : 1) * Main.TOWER_RADIUS + Main.ENEMY_SIZE) {
-                            return;
-                        }
-                    }
-                    boolean paid = false;
-                    if (type != null) {
-                        switch (type) {
-                            default:
-                            case RED:
-                                if (redResource >= 25) {
-                                    redResource -= 25;
-                                    paid = true;
-                                }
-                                break;
-                            case BLUE:
-                                if (blueResource >= 25) {
-                                    blueResource -= 25;
-                                    paid = true;
-                                }
-                                break;
-                            case YELLOW:
-                                if (yellowResource >= 25) {
-                                    yellowResource -= 25;
-                                    paid = true;
-                                }
-                                break;
-                        }
-                    } else {
-                        switch (type1) {
-                            default:
-                            case RED:
-                                if (redResource >= 100) {
-                                    redResource -= 100;
-                                    paid = true;
-                                }
-                                break;
-                            case BLUE:
-                                if (blueResource >= 100) {
-                                    blueResource -= 100;
-                                    paid = true;
-                                }
-                                break;
-                            case YELLOW:
-                                if (yellowResource >= 100) {
-                                    yellowResource -= 100;
-                                    paid = true;
-                                }
-                                break;
-                        }
-                    }
-                    if (!paid) {
-                        final Label message = new Label("Insufficient Resources", Main.skin);
-                        message.setPosition(coords.x, coords.y, Align.center);
-                        message.addAction(Actions.sequence(Actions.parallel(Actions.moveBy(0, 20, 1), Actions.fadeOut(1)), Actions.run(new Runnable() {
-                            @Override
-                            public void run() {
-                                message.remove();
-                            }
-                        })));
-                        stage.addActor(message);
+                for (Building building : buildings) {
+                    if (building.area.overlaps(new Circle(coords, selectedType * Main.TOWER_RADIUS))) {
                         return;
                     }
-                    if (type != null) {
-                        Tower tower = new Tower(coords.x - Main.TOWER_RADIUS, coords.y - Main.TOWER_RADIUS, type, Level.this);
-                        buildings.add(tower);
-                        stage.addActor(tower);
-                    } else {
-                        Generator generator = new Generator(coords.x - 2 * Main.TOWER_RADIUS, coords.y - 2 * Main.TOWER_RADIUS, type1, Level.this);
-                        buildings.add(generator);
-                        stage.addActor(generator);
+                }
+                for (int i = 0; i < path.length - 1; i++) {
+                    if (Intersector.distanceSegmentPoint(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y, x, y) < selectedType * Main.TOWER_RADIUS + Main.ENEMY_SIZE) {
+                        return;
                     }
-                    if (!(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))) {
-                        placingBuilding = false;
-                        red.setChecked(false);
-                        blue.setChecked(false);
-                        yellow.setChecked(false);
-                    }
+                }
+                boolean paid = false;
+                if (selectedType == 1 && Tower.pay(selectedResource, Level.this)) paid = true;
+                if (selectedType == 2 && Generator.pay(selectedResource, Level.this)) paid = true;
+                if (!paid) {
+                    final Label message = new Label("Insufficient Resources", Main.skin);
+                    message.setPosition(coords.x, coords.y, Align.center);
+                    message.addAction(Actions.sequence(Actions.parallel(Actions.moveBy(0, 20, 1), Actions.fadeOut(1)), Actions.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            message.remove();
+                        }
+                    })));
+                    stage.addActor(message);
+                    return;
+                }
+                if (selectedType == 1) {
+                    Tower tower = new Tower(coords.x - Main.TOWER_RADIUS, coords.y - Main.TOWER_RADIUS, selectedResource, Level.this);
+                    buildings.add(tower);
+                    stage.addActor(tower);
+                } else {
+                    Generator generator = new Generator(coords.x - 2 * Main.TOWER_RADIUS, coords.y - 2 * Main.TOWER_RADIUS, selectedResource, Level.this);
+                    buildings.add(generator);
+                    stage.addActor(generator);
+                }
+                if (!(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))) {
+                    placingBuilding = false;
+                    red.setChecked(false);
+                    blue.setChecked(false);
+                    yellow.setChecked(false);
+                    redGen.setChecked(false);
+                    blueGen.setChecked(false);
+                    yellowGen.setChecked(false);
+                    cost.setVisible(false);
                 }
             }
         });
@@ -217,10 +183,10 @@ public class Level implements Screen {
         table.setBackground(Main.skin.getDrawable("default-round"));
         table.setPosition(0, 8);
 
-        Table table1 = new Table(Main.skin);
+        Table buttonsTable = new Table(Main.skin);
         Button menuToggle = new TextButton("MENU", Main.skin);
         menuToggle.pad(10);
-        table1.add(menuToggle).expandY().fill().spaceBottom(8).row();
+        buttonsTable.add(menuToggle).expandY().fill().spaceBottom(8).row();
         final TextButton pause = new TextButton("PAUSE", Main.skin);
         pause.pad(10);
         pause.addListener(new ClickListener() {
@@ -229,8 +195,8 @@ public class Level implements Screen {
                 pause.setText(paused ? "RESUME" : "PAUSE");
             }
         });
-        table1.add(pause).width(new GlyphLayout(Main.skin.getFont("font"), "RESUME").width + 10).expandY().fill();
-        table.add(table1).expandY().fillY().spaceLeft(4);
+        buttonsTable.add(pause).width(new GlyphLayout(Main.skin.getFont("font"), "RESUME").width + 10).expandY().fill();
+        table.add(buttonsTable).expandY().fillY().spaceLeft(4);
 
         red.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -242,6 +208,9 @@ public class Level implements Screen {
                     yellowGen.setChecked(false);
                 }
                 placingBuilding = red.isChecked();
+                cost.setVisible(placingBuilding);
+                selectedType = 1;
+                selectedResource = Resource.RED;
             }
         });
         blue.addListener(new ClickListener() {
@@ -254,6 +223,9 @@ public class Level implements Screen {
                     yellowGen.setChecked(false);
                 }
                 placingBuilding = blue.isChecked();
+                cost.setVisible(placingBuilding);
+                selectedType = 1;
+                selectedResource = Resource.BLUE;
             }
         });
         yellow.addListener(new ClickListener() {
@@ -266,16 +238,19 @@ public class Level implements Screen {
                     yellowGen.setChecked(false);
                 }
                 placingBuilding = yellow.isChecked();
+                cost.setVisible(placingBuilding);
+                selectedType = 1;
+                selectedResource = Resource.YELLOW;
             }
         });
 
-        Table table2 = new Table(Main.skin);
-        table2.setBackground(Main.skin.getDrawable("default-round"));
-        table2.add(new Label("Towers", Main.skin)).colspan(3).row();
-        table2.add(red).size(32);
-        table2.add(blue).size(32);
-        table2.add(yellow).size(32);
-        table.add(table2).spaceLeft(4).uniformY();
+        Table towersTable = new Table(Main.skin);
+        towersTable.setBackground(Main.skin.getDrawable("default-round"));
+        towersTable.add(new Label("Towers", Main.skin)).colspan(3).row();
+        towersTable.add(red).size(32);
+        towersTable.add(blue).size(32);
+        towersTable.add(yellow).size(32);
+        table.add(towersTable).spaceLeft(4).uniformY();
 
         redGen.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -287,6 +262,9 @@ public class Level implements Screen {
                     yellowGen.setChecked(false);
                 }
                 placingBuilding = redGen.isChecked();
+                cost.setVisible(placingBuilding);
+                selectedType = 2;
+                selectedResource = Resource.RED;
             }
         });
         blueGen.addListener(new ClickListener() {
@@ -299,6 +277,9 @@ public class Level implements Screen {
                     yellowGen.setChecked(false);
                 }
                 placingBuilding = blueGen.isChecked();
+                cost.setVisible(placingBuilding);
+                selectedType = 2;
+                selectedResource = Resource.BLUE;
             }
         });
         yellowGen.addListener(new ClickListener() {
@@ -311,56 +292,69 @@ public class Level implements Screen {
                     blueGen.setChecked(false);
                 }
                 placingBuilding = yellowGen.isChecked();
+                cost.setVisible(placingBuilding);
+                selectedType = 3;
+                selectedResource = Resource.YELLOW;
             }
         });
 
-        Table table3 = new Table(Main.skin);
-        table3.setBackground(Main.skin.getDrawable("default-round"));
-        table3.add(new Label("Generators", Main.skin)).colspan(3).row();
-        table3.add(redGen).size(32);
-        table3.add(blueGen).size(32);
-        table3.add(yellowGen).size(32);
-        table.add(table3).spaceLeft(8).uniformY();
+        Table generatorsTable = new Table(Main.skin);
+        generatorsTable.setBackground(Main.skin.getDrawable("default-round"));
+        generatorsTable.add(new Label("Generators", Main.skin)).colspan(3).row();
+        generatorsTable.add(redGen).size(32);
+        generatorsTable.add(blueGen).size(32);
+        generatorsTable.add(yellowGen).size(32);
+        table.add(generatorsTable).spaceLeft(8).uniformY();
 
-        Table table4 = new Table(Main.skin);
-        table4.setBackground(Main.skin.getDrawable("default-round"));
-        table4.add(new Label("Resources", Main.skin)).colspan(3).row();
+        resourcesTable = new Table(Main.skin);
+        resourcesTable.setBackground(Main.skin.getDrawable("default-round"));
+        resourcesTable.add(new Label("Resources", Main.skin)).colspan(3).row();
         Table redTable = new Table(Main.skin);
-        redTable.setBackground(Main.getDrawable("towers/redGen"));
         redTable.add(redRes);
-        table4.add(redTable).size(32);
+        resourcesTable.add(redTable).size(32);
         Table blueTable = new Table(Main.skin);
-        blueTable.setBackground(Main.getDrawable("towers/blueGen"));
         blueTable.add(blueRes);
-        table4.add(blueTable).size(32);
+        resourcesTable.add(blueTable).size(32);
         Table yellowTable = new Table(Main.skin);
-        yellowTable.setBackground(Main.getDrawable("towers/yellowGen"));
         yellowTable.add(yellowRes);
-        table4.add(yellowTable).size(32);
-        table.add(table4).spaceLeft(8).uniformY();
+        resourcesTable.add(yellowTable).size(32);
+        table.add(resourcesTable).spaceLeft(8).uniformY();
 
-        Table table5 = new Table(Main.skin);
-        table5.setBackground(Main.skin.getDrawable("default-round"));
-        table5.add(new Label("Life", Main.skin)).row();
-        table5.add(livesLabel).height(32);
-        table.add(table5).spaceLeft(8).uniformY();
+        Table lifeTable = new Table(Main.skin);
+        lifeTable.setBackground(Main.skin.getDrawable("default-round"));
+        lifeTable.add(new Label("Life", Main.skin)).row();
+        lifeTable.add(livesLabel).height(32);
+        table.add(lifeTable).spaceLeft(8).uniformY();
 
-        Table table6 = new Table(Main.skin);
-        table6.setBackground(Main.skin.getDrawable("default-round"));
-        table6.add(new Label("Wave", Main.skin)).row();
-        table6.add(wavesLabel).height(32);
-        table.add(table6).spaceLeft(8).uniformY();
+        Table waveTable = new Table(Main.skin);
+        waveTable.setBackground(Main.skin.getDrawable("default-round"));
+        waveTable.add(new Label("Wave", Main.skin)).row();
+        waveTable.add(wavesLabel).height(32);
+        table.add(waveTable).spaceLeft(8).uniformY();
 
-        Table table7 = new Table(Main.skin);
-        table7.setBackground(Main.skin.getDrawable("default-round"));
-        table7.add(new Label("Next Enemy", Main.skin)).row();
+        Table timerTable = new Table(Main.skin);
+        timerTable.setBackground(Main.skin.getDrawable("default-round"));
+        timerTable.add(new Label("Next Enemy", Main.skin)).row();
         Table enemyTable = new Table(Main.skin);
         enemyTable.setBackground(Main.getDrawable("alien"));
         enemyTable.add(timeLabel);
-        table7.add(enemyTable).size(32);
-        table.add(table7).spaceLeft(8).uniformY();
+        timerTable.add(enemyTable).size(32);
+        table.add(timerTable).spaceLeft(8).uniformY();
+
+        cost = new Table(Main.skin);
+        cost.setColor(1, 1, 1, .5f);
+        cost.setTouchable(Touchable.disabled);
+        cost.setBackground(Main.skin.getDrawable("default-round"));
+        cost.setVisible(false);
+        cost.setPosition(resourcesTable.getX(), 72);
+        cost.setSize(resourcesTable.getPrefWidth(), 40);
+        cost.add(new Label("Cost", Main.skin)).colspan(3).row();
+        cost.add(redCost).expand().uniform();
+        cost.add(blueCost).expand().uniform();
+        cost.add(yellowCost).expand().uniform();
 
         ui.addActor(table);
+        ui.addActor(cost);
 
         stage.addListener(new InputListener() {
             @Override
@@ -450,19 +444,19 @@ public class Level implements Screen {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
 
-        if (selected != null) {
+        if (selectedBuilding != null) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(1, 1, 1, .5f);
-            shapeRenderer.circle(selected.area.x, selected.area.y, selected.area.radius + 2);
+            shapeRenderer.circle(selectedBuilding.area.x, selectedBuilding.area.y, selectedBuilding.area.radius + 2);
             shapeRenderer.end();
-            if (selected instanceof Tower) {
+            if (selectedBuilding instanceof Tower) {
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
                 shapeRenderer.setColor(0, 1, 0, .5f);
-                shapeRenderer.circle(selected.area.x, selected.area.y, ((Tower) selected).range);
+                shapeRenderer.circle(selectedBuilding.area.x, selectedBuilding.area.y, ((Tower) selectedBuilding).range);
                 shapeRenderer.end();
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
                 shapeRenderer.setColor(0, 1, 0, .25f);
-                shapeRenderer.circle(selected.area.x, selected.area.y, ((Tower) selected).range);
+                shapeRenderer.circle(selectedBuilding.area.x, selectedBuilding.area.y, ((Tower) selectedBuilding).range);
                 shapeRenderer.end();
             }
         }
@@ -512,6 +506,14 @@ public class Level implements Screen {
         livesLabel.setText("" + population);
         wavesLabel.setText("" + currWave);
         timeLabel.setText("" + Math.round(time <= 0 ? Math.abs(time) : (currWave < waves.length ? waves[currWave].enemyDistance : finalWave.enemyDistance) - time));
+        cost.setX(resourcesTable.getX());
+
+        redCost.setText("" + (selectedType == 1 ? Tower.getRedCost(selectedResource) : Generator.getRedCost(selectedResource)));
+        redCost.setColor(redResource >= (selectedType == 1 ? Tower.getRedCost(selectedResource) : Generator.getRedCost(selectedResource)) ? Color.GREEN : Color.RED);
+        blueCost.setText("" + (selectedType == 1 ? Tower.getBlueCost(selectedResource) : Generator.getBlueCost(selectedResource)));
+        blueCost.setColor(blueResource >= (selectedType == 1 ? Tower.getBlueCost(selectedResource) : Generator.getBlueCost(selectedResource)) ? Color.GREEN : Color.RED);
+        yellowCost.setText("" + (selectedType == 1 ? Tower.getYellowCost(selectedResource) : Generator.getYellowCost(selectedResource)));
+        yellowCost.setColor(yellowResource >= (selectedType == 1 ? Tower.getYellowCost(selectedResource) : Generator.getYellowCost(selectedResource)) ? Color.GREEN : Color.RED);
 
         ui.act(delta);
         ui.draw();
@@ -550,6 +552,11 @@ public class Level implements Screen {
         ui.dispose();
     }
 
+    public enum Resource {
+        RED,
+        BLUE,
+        YELLOW
+    }
 
     public static class LevelPrototype {
         // TODO when you make the generators make these local again

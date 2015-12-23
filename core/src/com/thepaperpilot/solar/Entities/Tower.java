@@ -35,7 +35,7 @@ public class Tower extends Building {
         bluePool = new ParticleEffectPool(particleEffect, 0, 100);
     }
 
-    private final Type type;
+    private final Level.Resource type;
     public float range;
     boolean comboUpgrade;
     private boolean ability;
@@ -45,7 +45,7 @@ public class Tower extends Building {
     private Level level;
     private ParticleEffect effect;
 
-    public Tower(float x, float y, Type type, final Level level) {
+    public Tower(float x, float y, Level.Resource type, final Level level) {
         super(x, y, Main.TOWER_RADIUS);
         this.type = type;
         this.level = level;
@@ -74,10 +74,33 @@ public class Tower extends Building {
 
         addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                if (!level.placingBuilding) level.selected = (level.selected == Tower.this ? null : Tower.this);
+                if (!level.placingBuilding)
+                    level.selectedBuilding = (level.selectedBuilding == Tower.this ? null : Tower.this);
                 event.reset();
             }
         });
+    }
+
+    public static int getRedCost(Level.Resource type) {
+        return type == Level.Resource.RED ? 25 : 0;
+    }
+
+    public static int getBlueCost(Level.Resource type) {
+        return type == Level.Resource.BLUE ? 25 : 0;
+    }
+
+    public static int getYellowCost(Level.Resource type) {
+        return type == Level.Resource.YELLOW ? 25 : 0;
+    }
+
+    public static boolean pay(Level.Resource type, Level level) {
+        if (level.redResource >= getRedCost(type) && level.blueResource >= getBlueCost(type) && level.yellowResource >= getYellowCost(type)) {
+            level.redResource -= getRedCost(type);
+            level.blueResource -= getBlueCost(type);
+            level.yellowResource -= getYellowCost(type);
+            return true;
+        }
+        return false;
     }
 
     public void act(float delta) {
@@ -95,7 +118,7 @@ public class Tower extends Building {
         }
         if (target == null) {
             time = Math.min(time, Main.TOWER_SPEED);
-            if (type == Type.YELLOW) {
+            if (type == Level.Resource.YELLOW) {
                 effect.allowCompletion();
             }
         } else switch (type) {
@@ -187,11 +210,5 @@ public class Tower extends Building {
                 }
                 break;
         }
-    }
-
-    public enum Type {
-        RED,
-        BLUE,
-        YELLOW
     }
 }

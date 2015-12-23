@@ -9,13 +9,13 @@ import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Main;
 
 public class Generator extends Building {
-    private final Type type;
+    private final Level.Resource type;
     private final Level level;
     private float time;
     private float amount = 1;
     private float speed = 4;
 
-    public Generator(float x, float y, Type type, final Level level) {
+    public Generator(float x, float y, Level.Resource type, final Level level) {
         super(x, y, 2 * Main.TOWER_RADIUS);
         setOrigin(Align.center);
         this.type = type;
@@ -35,10 +35,33 @@ public class Generator extends Building {
 
         addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                if (!level.placingBuilding) level.selected = (level.selected == Generator.this ? null : Generator.this);
+                if (!level.placingBuilding)
+                    level.selectedBuilding = (level.selectedBuilding == Generator.this ? null : Generator.this);
                 event.reset();
             }
         });
+    }
+
+    public static boolean pay(Level.Resource type, Level level) {
+        if (level.redResource >= getRedCost(type) && level.blueResource >= getBlueCost(type) && level.yellowResource >= getYellowCost(type)) {
+            level.redResource -= getRedCost(type);
+            level.blueResource -= getBlueCost(type);
+            level.yellowResource -= getYellowCost(type);
+            return true;
+        }
+        return false;
+    }
+
+    public static int getRedCost(Level.Resource type) {
+        return type == Level.Resource.RED ? 100 : 50;
+    }
+
+    public static int getBlueCost(Level.Resource type) {
+        return type == Level.Resource.BLUE ? 100 : 50;
+    }
+
+    public static int getYellowCost(Level.Resource type) {
+        return type == Level.Resource.YELLOW ? 100 : 50;
     }
 
     public void act(float delta) {
@@ -71,11 +94,5 @@ public class Generator extends Building {
             }
             level.stage.addActor(increase);
         }
-    }
-
-    public enum Type {
-        RED,
-        BLUE,
-        YELLOW
     }
 }
