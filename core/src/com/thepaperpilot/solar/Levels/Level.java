@@ -92,7 +92,7 @@ public class Level implements Screen {
 
         stage = new Stage(new StretchViewport(levelPrototype.width, levelPrototype.height));
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        ui = new Stage(new StretchViewport(640, 360));
+        ui = new Stage(new StretchViewport(648, 360)); //640x360 is 16:9, try to stay as close as possible
 
         stage.addActor(new Image(Main.getDrawable("bg")));
 
@@ -230,7 +230,7 @@ public class Level implements Screen {
             }
         });
         table1.add(pause).width(new GlyphLayout(Main.skin.getFont("font"), "RESUME").width + 10).expandY().fill();
-        table.left().add(table1).expandY().fillY().spaceLeft(4);
+        table.add(table1).expandY().fillY().spaceLeft(4);
 
         red.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
