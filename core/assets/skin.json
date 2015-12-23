@@ -12,7 +12,8 @@
   toggle: { down: default-round-down, checked: default-round-down, up: default-round },
 },
   com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
-  default: { down: default-round-down, up: default-round, font: font, fontColor: white },
+  default: { down: default
+    -round-down, up: default-round, font: font, fontColor: white },
   toggle: {
     down: default
     -
