@@ -49,28 +49,11 @@ public class Tower extends Building {
         super(x, y, Main.TOWER_RADIUS);
         this.type = type;
         this.level = level;
-        switch (type) {
-            default:
-            case RED:
-                setDrawable(Main.getDrawable("towers/red"));
-                damage = 3;
-                speed = 2;
-                range = 100;
-                break;
-            case BLUE:
-                setDrawable(Main.getDrawable("towers/blue"));
-                damage = 6;
-                speed = 1;
-                range = 150;
-                break;
-            case YELLOW:
-                setDrawable(Main.getDrawable("towers/yellow"));
-                damage = 1;
-                speed = 6;
-                range = 50;
-                effect = yellowPool.obtain();
-                break;
-        }
+        damage = getBaseDamage(type);
+        range = getBaseRange(type);
+        speed = getBaseSpeed(type);
+        setDrawable(Main.getDrawable("towers/" + (type == Level.Resource.RED ? "red" : type == Level.Resource.BLUE ? "blue" : "yellow")));
+        if (type == Level.Resource.YELLOW) effect = yellowPool.obtain();
 
         addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -101,6 +84,18 @@ public class Tower extends Building {
             return true;
         }
         return false;
+    }
+
+    public static float getBaseDamage(Level.Resource resource) {
+        return resource == Level.Resource.RED ? 3 : resource == Level.Resource.BLUE ? 6 : 1;
+    }
+
+    public static float getBaseRange(Level.Resource resource) {
+        return resource == Level.Resource.RED ? 100 : resource == Level.Resource.BLUE ? 150 : 50;
+    }
+
+    public static float getBaseSpeed(Level.Resource resource) {
+        return resource == Level.Resource.RED ? 2 : resource == Level.Resource.BLUE ? 1 : 6;
     }
 
     public void act(float delta) {

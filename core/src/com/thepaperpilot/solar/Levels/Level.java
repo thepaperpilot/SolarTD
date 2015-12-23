@@ -462,16 +462,14 @@ public class Level implements Screen {
         }
 
         if (placingBuilding) {
-
             float range = 0;
-            boolean generator = false;
-            if (red.isChecked()) range = 100; // TODO sync this with the value in Tower
-            else if (blue.isChecked()) range = 150;
-            else if (yellow.isChecked()) range = 50;
-            else generator = true;
-            if (Gdx.input.getY() < Gdx.graphics.getHeight() - 256 - (generator ? 2 : 1) * Main.TOWER_RADIUS) {
+            if (selectedType == 1) {
+                range = Tower.getBaseRange(selectedResource);
+            }
+            float uiHeight = ui.stageToScreenCoordinates(new Vector2(0, ui.getHeight() - ui.getActors().first().getY() - ui.getActors().first().getHeight())).y;
+            uiHeight += stage.stageToScreenCoordinates(new Vector2(0, stage.getHeight() - selectedType * Main.TOWER_RADIUS)).y;
+            if (Gdx.input.getY() < Gdx.graphics.getHeight() - uiHeight) {
                 Vector2 coords = stage.screenToStageCoordinates(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
-
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
                 shapeRenderer.setColor(1, 1, 1, .5f);
                 shapeRenderer.circle(coords.x, coords.y, range);
@@ -484,16 +482,16 @@ public class Level implements Screen {
                     shapeRenderer.circle(building.area.x, building.area.y, building.area.radius);
                 shapeRenderer.setColor(0, 1, 0, .5f);
                 for (Building building : buildings)
-                    if (building.area.overlaps(new Circle(coords, (generator ? 2 : 1) * Main.TOWER_RADIUS))) {
+                    if (building.area.overlaps(new Circle(coords, selectedType * Main.TOWER_RADIUS))) {
                         shapeRenderer.setColor(1, 0, 0, .5f);
                         break;
                     }
                 for (int i = 0; i < path.length - 1; i++)
-                    if (Intersector.distanceSegmentPoint(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y, coords.x, coords.y) < (generator ? 2 : 1) * Main.TOWER_RADIUS + Main.ENEMY_SIZE) {
+                    if (Intersector.distanceSegmentPoint(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y, coords.x, coords.y) < selectedType * Main.TOWER_RADIUS + Main.ENEMY_SIZE) {
                         shapeRenderer.setColor(1, 0, 0, .5f);
                         break;
                     }
-                shapeRenderer.circle(coords.x, coords.y, (generator ? 2 : 1) * Main.TOWER_RADIUS);
+                shapeRenderer.circle(coords.x, coords.y, selectedType * Main.TOWER_RADIUS);
                 shapeRenderer.end();
             }
         }
