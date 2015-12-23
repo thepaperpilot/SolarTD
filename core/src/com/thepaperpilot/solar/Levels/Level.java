@@ -520,7 +520,7 @@ public class Level implements Screen {
 
     private void addEnemy(final Enemy enemy) {
         stage.addActor(enemy);
-        enemy.setPosition(path[0].x, path[0].y);
+        enemy.setPosition(path[0].x - Main.ENEMY_SIZE / 2, path[0].y - Main.ENEMY_SIZE / 2);
         enemies.add(enemy);
     }
 

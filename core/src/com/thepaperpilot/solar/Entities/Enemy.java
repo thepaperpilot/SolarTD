@@ -56,7 +56,7 @@ public class Enemy extends Image {
             tempSpeed *= .5f; // TODO make this dynamic somehow
             // maybe a condition class?
         } else slowed = 0;
-        Vector2 dist = new Vector2(level.path[path + 1].x - getX(), level.path[path + 1].y - getY());
+        Vector2 dist = new Vector2(level.path[path + 1].x - getX() - Main.ENEMY_SIZE / 2, level.path[path + 1].y - getY() - Main.ENEMY_SIZE / 2);
         float angle = dist.angle();
         if (dist.len() < Main.ENEMY_SPEED * delta) {
             path++;
@@ -66,7 +66,7 @@ public class Enemy extends Image {
                     remove();
                     // TODO take away life
                 }
-            } else setPosition(level.path[path].x, level.path[path].y);
+            } else setPosition(level.path[path].x - Main.ENEMY_SIZE / 2, level.path[path].y - Main.ENEMY_SIZE / 2);
         } else
             setPosition(getX() + tempSpeed * MathUtils.cosDeg(angle) * delta, getY() + tempSpeed * MathUtils.sinDeg(angle) * delta);
     }
