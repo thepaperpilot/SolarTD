@@ -48,6 +48,7 @@ public class Level implements Screen {
     private final Label blueRes;
     private final Label yellowRes;
     private final Label livesLabel;
+    private final Label wavesLabel;
     private final Label timeLabel;
     public Building selected;
     public boolean placingBuilding;
@@ -105,6 +106,7 @@ public class Level implements Screen {
         blueRes = new Label("" + blueResource, Main.skin);
         yellowRes = new Label("" + yellowResource, Main.skin);
         livesLabel = new Label("" + population, Main.skin);
+        wavesLabel = new Label("" + currWave, Main.skin);
         timeLabel = new Label("" + Math.abs(time), Main.skin);
 
         stage.addListener(new ClickListener(Input.Buttons.LEFT) {
@@ -339,18 +341,24 @@ public class Level implements Screen {
 
         Table table5 = new Table(Main.skin);
         table5.setBackground(Main.skin.getDrawable("default-round"));
-        table5.add(new Label("Population", Main.skin)).row();
+        table5.add(new Label("Life", Main.skin)).row();
         table5.add(livesLabel).height(32);
         table.add(table5).spaceLeft(8).uniformY();
 
         Table table6 = new Table(Main.skin);
         table6.setBackground(Main.skin.getDrawable("default-round"));
-        table6.add(new Label("Next Enemy", Main.skin)).row();
+        table6.add(new Label("Wave", Main.skin)).row();
+        table6.add(wavesLabel).height(32);
+        table.add(table6).spaceLeft(8).uniformY();
+
+        Table table7 = new Table(Main.skin);
+        table7.setBackground(Main.skin.getDrawable("default-round"));
+        table7.add(new Label("Next Enemy", Main.skin)).row();
         Table enemyTable = new Table(Main.skin);
         enemyTable.setBackground(Main.getDrawable("alien"));
         enemyTable.add(timeLabel);
-        table6.add(enemyTable).size(32);
-        table.add(table6).spaceLeft(8).uniformY();
+        table7.add(enemyTable).size(32);
+        table.add(table7).spaceLeft(8).uniformY();
 
         ui.addActor(table);
 
@@ -502,6 +510,7 @@ public class Level implements Screen {
         blueRes.setText("" + blueResource);
         yellowRes.setText("" + yellowResource);
         livesLabel.setText("" + population);
+        wavesLabel.setText("" + currWave);
         timeLabel.setText("" + Math.round(time <= 0 ? Math.abs(time) : (currWave < waves.length ? waves[currWave].enemyDistance : finalWave.enemyDistance) - time));
 
         ui.act(delta);
