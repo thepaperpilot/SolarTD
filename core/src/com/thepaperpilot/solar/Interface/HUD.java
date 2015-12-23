@@ -38,7 +38,7 @@ public class HUD {
     private static Level level;
 
     static {
-        ui.setSize(HUD.ui.getWidth(), 64);
+        ui.setSize(Main.UI_WIDTH, 64);
         ui.setBackground(Main.skin.getDrawable("default-round"));
         ui.setPosition(0, 8);
 

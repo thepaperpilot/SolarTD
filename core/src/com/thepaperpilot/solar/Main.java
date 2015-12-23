@@ -24,6 +24,7 @@ public class Main extends Game implements Screen {
     public static final float TOWER_SPEED = 4;
     public static final float BULLET_SPEED = 96;
     public static final float TURN_RADIUS = 10;
+    public static final float UI_WIDTH = 648;
     private static final AssetManager manager = new AssetManager();
     public static Skin skin;
     private static Main instance;

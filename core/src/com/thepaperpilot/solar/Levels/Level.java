@@ -87,7 +87,7 @@ public class Level implements Screen {
 
         stage = new Stage(new StretchViewport(levelPrototype.width, levelPrototype.height));
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        ui = new Stage(new StretchViewport(648, 360)); //640x360 is 16:9, try to stay as close as possible
+        ui = new Stage(new StretchViewport(Main.UI_WIDTH, Main.UI_WIDTH * 9f / 16f));
 
         stage.addActor(new Image(Main.getDrawable("bg")));
 
