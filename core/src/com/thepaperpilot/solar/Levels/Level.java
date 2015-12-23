@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -34,12 +33,9 @@ public class Level implements Screen {
     public final Vector2[] path;
     public final ArrayList<Enemy> enemies = new ArrayList<>();
     public final ArrayList<ParticleEffect> particles = new ArrayList<>();
-    private final Batch batch;
     private final ParticleEffect pathParticles;
     private final ArrayList<Building> buildings = new ArrayList<>();
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
-    private final float width;
-    private final float height;
     private final Stage ui;
     private final Wave[] waves;
     private final Button red;
@@ -66,8 +62,6 @@ public class Level implements Screen {
     private int population = 1;
 
     public Level(LevelPrototype levelPrototype) {
-        width = levelPrototype.width;
-        height = levelPrototype.height;
         path = new Vector2[levelPrototype.path.length / 2];
         for (int i = 0; i < levelPrototype.path.length - 1; i += 2) {
             path[i / 2] = new Vector2(levelPrototype.path[i], levelPrototype.path[i + 1]);
@@ -76,8 +70,6 @@ public class Level implements Screen {
         for (int i = 0; i < levelPrototype.waves.length; i++) {
             waves[i] = new Wave(levelPrototype.waves[i]);
         }
-
-        batch = new SpriteBatch();
 
         pathParticles = new ParticleEffect();
         pathParticles.load(Gdx.files.internal("particles/path.p"), Gdx.files.internal("particles/"));
@@ -97,7 +89,7 @@ public class Level implements Screen {
             pathParticles.update(.1f);
         }
 
-        stage = new Stage(new StretchViewport(width, height));
+        stage = new Stage(new StretchViewport(levelPrototype.width, levelPrototype.height));
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         ui = new Stage(new StretchViewport(640, 360));
 
@@ -433,9 +425,7 @@ public class Level implements Screen {
         if (!paused) stage.act(delta);
         stage.draw();
 
-        Matrix4 transform = new Matrix4();
-        transform.scale(Gdx.graphics.getWidth() / width, Gdx.graphics.getHeight() / height, 1);
-        batch.setTransformMatrix(transform);
+        Batch batch = stage.getBatch();
         batch.begin();
         pathParticles.draw(batch, paused ? 0 : delta * .2f);
         for (int i = 0; i < particles.size(); ) {
@@ -450,7 +440,7 @@ public class Level implements Screen {
         batch.end();
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
-        shapeRenderer.setTransformMatrix(transform);
+        shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
 
         if (selected != null) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -526,7 +516,6 @@ public class Level implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        // TODO making non-actors render in wrong spot
         stage.getViewport().update(width, height);
         ui.getViewport().update(width, height);
     }
@@ -550,7 +539,6 @@ public class Level implements Screen {
     public void dispose() {
         stage.dispose();
         ui.dispose();
-        batch.dispose();
     }
 
 
