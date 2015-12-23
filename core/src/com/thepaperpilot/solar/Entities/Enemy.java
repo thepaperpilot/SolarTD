@@ -65,7 +65,7 @@ public class Enemy extends Image {
                 if (level.enemies.contains(this)) {
                     level.enemies.remove(this);
                     remove();
-                    // TODO take away life
+                    level.population -= health;
                 }
             } else setPosition(level.path[path].x - Main.ENEMY_SIZE / 2, level.path[path].y - Main.ENEMY_SIZE / 2);
         } else

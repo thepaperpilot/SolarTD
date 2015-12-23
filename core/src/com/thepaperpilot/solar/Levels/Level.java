@@ -54,12 +54,12 @@ public class Level implements Screen {
     public int redResource = 25;
     public int blueResource = 25;
     public int yellowResource = 25;
+    public int population = 1;
     private Wave finalWave;
     private boolean paused;
     private float time = -10;
     private float resourceTime = -10;
     private int currWave;
-    private int population = 1;
 
     public Level(LevelPrototype levelPrototype) {
         path = new Vector2[levelPrototype.path.length / 2];
@@ -404,7 +404,7 @@ public class Level implements Screen {
                 wavePrototype.enemyDistance = 1;
                 Enemy.EnemyPrototype enemyPrototype = new Enemy.EnemyPrototype();
                 enemyPrototype.speed = 1;
-                enemyPrototype.health = (int) Math.pow(currWave, 2);
+                enemyPrototype.health = (float) Math.pow(currWave, 1.2f);
                 enemyPrototype.count = 10;
                 enemyPrototype.name = "alien";
                 wavePrototype.enemies = new Enemy.EnemyPrototype[]{enemyPrototype};
