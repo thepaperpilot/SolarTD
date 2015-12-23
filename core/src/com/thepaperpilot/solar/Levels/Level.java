@@ -126,10 +126,11 @@ public class Level implements Screen {
 
         stage.addListener(new ClickListener(Input.Buttons.LEFT) {
             public void clicked(InputEvent event, float x, float y) {
-                if (!placingBuilding) return;
-                if (stage.stageToScreenCoordinates(new Vector2(x, stage.getHeight() - y)).y < 256 + selectedType * Main.TOWER_RADIUS)
-                    return;
+                float uiHeight = ui.stageToScreenCoordinates(new Vector2(0, ui.getHeight() - ui.getActors().first().getY() - ui.getActors().first().getHeight())).y;
+                uiHeight += stage.stageToScreenCoordinates(new Vector2(0, stage.getHeight() - selectedType * Main.TOWER_RADIUS)).y;
+                if (Gdx.input.getY() > Gdx.graphics.getHeight() - uiHeight) return;
                 selectedBuilding = null;
+                if (!placingBuilding) return;
                 Vector2 coords = new Vector2(x, y);
                 for (Building building : buildings) {
                     if (building.area.overlaps(new Circle(coords, selectedType * Main.TOWER_RADIUS))) {
