@@ -4,9 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
@@ -14,9 +16,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Json;
@@ -25,6 +27,7 @@ import com.thepaperpilot.solar.Entities.Building;
 import com.thepaperpilot.solar.Entities.Enemy;
 import com.thepaperpilot.solar.Entities.Generator;
 import com.thepaperpilot.solar.Entities.Tower;
+import com.thepaperpilot.solar.Interface.HUD;
 import com.thepaperpilot.solar.Main;
 
 import java.util.ArrayList;
@@ -35,41 +38,24 @@ public class Level implements Screen {
     public final Vector2[] path;
     public final ArrayList<Enemy> enemies = new ArrayList<>();
     public final ArrayList<ParticleEffect> particles = new ArrayList<>();
+    public final Stage ui;
+    public final Wave[] waves;
     private final ParticleEffect pathParticles;
     private final ArrayList<Building> buildings = new ArrayList<>();
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
-    private final Stage ui;
-    private final Wave[] waves;
-    private final Button red;
-    private final Button blue;
-    private final Button yellow;
-    private final Button redGen;
-    private final Button blueGen;
-    private final Button yellowGen;
-    private final Label redRes;
-    private final Label blueRes;
-    private final Label yellowRes;
-    private final Label redCost;
-    private final Label blueCost;
-    private final Label yellowCost;
-    private final Label livesLabel;
-    private final Label wavesLabel;
-    private final Label timeLabel;
-    private final Table cost;
-    private final Table resourcesTable;
     public Building selectedBuilding;
     public boolean placingBuilding;
     public int redResource = 100;
     public int blueResource = 100;
     public int yellowResource = 100;
     public int population = 1;
-    private Wave finalWave;
-    private boolean paused;
-    private float time = -10;
+    public Wave finalWave;
+    public boolean paused;
+    public float time = -10;
+    public int currWave;
+    public Resource selectedResource = Resource.RED;
+    public int selectedType = 1; // 1 is tower, 2 is generator
     private float resourceTime = -10;
-    private int currWave;
-    private Resource selectedResource = Resource.RED;
-    private int selectedType = 1; // 1 is tower, 2 is generator
 
     public Level(LevelPrototype levelPrototype) {
         path = new Vector2[levelPrototype.path.length / 2];
@@ -104,25 +90,6 @@ public class Level implements Screen {
         ui = new Stage(new StretchViewport(648, 360)); //640x360 is 16:9, try to stay as close as possible
 
         stage.addActor(new Image(Main.getDrawable("bg")));
-
-        red = new Button(Main.getDrawable("towers/redStore"), Main.getDrawable("towers/redStoreDown"), Main.getDrawable("towers/redStoreDown"));
-        blue = new Button(Main.getDrawable("towers/blueStore"), Main.getDrawable("towers/blueStoreDown"), Main.getDrawable("towers/blueStoreDown"));
-        yellow = new Button(Main.getDrawable("towers/yellowStore"), Main.getDrawable("towers/yellowStoreDown"), Main.getDrawable("towers/yellowStoreDown"));
-        redGen = new Button(Main.getDrawable("towers/redGenStore"), Main.getDrawable("towers/redGenStoreDown"), Main.getDrawable("towers/redGenStoreDown"));
-        blueGen = new Button(Main.getDrawable("towers/blueGenStore"), Main.getDrawable("towers/blueGenStoreDown"), Main.getDrawable("towers/blueGenStoreDown"));
-        yellowGen = new Button(Main.getDrawable("towers/yellowGenStore"), Main.getDrawable("towers/yellowGenStoreDown"), Main.getDrawable("towers/yellowGenStoreDown"));
-        redRes = new Label("" + redResource, Main.skin);
-        redRes.setColor(.5f, 0, 0, 1);
-        blueRes = new Label("" + blueResource, Main.skin);
-        blueRes.setColor(0, 0, .5f, 1);
-        yellowRes = new Label("" + yellowResource, Main.skin);
-        yellowRes.setColor(.5f, .5f, 0, 1);
-        redCost = new Label("0", Main.skin);
-        blueCost = new Label("0", Main.skin);
-        yellowCost = new Label("0", Main.skin);
-        livesLabel = new Label("" + population, Main.skin);
-        wavesLabel = new Label("" + currWave, Main.skin);
-        timeLabel = new Label("" + Math.abs(time), Main.skin);
 
         stage.addListener(new ClickListener(Input.Buttons.LEFT) {
             public void clicked(InputEvent event, float x, float y) {
@@ -168,201 +135,18 @@ public class Level implements Screen {
                 }
                 if (!(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))) {
                     placingBuilding = false;
-                    red.setChecked(false);
-                    blue.setChecked(false);
-                    yellow.setChecked(false);
-                    redGen.setChecked(false);
-                    blueGen.setChecked(false);
-                    yellowGen.setChecked(false);
-                    cost.setVisible(false);
+                    HUD.deselect();
                 }
             }
         });
 
-        Table table = new Table(Main.skin);
-        table.setSize(ui.getWidth(), 64);
-        table.setBackground(Main.skin.getDrawable("default-round"));
-        table.setPosition(0, 8);
-
-        Table buttonsTable = new Table(Main.skin);
-        Button menuToggle = new TextButton("MENU", Main.skin);
-        menuToggle.pad(10);
-        buttonsTable.add(menuToggle).expandY().fill().spaceBottom(8).row();
-        final TextButton pause = new TextButton("PAUSE", Main.skin);
-        pause.pad(10);
-        pause.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                paused = !paused;
-                pause.setText(paused ? "RESUME" : "PAUSE");
-            }
-        });
-        buttonsTable.add(pause).width(new GlyphLayout(Main.skin.getFont("font"), "RESUME").width + 10).expandY().fill();
-        table.add(buttonsTable).expandY().fillY().spaceLeft(4);
-
-        red.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                if (red.isChecked()) {
-                    blue.setChecked(false);
-                    yellow.setChecked(false);
-                    redGen.setChecked(false);
-                    blueGen.setChecked(false);
-                    yellowGen.setChecked(false);
-                }
-                placingBuilding = red.isChecked();
-                cost.setVisible(placingBuilding);
-                selectedType = 1;
-                selectedResource = Resource.RED;
-            }
-        });
-        blue.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                if (blue.isChecked()) {
-                    red.setChecked(false);
-                    yellow.setChecked(false);
-                    redGen.setChecked(false);
-                    blueGen.setChecked(false);
-                    yellowGen.setChecked(false);
-                }
-                placingBuilding = blue.isChecked();
-                cost.setVisible(placingBuilding);
-                selectedType = 1;
-                selectedResource = Resource.BLUE;
-            }
-        });
-        yellow.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                if (yellow.isChecked()) {
-                    red.setChecked(false);
-                    blue.setChecked(false);
-                    redGen.setChecked(false);
-                    blueGen.setChecked(false);
-                    yellowGen.setChecked(false);
-                }
-                placingBuilding = yellow.isChecked();
-                cost.setVisible(placingBuilding);
-                selectedType = 1;
-                selectedResource = Resource.YELLOW;
-            }
-        });
-
-        Table towersTable = new Table(Main.skin);
-        towersTable.setBackground(Main.skin.getDrawable("default-round"));
-        towersTable.add(new Label("Towers", Main.skin)).colspan(3).row();
-        towersTable.add(red).size(32);
-        towersTable.add(blue).size(32);
-        towersTable.add(yellow).size(32);
-        table.add(towersTable).spaceLeft(4).uniformY();
-
-        redGen.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                if (redGen.isChecked()) {
-                    red.setChecked(false);
-                    blue.setChecked(false);
-                    yellow.setChecked(false);
-                    blueGen.setChecked(false);
-                    yellowGen.setChecked(false);
-                }
-                placingBuilding = redGen.isChecked();
-                cost.setVisible(placingBuilding);
-                selectedType = 2;
-                selectedResource = Resource.RED;
-            }
-        });
-        blueGen.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                if (blueGen.isChecked()) {
-                    red.setChecked(false);
-                    blue.setChecked(false);
-                    yellow.setChecked(false);
-                    redGen.setChecked(false);
-                    yellowGen.setChecked(false);
-                }
-                placingBuilding = blueGen.isChecked();
-                cost.setVisible(placingBuilding);
-                selectedType = 2;
-                selectedResource = Resource.BLUE;
-            }
-        });
-        yellowGen.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                if (yellowGen.isChecked()) {
-                    red.setChecked(false);
-                    blue.setChecked(false);
-                    yellow.setChecked(false);
-                    redGen.setChecked(false);
-                    blueGen.setChecked(false);
-                }
-                placingBuilding = yellowGen.isChecked();
-                cost.setVisible(placingBuilding);
-                selectedType = 3;
-                selectedResource = Resource.YELLOW;
-            }
-        });
-
-        Table generatorsTable = new Table(Main.skin);
-        generatorsTable.setBackground(Main.skin.getDrawable("default-round"));
-        generatorsTable.add(new Label("Generators", Main.skin)).colspan(3).row();
-        generatorsTable.add(redGen).size(32);
-        generatorsTable.add(blueGen).size(32);
-        generatorsTable.add(yellowGen).size(32);
-        table.add(generatorsTable).spaceLeft(8).uniformY();
-
-        resourcesTable = new Table(Main.skin);
-        resourcesTable.setBackground(Main.skin.getDrawable("default-round"));
-        resourcesTable.add(new Label("Resources", Main.skin)).colspan(3).row();
-        Table redTable = new Table(Main.skin);
-        redTable.add(redRes);
-        resourcesTable.add(redTable).size(32);
-        Table blueTable = new Table(Main.skin);
-        blueTable.add(blueRes);
-        resourcesTable.add(blueTable).size(32);
-        Table yellowTable = new Table(Main.skin);
-        yellowTable.add(yellowRes);
-        resourcesTable.add(yellowTable).size(32);
-        table.add(resourcesTable).spaceLeft(8).uniformY();
-
-        Table lifeTable = new Table(Main.skin);
-        lifeTable.setBackground(Main.skin.getDrawable("default-round"));
-        lifeTable.add(new Label("Life", Main.skin)).row();
-        lifeTable.add(livesLabel).height(32);
-        table.add(lifeTable).spaceLeft(8).uniformY();
-
-        Table waveTable = new Table(Main.skin);
-        waveTable.setBackground(Main.skin.getDrawable("default-round"));
-        waveTable.add(new Label("Wave", Main.skin)).row();
-        waveTable.add(wavesLabel).height(32);
-        table.add(waveTable).spaceLeft(8).uniformY();
-
-        Table timerTable = new Table(Main.skin);
-        timerTable.setBackground(Main.skin.getDrawable("default-round"));
-        timerTable.add(new Label("Next Enemy", Main.skin)).row();
-        Table enemyTable = new Table(Main.skin);
-        enemyTable.setBackground(Main.getDrawable("alien"));
-        enemyTable.add(timeLabel);
-        timerTable.add(enemyTable).size(32);
-        table.add(timerTable).spaceLeft(8).uniformY();
-
-        cost = new Table(Main.skin);
-        cost.setColor(1, 1, 1, .5f);
-        cost.setTouchable(Touchable.disabled);
-        cost.setBackground(Main.skin.getDrawable("default-round"));
-        cost.setVisible(false);
-        cost.setPosition(resourcesTable.getX(), 72);
-        cost.setSize(resourcesTable.getPrefWidth(), 40);
-        cost.add(new Label("Cost", Main.skin)).colspan(3).row();
-        cost.add(redCost).expand().uniform();
-        cost.add(blueCost).expand().uniform();
-        cost.add(yellowCost).expand().uniform();
-
-        ui.addActor(table);
-        ui.addActor(cost);
+        HUD.init(this);
 
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.SPACE) {
-                    paused = !paused;
-                    pause.setText(paused ? "RESUME" : "PAUSE");
+                    HUD.pause();
                 }
                 return true;
             }
@@ -499,20 +283,7 @@ public class Level implements Screen {
 
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
-        redRes.setText("" + redResource);
-        blueRes.setText("" + blueResource);
-        yellowRes.setText("" + yellowResource);
-        livesLabel.setText("" + population);
-        wavesLabel.setText("" + currWave);
-        timeLabel.setText("" + Math.round(time <= 0 ? Math.abs(time) : (currWave < waves.length ? waves[currWave].enemyDistance : finalWave.enemyDistance) - time));
-        cost.setX(resourcesTable.getX());
-
-        redCost.setText("" + (selectedType == 1 ? Tower.getRedCost(selectedResource) : Generator.getRedCost(selectedResource)));
-        redCost.setColor(redResource >= (selectedType == 1 ? Tower.getRedCost(selectedResource) : Generator.getRedCost(selectedResource)) ? Color.GREEN : Color.RED);
-        blueCost.setText("" + (selectedType == 1 ? Tower.getBlueCost(selectedResource) : Generator.getBlueCost(selectedResource)));
-        blueCost.setColor(blueResource >= (selectedType == 1 ? Tower.getBlueCost(selectedResource) : Generator.getBlueCost(selectedResource)) ? Color.GREEN : Color.RED);
-        yellowCost.setText("" + (selectedType == 1 ? Tower.getYellowCost(selectedResource) : Generator.getYellowCost(selectedResource)));
-        yellowCost.setColor(yellowResource >= (selectedType == 1 ? Tower.getYellowCost(selectedResource) : Generator.getYellowCost(selectedResource)) ? Color.GREEN : Color.RED);
+        HUD.update();
 
         ui.act(delta);
         ui.draw();
