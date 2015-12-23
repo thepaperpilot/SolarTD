@@ -58,6 +58,7 @@ public class Enemy extends Image {
         } else slowed = 0;
         Vector2 dist = new Vector2(level.path[path + 1].x - getX() - Main.ENEMY_SIZE / 2, level.path[path + 1].y - getY() - Main.ENEMY_SIZE / 2);
         float angle = dist.angle();
+        angle += 4 * MathUtils.sinDeg(dist.len());
         if (dist.len() < Main.ENEMY_SPEED * delta) {
             path++;
             if (path == level.path.length - 1) {
