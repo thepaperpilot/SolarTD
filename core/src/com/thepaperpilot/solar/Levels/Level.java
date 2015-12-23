@@ -28,12 +28,14 @@ import com.thepaperpilot.solar.Entities.Enemy;
 import com.thepaperpilot.solar.Entities.Generator;
 import com.thepaperpilot.solar.Entities.Tower;
 import com.thepaperpilot.solar.Interface.HUD;
+import com.thepaperpilot.solar.Interface.Menu;
 import com.thepaperpilot.solar.Main;
 
 import java.util.ArrayList;
 
 public class Level implements Screen {
     private final static Json json = new Json();
+    public final LevelPrototype prototype;
     public final Stage stage;
     public final Vector2[] path;
     public final ArrayList<Enemy> enemies = new ArrayList<>();
@@ -58,6 +60,7 @@ public class Level implements Screen {
     private float resourceTime = -10;
 
     public Level(LevelPrototype levelPrototype) {
+        prototype = levelPrototype;
         path = new Vector2[levelPrototype.path.length / 2];
         for (int i = 0; i < levelPrototype.path.length - 1; i += 2) {
             path[i / 2] = new Vector2(levelPrototype.path[i], levelPrototype.path[i + 1]);
@@ -141,12 +144,15 @@ public class Level implements Screen {
         });
 
         HUD.init(this);
+        Menu.init(this);
 
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.SPACE) {
                     HUD.pause();
+                } else if (keycode == Input.Keys.ESCAPE) {
+                    Menu.toggle();
                 }
                 return true;
             }
