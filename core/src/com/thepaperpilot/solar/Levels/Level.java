@@ -100,6 +100,7 @@ public class Level implements Screen {
                 uiHeight += stage.stageToScreenCoordinates(new Vector2(0, stage.getHeight() - selectedType * Main.TOWER_RADIUS)).y;
                 if (Gdx.input.getY() > Gdx.graphics.getHeight() - uiHeight) return;
                 selectedBuilding = null;
+                Menu.deselect();
                 if (!placingBuilding) return;
                 Vector2 coords = new Vector2(x, y);
                 for (Building building : buildings) {

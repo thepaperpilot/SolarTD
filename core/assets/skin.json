@@ -12,25 +12,8 @@
   toggle: { down: default-round-down, checked: default-round-down, up: default-round },
 },
   com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
-  default: { down: default
-    -round-down, up: default-round, font: font, fontColor: white },
-  toggle: {
-    down: default
-    -
-    round
-    -
-    down,
-    up: default
-    -
-    round,
-    checked: default
-    -
-    round
-    -
-    down,
-    font: font,
-    fontColor: white
-  },
+  default: { down: default-round-down, up: default-round, font: font, fontColor: white },
+  toggle: {down: default-round-down, up: default-round, checked: default-round-down, font: font, fontColor: white },
   large: { down: default-round-down, up: default-round, font: large, fontColor: white }
 },
   com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
@@ -42,13 +25,7 @@
 },
   com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
   default: { titleFont: font, background: default-window, titleFontColor: white },
-  large: {
-    titleFont: large,
-    background: default
-    -
-    window,
-    titleFontColor: white
-  },
+  large: {titleFont: large, background: default-window, titleFontColor: white},
   transparent: { titleFont: large, titleFontColor: white },
   button: { titleFont: large, background: default-round-down, titleFontColor: white }
 },

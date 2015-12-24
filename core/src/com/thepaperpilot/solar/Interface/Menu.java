@@ -56,13 +56,13 @@ public class Menu {
     public static void deselect() {
     }
 
+    public static void select() {
+    }
+
     public static void init(Level level) {
         Menu.level = level;
 
         level.ui.addActor(menu);
-    }
-
-    public static void update() {
     }
 
     public static void toggle() {
