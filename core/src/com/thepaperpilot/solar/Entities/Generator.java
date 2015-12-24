@@ -5,21 +5,18 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.thepaperpilot.solar.Interface.Menu;
 import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Main;
 
 public class Generator extends Building {
-    private final Level.Resource type;
-    private final Level level;
     private float time;
     private float amount = 1;
     private float speed = 4;
 
     public Generator(float x, float y, Level.Resource type, final Level level) {
-        super(x, y, 2 * Main.TOWER_RADIUS);
+        super(x, y, 2 * Main.TOWER_RADIUS, level, type);
         setOrigin(Align.center);
-        this.type = type;
-        this.level = level;
         switch (type) {
             default:
             case RED:
@@ -35,8 +32,10 @@ public class Generator extends Building {
 
         addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                if (!level.placingBuilding)
+                if (!level.placingBuilding) {
                     level.selectedBuilding = (level.selectedBuilding == Generator.this ? null : Generator.this);
+                    Menu.select();
+                }
                 event.reset();
             }
         });
@@ -94,5 +93,9 @@ public class Generator extends Building {
             }
             level.stage.addActor(increase);
         }
+    }
+
+    public String getName() {
+        return type.name() + " GENERATOR";
     }
 }

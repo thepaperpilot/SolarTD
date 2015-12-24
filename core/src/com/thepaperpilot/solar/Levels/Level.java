@@ -42,8 +42,8 @@ public class Level implements Screen {
     public final ArrayList<ParticleEffect> particles = new ArrayList<>();
     public final Stage ui;
     public final Wave[] waves;
+    public final ArrayList<Building> buildings = new ArrayList<>();
     private final ParticleEffect pathParticles;
-    private final ArrayList<Building> buildings = new ArrayList<>();
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
     public Building selectedBuilding;
     public boolean placingBuilding;

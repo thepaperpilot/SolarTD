@@ -36,20 +36,16 @@ public class Tower extends Building {
         bluePool = new ParticleEffectPool(particleEffect, 0, 100);
     }
 
-    private final Level.Resource type;
     public float range;
     boolean comboUpgrade;
     private boolean ability;
     private float damage;
     private float speed;
     private float time;
-    private Level level;
     private ParticleEffect effect;
 
     public Tower(float x, float y, Level.Resource type, final Level level) {
-        super(x, y, Main.TOWER_RADIUS);
-        this.type = type;
-        this.level = level;
+        super(x, y, Main.TOWER_RADIUS, level, type);
         damage = getBaseDamage(type);
         range = getBaseRange(type);
         speed = getBaseSpeed(type);
@@ -67,15 +63,15 @@ public class Tower extends Building {
         });
     }
 
-    public static int getRedCost(Level.Resource type) {
+    public static float getRedCost(Level.Resource type) {
         return type == Level.Resource.RED ? 25 : 0;
     }
 
-    public static int getBlueCost(Level.Resource type) {
+    public static float getBlueCost(Level.Resource type) {
         return type == Level.Resource.BLUE ? 25 : 0;
     }
 
-    public static int getYellowCost(Level.Resource type) {
+    public static float getYellowCost(Level.Resource type) {
         return type == Level.Resource.YELLOW ? 25 : 0;
     }
 
@@ -208,5 +204,15 @@ public class Tower extends Building {
                 }
                 break;
         }
+    }
+
+    public void sell() {
+        if (type == Level.Resource.YELLOW)
+            level.particles.remove(effect);
+        super.sell();
+    }
+
+    public String getName() {
+        return type.name() + " TOWER";
     }
 }

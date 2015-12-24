@@ -192,11 +192,11 @@ public class HUD {
 
         int type = level.selectedType;
         Level.Resource resource = level.selectedResource;
-        redCost.setText("" + (type == 1 ? Tower.getRedCost(resource) : Generator.getRedCost(resource)));
+        redCost.setText("" + (int) (type == 1 ? Tower.getRedCost(resource) : Generator.getRedCost(resource)));
         redCost.setColor(level.redResource >= (type == 1 ? Tower.getRedCost(resource) : Generator.getRedCost(resource)) ? Color.GREEN : Color.RED);
-        blueCost.setText("" + (type == 1 ? Tower.getBlueCost(resource) : Generator.getBlueCost(resource)));
+        blueCost.setText("" + (int) (type == 1 ? Tower.getBlueCost(resource) : Generator.getBlueCost(resource)));
         blueCost.setColor(level.blueResource >= (type == 1 ? Tower.getBlueCost(resource) : Generator.getBlueCost(resource)) ? Color.GREEN : Color.RED);
-        yellowCost.setText("" + (type == 1 ? Tower.getYellowCost(resource) : Generator.getYellowCost(resource)));
+        yellowCost.setText("" + (int) (type == 1 ? Tower.getYellowCost(resource) : Generator.getYellowCost(resource)));
         yellowCost.setColor(level.yellowResource >= (type == 1 ? Tower.getYellowCost(resource) : Generator.getYellowCost(resource)) ? Color.GREEN : Color.RED);
     }
 
