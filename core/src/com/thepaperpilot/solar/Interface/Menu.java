@@ -13,16 +13,27 @@ public class Menu {
     private static final Label buildingLabel = new Label("Building", Main.skin);
     private static final TextButton settingsButton = new TextButton("Settings", Main.skin, "toggle");
     private static final TextButton generalButton = new TextButton("General", Main.skin, "toggle");
+    private static final Table buildingTable = new Table(Main.skin);
     private static final Table towerTable = new Table(Main.skin);
+    private static final Label damageLabel = new Label("0", Main.skin);
+    private static final TextButton damageUpgrade = new TextButton("Upgrade", Main.skin);
+    private static final Label rangeLabel = new Label("0", Main.skin);
+    private static final TextButton rangeUpgrade = new TextButton("Upgrade", Main.skin);
+    private static final Label speedLabel = new Label("0", Main.skin);
+    private static final TextButton speedUpgrade = new TextButton("Upgrade", Main.skin);
+    private static final ProgressBar damageBar = new ProgressBar(0, 11, 1, false, Main.skin);
+    private static final ProgressBar rangeBar = new ProgressBar(0, 11, 1, false, Main.skin);
+    private static final ProgressBar speedBar = new ProgressBar(0, 11, 1, false, Main.skin);
     private static final Table settingsTable = new Table(Main.skin);
     private static final Table generalTable = new Table(Main.skin);
-    private static final ButtonGroup tabs = new ButtonGroup(settingsButton, generalButton);
     private static final Window menu = new Window("Settings", Main.skin, "large");
     private static Table currentTab;
 
     private static Level level;
 
     static {
+        new ButtonGroup(settingsButton, generalButton);
+
         menu.setVisible(false);
         menu.setSize(300, 200);
         menu.setPosition(20, 200);
@@ -32,9 +43,9 @@ public class Menu {
         buttonsTable.setBackground(Main.skin.getDrawable("default-round"));
         buttonsTable.top().add(settingsButton).expandX().fill().row();
         buildingLabel.setAlignment(Align.center);
-        towerTable.center().add(buildingLabel).expandX().fill().spaceBottom(4).row();
-        towerTable.add(generalButton).expandX().fill();
-        buttonsTable.add(towerTable).spaceTop(8).expandX().fill().row();
+        buildingTable.center().add(buildingLabel).expandX().fill().spaceBottom(4).row();
+        buildingTable.add(generalButton).expandX().fill();
+        buttonsTable.add(buildingTable).spaceTop(8).expandX().fill().row();
         settingsButton.setChecked(true);
 
         settingsTable.setName("Settings");
@@ -43,8 +54,32 @@ public class Menu {
         currentTab = settingsTable;
 
         Button sellButton = new TextButton("Sell Tower", Main.skin);
-        generalTable.top().add(sellButton).expandX().fill();
+        generalTable.top().add(sellButton).colspan(3).expandX().fill().row();
+        towerTable.pad(2);
+        towerTable.add(new Label("Damage: ", Main.skin)).right();
+        damageLabel.setColor(1, 0, 0, 1);
+        towerTable.add(damageLabel).right();
+        damageBar.setColor(1, 0, 0, 1);
+        towerTable.add(damageBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
+        damageUpgrade.setColor(1, 0, 0, 1);
+        towerTable.add(damageUpgrade).row();
+        towerTable.add(new Label("Range: ", Main.skin)).right();
+        rangeLabel.setColor(0, 0, 1, 1);
+        towerTable.add(rangeLabel).right();
+        rangeBar.setColor(0, 0, 1, 1);
+        towerTable.add(rangeBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
+        rangeUpgrade.setColor(0, 0, 1, 1);
+        towerTable.add(rangeUpgrade).row();
+        towerTable.add(new Label("Speed: ", Main.skin)).right();
+        speedLabel.setColor(1, 1, 0, 1);
+        towerTable.add(speedLabel).right();
+        speedBar.setColor(1, 1, 0, 1);
+        towerTable.add(speedBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
+        speedUpgrade.setColor(1, 1, 0, 1);
+        towerTable.add(speedUpgrade).row();
+        generalTable.add(towerTable).fill();
         towerTable.setVisible(false);
+        buildingTable.setVisible(false);
 
         menu.left().add(buttonsTable).expandY().fill();
         menu.add(settingsTable).expand().fill();
@@ -69,6 +104,30 @@ public class Menu {
                 switchTab(generalTable);
             }
         });
+        damageUpgrade.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                if (level.selectedBuilding instanceof Tower) {
+                    ((Tower) level.selectedBuilding).upgradeDamage();
+                    select();
+                }
+            }
+        });
+        rangeUpgrade.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                if (level.selectedBuilding instanceof Tower) {
+                    ((Tower) level.selectedBuilding).upgradeRange();
+                    select();
+                }
+            }
+        });
+        speedUpgrade.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                if (level.selectedBuilding instanceof Tower) {
+                    ((Tower) level.selectedBuilding).upgradeSpeed();
+                    select();
+                }
+            }
+        });
     }
 
     private static void switchTab(Table tab) {
@@ -78,7 +137,7 @@ public class Menu {
     }
 
     public static void deselect() {
-        towerTable.setVisible(false);
+        buildingTable.setVisible(false);
         if (currentTab == generalTable) {
             settingsButton.setChecked(true);
             switchTab(settingsTable);
@@ -86,8 +145,25 @@ public class Menu {
     }
 
     public static void select() {
-        towerTable.setVisible(true);
+        if (level.selectedBuilding == null) {
+            deselect();
+            return;
+        }
+        buildingTable.setVisible(true);
         buildingLabel.setText(level.selectedBuilding instanceof Tower ? "Tower" : "Generator");
+        towerTable.setVisible(level.selectedBuilding instanceof Tower);
+        if (level.selectedBuilding instanceof Tower) {
+            Tower tower = ((Tower) level.selectedBuilding);
+            damageLabel.setText("" + (int) tower.getDamage());
+            damageBar.setValue(tower.getDamageIndex());
+            damageUpgrade.setText("" + tower.getDamageCost());
+            rangeLabel.setText("" + (int) tower.getRange());
+            rangeBar.setValue(tower.getRangeIndex());
+            rangeUpgrade.setText("" + tower.getRangeCost());
+            speedLabel.setText("" + (int) tower.getSpeed());
+            speedBar.setValue(tower.getSpeedIndex());
+            speedUpgrade.setText("" + tower.getSpeedCost());
+        }
         generalTable.setName(level.selectedBuilding.getName());
         if (currentTab == generalTable) menu.getTitleLabel().setText(level.selectedBuilding.getName());
     }

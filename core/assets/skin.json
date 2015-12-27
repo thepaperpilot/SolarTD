@@ -48,5 +48,8 @@
 },
   com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
   default: { background: default-pane, knob: default-round-large }
+},
+  com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
+  default-horizontal: { background: progress-bar, knobBefore: default-slider }
 }
 }

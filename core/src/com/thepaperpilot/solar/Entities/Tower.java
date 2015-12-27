@@ -18,6 +18,13 @@ public class Tower extends Building {
     private static final ParticleEffectPool yellowPool;
     private static final ParticleEffectPool bluePool;
 
+    private static final float[] damages = new float[]{1, 2, 3, 5, 7, 10, 15, 20, 30, 50, 75, 100};
+    private static final int[] damageCosts = new int[]{50, 100, 200, 350, 500, 700, 950, 1250, 1550, 1900, 2300};
+    private static final float[] ranges = new float[]{1, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.6f, 1.7f, 1.8f, 1.9f, 2.0f, 2.1f};
+    private static final int[] rangeCosts = new int[]{50, 100, 200, 350, 500, 700, 950, 1250, 1550, 1900, 2300};
+    private static final float[] speeds = new float[]{1, 1.1f, 1.3f, 1.6f, 2f, 2.5f, 3.1f, 3.8f, 4.6f, 5.4f, 6.4f, 7.5f};
+    private static final int[] speedCosts = new int[]{50, 100, 200, 350, 500, 700, 950, 1250, 1550, 1900, 2300};
+
     static {
         ParticleEffect particleEffect = new ParticleEffect();
         particleEffect.load(Gdx.files.internal("particles/red.p"), Gdx.files.internal("particles/"));
@@ -36,19 +43,19 @@ public class Tower extends Building {
         bluePool = new ParticleEffectPool(particleEffect, 0, 100);
     }
 
-    public float range;
+    public float time;
     boolean comboUpgrade;
     private boolean ability;
-    private float damage;
-    private float speed;
-    private float time;
+    private int range;
+    private int damage;
+    private int speed;
     private ParticleEffect effect;
 
     public Tower(float x, float y, Level.Resource type, final Level level) {
         super(x, y, Main.TOWER_RADIUS, level, type);
-        damage = getBaseDamage(type);
-        range = getBaseRange(type);
-        speed = getBaseSpeed(type);
+        damage = 0;
+        range = 0;
+        speed = 0;
         setDrawable(Main.getDrawable("towers/" + (type == Level.Resource.RED ? "red" : type == Level.Resource.BLUE ? "blue" : "yellow")));
         if (type == Level.Resource.YELLOW) effect = yellowPool.obtain();
 
@@ -98,12 +105,12 @@ public class Tower extends Building {
     }
 
     public void act(float delta) {
-        time += delta * speed;
+        time += delta * getSpeed();
         Enemy target = null;
         float dist = 0;
         for (Enemy enemy : level.enemies) {
             float length = enemy.getPosition().cpy().sub(getX(), getY()).len();
-            if (length <= range) {
+            if (length <= getRange()) {
                 if (target == null || length < dist) { // TODO different ways of preferring enemies. ATM it's closest to tower
                     target = enemy;
                     dist = length;
@@ -126,7 +133,7 @@ public class Tower extends Building {
                     effect = ability ? red2Pool.obtain() : redPool.obtain();
                     effect.setPosition(target.getX() + Main.ENEMY_SIZE / 2, target.getY() + Main.ENEMY_SIZE / 2);
                     level.particles.add(effect);
-                    target.hit(damage);
+                    target.hit(getDamage());
                 }
                 break;
             case BLUE:
@@ -144,7 +151,7 @@ public class Tower extends Building {
                             float dist = -1;
                             for (Enemy enemy : level.enemies) {
                                 float length = enemy.getPosition().cpy().sub(getX(), getY()).len();
-                                if (length <= range) {
+                                if (length <= getRange()) {
                                     if (dist == -1 || length < dist) {
                                         target = enemy;
                                         dist = length;
@@ -152,7 +159,7 @@ public class Tower extends Building {
                                 }
                             }
                             if (dist != -1 && dist < Main.BULLET_SPEED * delta) {
-                                target.hit(damage);
+                                target.hit(getDamage());
                                 remove();
                                 effect.allowCompletion();
                                 return;
@@ -180,24 +187,24 @@ public class Tower extends Building {
                 float angle = new Vector2(target.getX() - getX(), target.getY() - getY()).angle();
                 effect.getEmitters().first().getAngle().setHigh(angle - 45, angle + 45);
                 effect.getEmitters().first().getAngle().setLow(angle);
-                effect.getEmitters().first().getLife().setHigh(range * 10);
-                effect.getEmitters().first().getEmission().setHigh(range);
+                effect.getEmitters().first().getLife().setHigh(getRange() * 10);
+                effect.getEmitters().first().getEmission().setHigh(getRange());
                 while (time >= Main.TOWER_SPEED) {
                     time -= Main.TOWER_SPEED;
                     Polygon area = new Polygon(new float[]{
                             getX() + Main.TOWER_RADIUS,
                             getY() + Main.TOWER_RADIUS,
 
-                            getX() + Main.TOWER_RADIUS + range * MathUtils.cosDeg(angle - 45),
-                            getY() + Main.TOWER_RADIUS + range * MathUtils.sinDeg(angle - 45),
+                            getX() + Main.TOWER_RADIUS + getRange() * MathUtils.cosDeg(angle - 45),
+                            getY() + Main.TOWER_RADIUS + getRange() * MathUtils.sinDeg(angle - 45),
 
-                            getX() + Main.TOWER_RADIUS + range * MathUtils.cosDeg(angle + 45),
-                            getY() + Main.TOWER_RADIUS + range * MathUtils.sinDeg(angle + 45)});
+                            getX() + Main.TOWER_RADIUS + getRange() * MathUtils.cosDeg(angle + 45),
+                            getY() + Main.TOWER_RADIUS + getRange() * MathUtils.sinDeg(angle + 45)});
 
                     for (int i = 0; i < level.enemies.size(); ) {
                         Enemy enemy = level.enemies.get(i);
                         if (area.contains(enemy.getPosition())) {
-                            enemy.slowed = damage;
+                            enemy.slowed = getDamage();
                         }
                         i++;
                     }
@@ -214,5 +221,69 @@ public class Tower extends Building {
 
     public String getName() {
         return type.name() + " TOWER";
+    }
+
+    public void upgradeDamage() {
+        if (damage < 11) {
+            if (level.redResource >= damageCosts[damage]) {
+                level.redResource -= damageCosts[damage];
+                damage++;
+            }
+        }
+    }
+
+    public void upgradeRange() {
+        if (range < 11) {
+            if (level.blueResource >= rangeCosts[range]) {
+                level.blueResource -= rangeCosts[range];
+                range++;
+            }
+        }
+    }
+
+    public void upgradeSpeed() {
+        if (speed < 11) {
+            if (level.yellowResource >= speedCosts[speed]) {
+                level.yellowResource -= speedCosts[speed];
+                speed++;
+            }
+        }
+    }
+
+    public int getDamageIndex() {
+        return damage;
+    }
+
+    public int getRangeIndex() {
+        return range;
+    }
+
+    public int getSpeedIndex() {
+        return speed;
+    }
+
+    public float getDamage() {
+        return getBaseDamage(type) * damages[damage];
+    }
+
+    public float getRange() {
+        return getBaseRange(type) * ranges[range];
+    }
+
+    public float getSpeed() {
+        return getBaseSpeed(type) * speeds[speed];
+    }
+
+    public int getDamageCost() {
+        return damageCosts[damage];
+    }
+
+    public int getRangeCost() {
+        return rangeCosts[range];
+    }
+
+
+    public int getSpeedCost() {
+        return speedCosts[speed];
     }
 }

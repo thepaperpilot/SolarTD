@@ -152,6 +152,7 @@ textfield
   rotate: false
   xy: 13, 105
   size: 14, 14
+  split: 5, 3, 3, 2
   orig: 14, 14
   offset: 0, 0
   index: -1
@@ -161,4 +162,12 @@ white
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
+  index: -1
+progress-bar
+  rotate: false
+  xy: 2, 137
+  size: 10, 10
+  split: 2, 2, 3, 3
+  orig: 10, 10
+  offset: 10, 10
   index: -1

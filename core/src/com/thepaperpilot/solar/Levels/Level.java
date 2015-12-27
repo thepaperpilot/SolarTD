@@ -244,11 +244,11 @@ public class Level implements Screen {
             if (selectedBuilding instanceof Tower) {
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
                 shapeRenderer.setColor(0, 1, 0, .5f);
-                shapeRenderer.circle(selectedBuilding.area.x, selectedBuilding.area.y, ((Tower) selectedBuilding).range);
+                shapeRenderer.circle(selectedBuilding.area.x, selectedBuilding.area.y, ((Tower) selectedBuilding).getRange());
                 shapeRenderer.end();
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
                 shapeRenderer.setColor(0, 1, 0, .25f);
-                shapeRenderer.circle(selectedBuilding.area.x, selectedBuilding.area.y, ((Tower) selectedBuilding).range);
+                shapeRenderer.circle(selectedBuilding.area.x, selectedBuilding.area.y, ((Tower) selectedBuilding).getRange());
                 shapeRenderer.end();
             }
         }
