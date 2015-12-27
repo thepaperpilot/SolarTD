@@ -19,11 +19,11 @@ public class Tower extends Building {
     private static final ParticleEffectPool bluePool;
 
     private static final float[] damages = new float[]{1, 2, 3, 5, 7, 10, 15, 20, 30, 50, 75, 100};
-    private static final int[] damageCosts = new int[]{50, 100, 200, 350, 500, 700, 950, 1250, 1550, 1900, 2300};
+    private static final int[] damageCosts = new int[]{25, 50, 100, 175, 275, 400, 550, 725, 925, 1150, 1400};
     private static final float[] ranges = new float[]{1, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.6f, 1.7f, 1.8f, 1.9f, 2.0f, 2.1f};
-    private static final int[] rangeCosts = new int[]{50, 100, 200, 350, 500, 700, 950, 1250, 1550, 1900, 2300};
+    private static final int[] rangeCosts = new int[]{25, 50, 100, 175, 275, 400, 550, 725, 925, 1150, 1400};
     private static final float[] speeds = new float[]{1, 1.1f, 1.3f, 1.6f, 2f, 2.5f, 3.1f, 3.8f, 4.6f, 5.4f, 6.4f, 7.5f};
-    private static final int[] speedCosts = new int[]{50, 100, 200, 350, 500, 700, 950, 1250, 1550, 1900, 2300};
+    private static final int[] speedCosts = new int[]{25, 50, 100, 175, 275, 400, 550, 725, 925, 1150, 1400};
 
     static {
         ParticleEffect particleEffect = new ParticleEffect();
