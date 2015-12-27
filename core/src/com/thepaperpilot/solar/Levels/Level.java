@@ -47,6 +47,7 @@ public class Level implements Screen {
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
     public Building selectedBuilding;
     public boolean placingBuilding;
+    public boolean movingBuilding;
     public int redResource = 100;
     public int blueResource = 100;
     public int yellowResource = 100;
@@ -97,21 +98,35 @@ public class Level implements Screen {
         stage.addListener(new ClickListener(Input.Buttons.LEFT) {
             public void clicked(InputEvent event, float x, float y) {
                 float uiHeight = ui.stageToScreenCoordinates(new Vector2(0, ui.getHeight() - ui.getActors().first().getY() - ui.getActors().first().getHeight())).y;
-                uiHeight += stage.stageToScreenCoordinates(new Vector2(0, stage.getHeight() - selectedType * Main.TOWER_RADIUS)).y;
+                if (placingBuilding) uiHeight += stage.stageToScreenCoordinates(new Vector2(0, stage.getHeight() - selectedType * Main.TOWER_RADIUS)).y;
+                else uiHeight += stage.stageToScreenCoordinates(new Vector2(0, stage.getHeight() - (selectedBuilding instanceof Tower ? 1 : 2) * Main.TOWER_RADIUS)).y;
                 if (Gdx.input.getY() > Gdx.graphics.getHeight() - uiHeight) return;
-                selectedBuilding = null;
-                Menu.deselect();
-                if (!placingBuilding) return;
+                if (!movingBuilding) {
+                    selectedBuilding = null;
+                    Menu.deselect();
+                }
+                if (!placingBuilding && !movingBuilding) return;
                 Vector2 coords = new Vector2(x, y);
                 for (Building building : buildings) {
                     if (building.area.overlaps(new Circle(coords, selectedType * Main.TOWER_RADIUS))) {
+                        if(movingBuilding && selectedBuilding == building) continue;
+                        placingBuilding = false;
+                        movingBuilding = false;
                         return;
                     }
                 }
                 for (int i = 0; i < path.length - 1; i++) {
                     if (Intersector.distanceSegmentPoint(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y, x, y) < selectedType * Main.TOWER_RADIUS + Main.ENEMY_SIZE) {
+                        placingBuilding = false;
+                        movingBuilding = false;
                         return;
                     }
+                }
+                if (movingBuilding) {
+                    selectedBuilding.setPosition(coords.x - (selectedBuilding instanceof Tower ? 1 : 2) * Main.TOWER_RADIUS, coords.y - (selectedBuilding instanceof Tower ? 1 : 2) * Main.TOWER_RADIUS);
+                    selectedBuilding.area.setPosition(coords.x, coords.y);
+                    movingBuilding = false;
+                    return;
                 }
                 boolean paid = false;
                 if (selectedType == 1 && Tower.pay(selectedResource, Level.this)) paid = true;
@@ -154,6 +169,9 @@ public class Level implements Screen {
                     HUD.pause();
                 } else if (keycode == Input.Keys.ESCAPE) {
                     Menu.toggle();
+                } else if (keycode == Input.Keys.M) {
+                    if (movingBuilding) movingBuilding = false;
+                    else if (selectedBuilding != null) movingBuilding = true;
                 }
                 return true;
             }
@@ -255,13 +273,16 @@ public class Level implements Screen {
             }
         }
 
-        if (placingBuilding) {
+        if (placingBuilding || movingBuilding) {
             float range = 0;
-            if (selectedType == 1) {
+            if (movingBuilding) {
+                if (selectedBuilding instanceof Tower) range = ((Tower) selectedBuilding).getRange();
+            } else if (selectedType == 1) {
                 range = Tower.getBaseRange(selectedResource);
             }
             float uiHeight = ui.stageToScreenCoordinates(new Vector2(0, ui.getHeight() - ui.getActors().first().getY() - ui.getActors().first().getHeight())).y;
-            uiHeight += stage.stageToScreenCoordinates(new Vector2(0, stage.getHeight() - selectedType * Main.TOWER_RADIUS)).y;
+            if (placingBuilding) uiHeight += stage.stageToScreenCoordinates(new Vector2(0, stage.getHeight() - selectedType * Main.TOWER_RADIUS)).y;
+            else uiHeight += stage.stageToScreenCoordinates(new Vector2(0, stage.getHeight() - (selectedBuilding instanceof Tower ? 1 : 2) * Main.TOWER_RADIUS)).y;
             if (Gdx.input.getY() < Gdx.graphics.getHeight() - uiHeight) {
                 Vector2 coords = stage.screenToStageCoordinates(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -273,10 +294,11 @@ public class Level implements Screen {
                 shapeRenderer.circle(coords.x, coords.y, range);
                 shapeRenderer.setColor(1, 1, 1, .5f);
                 for (Building building : buildings)
-                    shapeRenderer.circle(building.area.x, building.area.y, building.area.radius);
-                shapeRenderer.setColor(0, 1, 0, .5f);
+                    if (!(movingBuilding && selectedBuilding == building)) shapeRenderer.circle(building.area.x, building.area.y, building.area.radius);
+                shapeRenderer.setColor(0, placingBuilding ? 1 : 0, movingBuilding ? 1 : 0, .5f);
                 for (Building building : buildings)
                     if (building.area.overlaps(new Circle(coords, selectedType * Main.TOWER_RADIUS))) {
+                        if (movingBuilding && selectedBuilding == building) continue;
                         shapeRenderer.setColor(1, 0, 0, .5f);
                         break;
                     }

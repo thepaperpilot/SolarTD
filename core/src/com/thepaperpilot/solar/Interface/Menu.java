@@ -63,7 +63,9 @@ public class Menu {
         currentTab = settingsTable;
 
         Button sellButton = new TextButton("Sell Tower", Main.skin);
-        generalTable.top().add(sellButton).colspan(3).expandX().fill().row();
+        generalTable.top().add(sellButton).expandX().fill().row();
+        Button moveButton = new TextButton("Move Tower", Main.skin);
+        generalTable.add(moveButton).expandX().fill().row();
         towerTable.pad(2);
         towerTable.add(new Label("Damage: ", Main.skin)).right();
         damageLabel.setColor(1, 0, 0, 1);
@@ -110,6 +112,11 @@ public class Menu {
         sellButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 level.selectedBuilding.sell();
+            }
+        });
+        moveButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                level.movingBuilding = !level.movingBuilding;
             }
         });
         settingsButton.addListener(new ClickListener() {

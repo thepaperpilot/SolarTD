@@ -1,11 +1,8 @@
 package com.thepaperpilot.solar.Entities;
 
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.thepaperpilot.solar.Interface.Menu;
 import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Main;
 
@@ -32,16 +29,6 @@ public class Generator extends Building {
                 setDrawable(Main.getDrawable("towers/yellowGen"));
                 break;
         }
-
-        addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                if (!level.placingBuilding) {
-                    level.selectedBuilding = (level.selectedBuilding == Generator.this ? null : Generator.this);
-                    Menu.select();
-                }
-                event.reset();
-            }
-        });
     }
 
     public static boolean pay(Level.Resource type, Level level) {

@@ -6,9 +6,6 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.thepaperpilot.solar.Interface.Menu;
 import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Main;
 
@@ -58,16 +55,6 @@ public class Tower extends Building {
         speed = 0;
         setDrawable(Main.getDrawable("towers/" + (type == Level.Resource.RED ? "red" : type == Level.Resource.BLUE ? "blue" : "yellow")));
         if (type == Level.Resource.YELLOW) effect = yellowPool.obtain();
-
-        addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                if (!level.placingBuilding) {
-                    level.selectedBuilding = (level.selectedBuilding == Tower.this ? null : Tower.this);
-                    Menu.select();
-                }
-                event.reset();
-            }
-        });
     }
 
     public static float getRedCost(Level.Resource type) {
