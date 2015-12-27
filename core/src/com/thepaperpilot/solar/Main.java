@@ -14,8 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.thepaperpilot.solar.Levels.Level;
-import com.thepaperpilot.solar.Levels.Wave;
 
 public class Main extends Game implements Screen {
     public static final float TOWER_RADIUS = 16;
@@ -76,6 +74,7 @@ public class Main extends Game implements Screen {
         manager.load("towers/blueGenStoreDown.png", Texture.class);
         manager.load("towers/yellowGenStoreDown.png", Texture.class);
         manager.load("bg.png", Texture.class);
+        manager.load("title.png", Texture.class);
         manager.load("alien.png", Texture.class);
 
         // show this screen while it loads
@@ -112,13 +111,7 @@ public class Main extends Game implements Screen {
             skin.getFont("font").getData().setScale(.25f);
 
             // go to the menu screen
-            //setScreen(new MenuScreen());
-            Level.LevelPrototype levelPrototype = new Level.LevelPrototype();
-            levelPrototype.width = 980;
-            levelPrototype.height = 540;
-            levelPrototype.path = new float[]{980, 200, 500, 200, 300, 300, 300, 200, 100, 400, 980, 400};
-            levelPrototype.waves = new Wave.WavePrototype[]{};
-            setScreen(new Level(levelPrototype));
+            setScreen(new MenuScreen());
         }
     }
 
