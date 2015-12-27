@@ -153,6 +153,11 @@ public class HUD {
                 updateStore(Level.Resource.YELLOW, false);
             }
         });
+        timerTable.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                level.time = level.currWave < level.waves.length ? level.waves[level.currWave].enemyDistance : level.finalWave.enemyDistance;
+            }
+        });
     }
 
     private static void updateStore(Level.Resource resource, boolean tower) {
