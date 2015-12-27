@@ -104,6 +104,10 @@ public class Tower extends Building {
         return resource == Level.Resource.RED ? 2 : resource == Level.Resource.BLUE ? 1 : 6;
     }
 
+    public static String getDescription(Level.Resource type) {
+        return type == Level.Resource.RED ? "A medium range fast shooting tower" : type == Level.Resource.BLUE ? "A long range high damage tower" : "A short range AoE tower that slows enemies";
+    }
+
     public void act(float delta) {
         time += delta * getSpeed();
         Enemy target = null;

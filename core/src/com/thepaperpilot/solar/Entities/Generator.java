@@ -66,6 +66,10 @@ public class Generator extends Building {
         return type == Level.Resource.YELLOW ? 50 : 25;
     }
 
+    public static String getDescription(Level.Resource type) {
+        return "Generates additional " + type.name().toLowerCase() + " resources";
+    }
+
     public void act(float delta) {
         time += delta * speed;
         rotateBy(10 * delta);

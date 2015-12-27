@@ -1,6 +1,5 @@
 package com.thepaperpilot.solar.Interface;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -26,6 +25,7 @@ public class HUD {
     private static final Label redCost = new Label("", Main.skin, "large");
     private static final Label blueCost = new Label("", Main.skin, "large");
     private static final Label yellowCost = new Label("", Main.skin, "large");
+    private static final Label description = new Label("", Main.skin);
     private static final Label livesLabel = new Label("", Main.skin, "large");
     private static final Label wavesLabel = new Label("", Main.skin, "large");
     private static final Label timeLabel = new Label("", Main.skin, "large");
@@ -107,8 +107,11 @@ public class HUD {
         cost.setBackground(Main.skin.getDrawable("default-round"));
         cost.setVisible(false);
         cost.setPosition(resourcesTable.getX(), 72);
-        cost.setSize(resourcesTable.getPrefWidth(), 40);
-        cost.add(new Label("Cost", Main.skin)).colspan(3).row();
+        cost.setHeight(40);
+        cost.add(description).colspan(3).spaceBottom(4).row();
+        redCost.setColor(1, 0, 0, 1);
+        blueCost.setColor(0, 0, 1, 1);
+        yellowCost.setColor(1, 1, 0, 1);
         cost.add(redCost).expand().uniform();
         cost.add(blueCost).expand().uniform();
         cost.add(yellowCost).expand().uniform();
@@ -193,16 +196,20 @@ public class HUD {
         livesLabel.setText("" + level.population);
         wavesLabel.setText("" + level.currWave);
         timeLabel.setText("" + Math.round(level.time <= 0 ? Math.abs(level.time) : (level.currWave < level.waves.length ? level.waves[level.currWave].enemyDistance : level.finalWave.enemyDistance) - level.time));
-        cost.setX(resourcesTable.getX());
+
+        if (!cost.isVisible()) return;
 
         int type = level.selectedType;
         Level.Resource resource = level.selectedResource;
+        description.setText(type == 1 ? Tower.getDescription(resource) : Generator.getDescription(resource));
+        cost.setWidth(description.getPrefWidth() + 8);
+        cost.setX(resourcesTable.getX() - (cost.getWidth() - resourcesTable.getWidth()) / 2);
         redCost.setText("" + (int) (type == 1 ? Tower.getRedCost(resource) : Generator.getRedCost(resource)));
-        redCost.setColor(level.redResource >= (type == 1 ? Tower.getRedCost(resource) : Generator.getRedCost(resource)) ? Color.GREEN : Color.RED);
+        redCost.setColor(1, 0, 0, level.redResource >= (type == 1 ? Tower.getRedCost(resource) : Generator.getRedCost(resource)) ? 1 : .5f);
         blueCost.setText("" + (int) (type == 1 ? Tower.getBlueCost(resource) : Generator.getBlueCost(resource)));
-        blueCost.setColor(level.blueResource >= (type == 1 ? Tower.getBlueCost(resource) : Generator.getBlueCost(resource)) ? Color.GREEN : Color.RED);
+        blueCost.setColor(0, 0, 1, level.blueResource >= (type == 1 ? Tower.getBlueCost(resource) : Generator.getBlueCost(resource)) ? 1 : .5f);
         yellowCost.setText("" + (int) (type == 1 ? Tower.getYellowCost(resource) : Generator.getYellowCost(resource)));
-        yellowCost.setColor(level.yellowResource >= (type == 1 ? Tower.getYellowCost(resource) : Generator.getYellowCost(resource)) ? Color.GREEN : Color.RED);
+        yellowCost.setColor(1, 1, 0, level.yellowResource >= (type == 1 ? Tower.getYellowCost(resource) : Generator.getYellowCost(resource)) ? 1 : .5f);
     }
 
     public static void pause() {
