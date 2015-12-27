@@ -84,6 +84,7 @@ public class Menu {
         menu.left().add(buttonsTable).expandY().fill();
         menu.add(settingsTable).expand().fill();
 
+        menu.addListener(new ClickListener());
         restart.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 Main.changeScreen(new Level(level.prototype));
