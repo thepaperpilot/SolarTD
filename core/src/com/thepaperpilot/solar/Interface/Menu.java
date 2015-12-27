@@ -1,10 +1,12 @@
 package com.thepaperpilot.solar.Interface;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.thepaperpilot.solar.Entities.Generator;
 import com.thepaperpilot.solar.Entities.Tower;
 import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Main;
@@ -16,14 +18,21 @@ public class Menu {
     private static final Table buildingTable = new Table(Main.skin);
     private static final Table towerTable = new Table(Main.skin);
     private static final Label damageLabel = new Label("0", Main.skin);
-    private static final TextButton damageUpgrade = new TextButton("Upgrade", Main.skin);
-    private static final Label rangeLabel = new Label("0", Main.skin);
-    private static final TextButton rangeUpgrade = new TextButton("Upgrade", Main.skin);
-    private static final Label speedLabel = new Label("0", Main.skin);
-    private static final TextButton speedUpgrade = new TextButton("Upgrade", Main.skin);
     private static final ProgressBar damageBar = new ProgressBar(0, 11, 1, false, Main.skin);
+    private static final TextButton damageUpgrade = new TextButton("0", Main.skin);
+    private static final Label rangeLabel = new Label("0", Main.skin);
     private static final ProgressBar rangeBar = new ProgressBar(0, 11, 1, false, Main.skin);
+    private static final TextButton rangeUpgrade = new TextButton("0", Main.skin);
+    private static final Label speedLabel = new Label("0", Main.skin);
     private static final ProgressBar speedBar = new ProgressBar(0, 11, 1, false, Main.skin);
+    private static final TextButton speedUpgrade = new TextButton("0", Main.skin);
+    private static final Table generatorTable = new Table(Main.skin);
+    private static final Label extractorsLabel = new Label("0", Main.skin);
+    private static final ProgressBar extractorsBar = new ProgressBar(0, 9, 1, false, Main.skin);
+    private static final TextButton extractorsUpgrade = new TextButton("0", Main.skin);
+    private static final Label efficiencyLabel = new Label("0", Main.skin);
+    private static final ProgressBar efficiencyBar = new ProgressBar(0, 9, 1, false, Main.skin);
+    private static final TextButton efficiencyUpgrade = new TextButton("0", Main.skin);
     private static final Table settingsTable = new Table(Main.skin);
     private static final Table generalTable = new Table(Main.skin);
     private static final Window menu = new Window("Settings", Main.skin, "large");
@@ -77,8 +86,16 @@ public class Menu {
         towerTable.add(speedBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         speedUpgrade.setColor(1, 1, 0, 1);
         towerTable.add(speedUpgrade).row();
+        generatorTable.pad(2);
+        generatorTable.add(new Label("Extractors: ", Main.skin)).right();
+        generatorTable.add(extractorsLabel).right();
+        generatorTable.add(extractorsBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
+        generatorTable.add(extractorsUpgrade).row();
+        generatorTable.add(new Label("Efficiency: ", Main.skin)).right();
+        generatorTable.add(efficiencyLabel).right();
+        generatorTable.add(efficiencyBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
+        generatorTable.add(efficiencyUpgrade).row();
         generalTable.add(towerTable).fill();
-        towerTable.setVisible(false);
         buildingTable.setVisible(false);
 
         menu.left().add(buttonsTable).expandY().fill();
@@ -129,6 +146,22 @@ public class Menu {
                 }
             }
         });
+        extractorsUpgrade.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                if (level.selectedBuilding instanceof Generator) {
+                    ((Generator) level.selectedBuilding).upgradeExtractors();
+                    select();
+                }
+            }
+        });
+        efficiencyUpgrade.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                if (level.selectedBuilding instanceof Generator) {
+                    ((Generator) level.selectedBuilding).upgradeEfficiency();
+                    select();
+                }
+            }
+        });
     }
 
     private static void switchTab(Table tab) {
@@ -152,7 +185,6 @@ public class Menu {
         }
         buildingTable.setVisible(true);
         buildingLabel.setText(level.selectedBuilding instanceof Tower ? "Tower" : "Generator");
-        towerTable.setVisible(level.selectedBuilding instanceof Tower);
         if (level.selectedBuilding instanceof Tower) {
             Tower tower = ((Tower) level.selectedBuilding);
             damageLabel.setText("" + (int) tower.getDamage());
@@ -164,6 +196,25 @@ public class Menu {
             speedLabel.setText("" + (int) tower.getSpeed());
             speedBar.setValue(tower.getSpeedIndex());
             speedUpgrade.setText("" + tower.getSpeedCost());
+            if (generalTable.getCell(generatorTable) != null)
+                generalTable.getCell(generatorTable).setActor(towerTable);
+        } else {
+            Generator generator = ((Generator) level.selectedBuilding);
+            Color color = generator.type == Level.Resource.RED ? Color.RED : generator.type == Level.Resource.BLUE ? Color.BLUE : Color.YELLOW;
+            extractorsLabel.setText("" + (generator.getExtractors() + 1));
+            extractorsLabel.setColor(color);
+            extractorsBar.setValue(generator.getExtractors());
+            extractorsBar.setColor(color);
+            extractorsUpgrade.setText("" + generator.getExtractorCost());
+            extractorsUpgrade.setColor(color);
+            efficiencyLabel.setText("" + (generator.getEfficiency()));
+            efficiencyLabel.setColor(color);
+            efficiencyBar.setValue(generator.getEfficiencyIndex());
+            efficiencyBar.setColor(color);
+            efficiencyUpgrade.setText("" + generator.getEfficiencyCost());
+            efficiencyUpgrade.setColor(color);
+            if (generalTable.getCell(towerTable) != null)
+                generalTable.getCell(towerTable).setActor(generatorTable);
         }
         generalTable.setName(level.selectedBuilding.getName());
         if (currentTab == generalTable) menu.getTitleLabel().setText(level.selectedBuilding.getName());

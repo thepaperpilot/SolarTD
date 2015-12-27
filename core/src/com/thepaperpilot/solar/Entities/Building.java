@@ -9,9 +9,8 @@ import com.thepaperpilot.solar.Main;
 public abstract class Building extends Image {
 
     public final Circle area;
-
+    public Level.Resource type;
     protected Level level;
-    protected Level.Resource type;
 
     Building(float x, float y, float radius, Level level, Level.Resource resource) {
         this.area = new Circle(x + radius, y + radius, radius);

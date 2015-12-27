@@ -26,6 +26,7 @@ public class Main extends Game implements Screen {
     public static final float TURN_RADIUS = 10;
     public static final float UI_WIDTH = 720;
     public static final float SELL_RATE = .75f;
+    public static final float GENERATOR_SPEED = 16;
     private static final AssetManager manager = new AssetManager();
     public static Skin skin;
     private static Main instance;
