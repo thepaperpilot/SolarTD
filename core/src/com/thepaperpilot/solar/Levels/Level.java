@@ -172,8 +172,10 @@ public class Level implements Screen {
 
     @Override
     public void render(float delta) {
-        time += delta;
-        resourceTime += delta;
+        if (!paused) {
+            time += delta;
+            resourceTime += delta;
+        }
         while (resourceTime > 4) {
             resourceTime -= 4;
             redResource++;
