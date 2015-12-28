@@ -163,6 +163,35 @@ public class HUD {
         });
     }
 
+    public static void pressButton(int button) {
+        switch (button) {
+            case 1:
+                red.toggle();
+                updateStore(Level.Resource.RED, true);
+                break;
+            case 2:
+                blue.toggle();
+                updateStore(Level.Resource.BLUE, true);
+                break;
+            case 3:
+                yellow.toggle();
+                updateStore(Level.Resource.YELLOW, true);
+                break;
+            case 4:
+                redGen.toggle();
+                updateStore(Level.Resource.RED, false);
+                break;
+            case 5:
+                blueGen.toggle();
+                updateStore(Level.Resource.BLUE, false);
+                break;
+            case 6:
+                yellowGen.toggle();
+                updateStore(Level.Resource.YELLOW, false);
+                break;
+        }
+    }
+
     private static void updateStore(Level.Resource resource, boolean tower) {
         Button button;
         if (tower) button = resource == Level.Resource.RED ? red : resource == Level.Resource.BLUE ? blue : yellow;

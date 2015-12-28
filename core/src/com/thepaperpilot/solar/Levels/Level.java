@@ -166,13 +166,28 @@ public class Level implements Screen {
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.SPACE) {
-                    HUD.pause();
-                } else if (keycode == Input.Keys.ESCAPE) {
-                    Menu.toggle();
-                } else if (keycode == Input.Keys.M) {
-                    if (movingBuilding) movingBuilding = false;
-                    else if (selectedBuilding != null) movingBuilding = true;
+                switch (keycode) {
+                    case Input.Keys.SPACE:
+                        HUD.pause();
+                        break;
+                    case Input.Keys.ESCAPE:
+                        Menu.toggle();
+                        break;
+                    case Input.Keys.M:
+                        if (movingBuilding) movingBuilding = false;
+                        else if (selectedBuilding != null) movingBuilding = true;
+                        break;
+                    case Input.Keys.S:
+                        if (selectedBuilding != null) selectedBuilding.sell();
+                        break;
+                    case Input.Keys.NUM_1:
+                    case Input.Keys.NUM_2:
+                    case Input.Keys.NUM_3:
+                    case Input.Keys.NUM_4:
+                    case Input.Keys.NUM_5:
+                    case Input.Keys.NUM_6:
+                        HUD.pressButton(Integer.parseInt(Input.Keys.toString(keycode)));
+                        break;
                 }
                 return true;
             }
