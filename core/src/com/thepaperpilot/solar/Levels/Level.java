@@ -100,7 +100,8 @@ public class Level implements Screen {
                 float uiHeight = ui.stageToScreenCoordinates(new Vector2(0, ui.getHeight() - ui.getActors().first().getY() - ui.getActors().first().getHeight())).y;
                 if (placingBuilding) uiHeight += stage.stageToScreenCoordinates(new Vector2(0, stage.getHeight() - selectedType * Main.TOWER_RADIUS)).y;
                 else uiHeight += stage.stageToScreenCoordinates(new Vector2(0, stage.getHeight() - (selectedBuilding instanceof Tower ? 1 : 2) * Main.TOWER_RADIUS)).y;
-                if (Gdx.input.getY() > Gdx.graphics.getHeight() - uiHeight) return;
+                float towerSize = stage.stageToScreenCoordinates(new Vector2((((movingBuilding ? selectedBuilding instanceof Tower : selectedType == 1) ? 1 : 2) * Main.TOWER_RADIUS), 0)).x;
+                if (!(Gdx.input.getY() < Gdx.graphics.getHeight() - uiHeight && Gdx.input.getY() > towerSize && Gdx.input.getX() > towerSize && Gdx.input.getX() < Gdx.graphics.getWidth() - towerSize)) return;
                 if (!movingBuilding) {
                     selectedBuilding = null;
                     Menu.deselect();
@@ -283,7 +284,8 @@ public class Level implements Screen {
             float uiHeight = ui.stageToScreenCoordinates(new Vector2(0, ui.getHeight() - ui.getActors().first().getY() - ui.getActors().first().getHeight())).y;
             if (placingBuilding) uiHeight += stage.stageToScreenCoordinates(new Vector2(0, stage.getHeight() - selectedType * Main.TOWER_RADIUS)).y;
             else uiHeight += stage.stageToScreenCoordinates(new Vector2(0, stage.getHeight() - (selectedBuilding instanceof Tower ? 1 : 2) * Main.TOWER_RADIUS)).y;
-            if (Gdx.input.getY() < Gdx.graphics.getHeight() - uiHeight) {
+            float towerSize = stage.stageToScreenCoordinates(new Vector2((((movingBuilding ? selectedBuilding instanceof Tower : selectedType == 1) ? 1 : 2) * Main.TOWER_RADIUS), 0)).x;
+            if (Gdx.input.getY() < Gdx.graphics.getHeight() - uiHeight && Gdx.input.getY() > towerSize && Gdx.input.getX() > towerSize && Gdx.input.getX() < Gdx.graphics.getWidth() - towerSize) {
                 Vector2 coords = stage.screenToStageCoordinates(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
                 shapeRenderer.setColor(1, 1, 1, .5f);
