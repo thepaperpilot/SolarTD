@@ -9,7 +9,7 @@ import com.thepaperpilot.solar.Main;
 public class Generator extends Building {
     private static final int[] extractorCosts = new int[]{100, 150, 200, 250, 300, 350, 400, 450, 500};
     private static final int[] efficiencyCosts = new int[]{200, 300, 400, 500, 600, 700, 800, 900, 1000};
-
+    public int generated;
     private float time;
     private int amount = 0;
     private int speed = 4;
@@ -86,6 +86,7 @@ public class Generator extends Building {
                     break;
             }
             level.stage.addActor(increase);
+            generated += amount + 1;
         }
     }
 

@@ -41,6 +41,8 @@ public class Tower extends Building {
     }
 
     public float time;
+    public int kills;
+    public int shots;
     boolean comboUpgrade;
     private boolean ability;
     private int range;
@@ -124,7 +126,11 @@ public class Tower extends Building {
                     effect = ability ? red2Pool.obtain() : redPool.obtain();
                     effect.setPosition(target.getX() + Main.ENEMY_SIZE / 2, target.getY() + Main.ENEMY_SIZE / 2);
                     level.particles.add(effect);
-                    target.hit(getDamage());
+                    if (target.hit(getDamage())) {
+                        kills++;
+                        level.totalKills++;
+                    }
+                    shots++;
                 }
                 break;
             case BLUE:
@@ -150,7 +156,10 @@ public class Tower extends Building {
                                 }
                             }
                             if (dist != -1 && dist < Main.BULLET_SPEED * delta) {
-                                target.hit(getDamage());
+                                if (target.hit(getDamage())) {
+                                    kills++;
+                                    level.totalKills++;
+                                }
                                 remove();
                                 effect.allowCompletion();
                                 return;
@@ -169,6 +178,7 @@ public class Tower extends Building {
                             super.act(delta);
                         }
                     });
+                    shots++;
                 }
                 break;
             case YELLOW:
@@ -199,6 +209,7 @@ public class Tower extends Building {
                         }
                         i++;
                     }
+                    shots++;
                 }
                 break;
         }

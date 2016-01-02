@@ -58,6 +58,7 @@ public class Level implements Screen {
     public int currWave;
     public Resource selectedResource = Resource.RED;
     public int selectedType = 1; // 1 is tower, 2 is generator
+    public int totalKills = 0;
     private float resourceTime = -10;
 
     public Level(LevelPrototype levelPrototype) {
@@ -255,6 +256,8 @@ public class Level implements Screen {
                 addEnemy(enemy);
             }
         }
+
+        Menu.update();
 
         if (!paused) stage.act(delta);
         stage.draw();

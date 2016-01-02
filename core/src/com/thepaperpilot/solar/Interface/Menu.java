@@ -1,5 +1,6 @@
 package com.thepaperpilot.solar.Interface;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -35,6 +36,11 @@ public class Menu {
     private static final TextButton efficiencyUpgrade = new TextButton("0", Main.skin);
     private static final Table generalTable = new Table(Main.skin);
     private static final StatsCircle towerCircle = new StatsCircle();
+    private static final Label totalKillsLabel = new Label("", Main.skin);
+    private static final Label fpsLabel = new Label("", Main.skin);
+    private static final Label towerKillsLabel = new Label("", Main.skin);
+    private static final Label towerShotsLabel = new Label("", Main.skin);
+    private static final Label generatedLabel = new Label("", Main.skin);
     private static final Table settingsTable = new Table(Main.skin);
     private static final Window menu = new Window("Settings", Main.skin, "large");
     private static Table currentTab;
@@ -60,7 +66,13 @@ public class Menu {
 
         settingsTable.setName("Settings");
         Button restart = new TextButton("Restart Level", Main.skin);
-        settingsTable.top().add(restart).expandX().fill();
+        settingsTable.top().add(restart).expandX().fill().row();
+        Table statsTable = new Table(Main.skin);
+        statsTable.add(new Label("Total Kills: ", Main.skin));
+        statsTable.add(totalKillsLabel).row();
+        statsTable.add(new Label("FPS: ", Main.skin));
+        statsTable.add(fpsLabel).row();
+        settingsTable.add(statsTable);
         currentTab = settingsTable;
 
         Button sellButton = new TextButton("Sell Tower", Main.skin);
@@ -87,6 +99,12 @@ public class Menu {
         towerTable.add(speedBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         speedUpgrade.setColor(1, 1, 0, 1);
         towerTable.add(speedUpgrade).row();
+        Table towerStatsTable = new Table(Main.skin);
+        towerStatsTable.add(new Label("Kills: ", Main.skin));
+        towerStatsTable.add(towerKillsLabel).row();
+        towerStatsTable.add(new Label("Shots: ", Main.skin));
+        towerStatsTable.add(towerShotsLabel).row();
+        towerTable.add(towerStatsTable).colspan(4);
         generatorTable.pad(2);
         generatorTable.add(new Label("Extractors: ", Main.skin)).right();
         generatorTable.add(extractorsLabel).right();
@@ -96,6 +114,10 @@ public class Menu {
         generatorTable.add(efficiencyLabel).right();
         generatorTable.add(efficiencyBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         generatorTable.add(efficiencyUpgrade).row();
+        Table generatorStatsTable = new Table(Main.skin);
+        generatorStatsTable.add(new Label("Generated Resources: ", Main.skin));
+        generatorStatsTable.add(generatedLabel).row();
+        generatorTable.add(generatorStatsTable).colspan(4);
         generalTable.top().add(towerTable).fill().row();
         generalTable.add(towerCircle).size(StatsCircle.SIZE).row();
         generalTable.add(sellButton).expandX().fill().row();
@@ -228,6 +250,19 @@ public class Menu {
         }
         generalTable.setName(level.selectedBuilding.getName());
         if (currentTab == generalTable) menu.getTitleLabel().setText(level.selectedBuilding.getName());
+    }
+
+    public static void update() {
+        totalKillsLabel.setText("" + level.totalKills);
+        fpsLabel.setText("" + Gdx.graphics.getFramesPerSecond());
+        if (level.selectedBuilding != null && level.selectedBuilding instanceof Tower) {
+            Tower tower = ((Tower) level.selectedBuilding);
+            towerKillsLabel.setText("" + tower.kills);
+            towerShotsLabel.setText("" + tower.shots);
+        } else if (level.selectedBuilding != null){
+            Generator generator = ((Generator) level.selectedBuilding);
+            generatedLabel.setText("" + generator.generated);
+        }
     }
 
     public static void init(Level level) {
