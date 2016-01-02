@@ -113,6 +113,7 @@ public class Level implements Screen {
                         if(movingBuilding && selectedBuilding == building) continue;
                         placingBuilding = false;
                         movingBuilding = false;
+                        HUD.deselect();
                         return;
                     }
                 }
@@ -120,6 +121,7 @@ public class Level implements Screen {
                     if (Intersector.distanceSegmentPoint(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y, x, y) < selectedType * Main.TOWER_RADIUS + Main.ENEMY_SIZE) {
                         placingBuilding = false;
                         movingBuilding = false;
+                        HUD.deselect();
                         return;
                     }
                 }
@@ -162,6 +164,8 @@ public class Level implements Screen {
 
         HUD.init(this);
         Menu.init(this);
+        HUD.deselect();
+        Menu.deselect();
 
         stage.addListener(new InputListener() {
             @Override

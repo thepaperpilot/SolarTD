@@ -33,8 +33,9 @@ public class Menu {
     private static final Label efficiencyLabel = new Label("0", Main.skin);
     private static final ProgressBar efficiencyBar = new ProgressBar(0, 9, 1, false, Main.skin);
     private static final TextButton efficiencyUpgrade = new TextButton("0", Main.skin);
-    private static final Table settingsTable = new Table(Main.skin);
     private static final Table generalTable = new Table(Main.skin);
+    private static final StatsCircle towerCircle = new StatsCircle();
+    private static final Table settingsTable = new Table(Main.skin);
     private static final Window menu = new Window("Settings", Main.skin, "large");
     private static Table currentTab;
 
@@ -63,9 +64,7 @@ public class Menu {
         currentTab = settingsTable;
 
         Button sellButton = new TextButton("Sell Tower", Main.skin);
-        generalTable.top().add(sellButton).expandX().fill().row();
         Button moveButton = new TextButton("Move Tower", Main.skin);
-        generalTable.add(moveButton).expandX().fill().row();
         towerTable.pad(2);
         towerTable.add(new Label("Damage: ", Main.skin)).right();
         damageLabel.setColor(1, 0, 0, 1);
@@ -97,7 +96,10 @@ public class Menu {
         generatorTable.add(efficiencyLabel).right();
         generatorTable.add(efficiencyBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         generatorTable.add(efficiencyUpgrade).row();
-        generalTable.add(towerTable).fill();
+        generalTable.top().add(towerTable).fill().row();
+        generalTable.add(towerCircle).size(StatsCircle.SIZE).row();
+        generalTable.add(sellButton).expandX().fill().row();
+        generalTable.add(moveButton).expandX().fill().row();
         buildingTable.setVisible(false);
 
         menu.left().add(buttonsTable).expandY().fill();
@@ -192,17 +194,18 @@ public class Menu {
         }
         buildingTable.setVisible(true);
         buildingLabel.setText(level.selectedBuilding instanceof Tower ? "Tower" : "Generator");
+        towerCircle.update(level.selectedBuilding);
         if (level.selectedBuilding instanceof Tower) {
             Tower tower = ((Tower) level.selectedBuilding);
             damageLabel.setText("" + (int) tower.getDamage());
             damageBar.setValue(tower.getDamageIndex());
-            damageUpgrade.setText("" + tower.getDamageCost());
+            damageUpgrade.setText("" + (tower.getDamageCost() == -1 ? "infinity" : tower.getDamageCost()));
             rangeLabel.setText("" + (int) tower.getRange());
             rangeBar.setValue(tower.getRangeIndex());
-            rangeUpgrade.setText("" + tower.getRangeCost());
+            rangeUpgrade.setText("" + (tower.getRangeCost() == -1 ? "infinity" : tower.getRangeCost()));
             speedLabel.setText("" + (int) tower.getSpeed());
             speedBar.setValue(tower.getSpeedIndex());
-            speedUpgrade.setText("" + tower.getSpeedCost());
+            speedUpgrade.setText("" + (tower.getSpeedCost() == -1 ? "infinity" : tower.getSpeedCost()));
             if (generalTable.getCell(generatorTable) != null)
                 generalTable.getCell(generatorTable).setActor(towerTable);
         } else {
@@ -212,13 +215,13 @@ public class Menu {
             extractorsLabel.setColor(color);
             extractorsBar.setValue(generator.getExtractors());
             extractorsBar.setColor(color);
-            extractorsUpgrade.setText("" + generator.getExtractorCost());
+            extractorsUpgrade.setText("" + (generator.getExtractorCost() == -1 ? "infinity" : generator.getExtractorCost()));
             extractorsUpgrade.setColor(color);
             efficiencyLabel.setText("" + (generator.getEfficiency()));
             efficiencyLabel.setColor(color);
             efficiencyBar.setValue(generator.getEfficiencyIndex());
             efficiencyBar.setColor(color);
-            efficiencyUpgrade.setText("" + generator.getEfficiencyCost());
+            efficiencyUpgrade.setText("" + (generator.getEfficiencyCost() == -1 ? "infinity" : generator.getEfficiencyCost()));
             efficiencyUpgrade.setColor(color);
             if (generalTable.getCell(towerTable) != null)
                 generalTable.getCell(towerTable).setActor(generatorTable);

@@ -11,6 +11,9 @@ import com.thepaperpilot.solar.Main;
 public abstract class Building extends Image {
 
     public final Circle area;
+    public float redValue;
+    public float blueValue;
+    public float yellowValue;
     public Level.Resource type;
     protected Level level;
 
@@ -20,6 +23,9 @@ public abstract class Building extends Image {
         this.type = resource;
         setPosition(x, y);
         setSize(radius * 2, radius * 2);
+        redValue = Main.SELL_RATE * (this instanceof Tower ? Tower.getRedCost(type) : Generator.getRedCost(type));
+        blueValue = Main.SELL_RATE * (this instanceof Tower ? Tower.getBlueCost(type) : Generator.getBlueCost(type));
+        yellowValue = Main.SELL_RATE * (this instanceof Tower ? Tower.getYellowCost(type) : Generator.getYellowCost(type));
 
         addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -39,9 +45,9 @@ public abstract class Building extends Image {
     }
 
     public void sell() {
-        level.redResource += Main.SELL_RATE * (this instanceof Tower ? Tower.getRedCost(type) : Generator.getRedCost(type));
-        level.blueResource += Main.SELL_RATE * (this instanceof Tower ? Tower.getBlueCost(type) : Generator.getBlueCost(type));
-        level.yellowResource += Main.SELL_RATE * (this instanceof Tower ? Tower.getYellowCost(type) : Generator.getYellowCost(type));
+        level.redResource += redValue;
+        level.blueResource += blueValue;
+        level.yellowResource += yellowValue;
         level.buildings.remove(this);
         remove();
         level.selectedBuilding = null;

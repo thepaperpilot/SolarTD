@@ -217,6 +217,7 @@ public class Tower extends Building {
     public void upgradeDamage() {
         if (damage < 11) {
             if (level.redResource >= damageCosts[damage]) {
+                redValue += Main.SELL_RATE * damageCosts[damage];
                 level.redResource -= damageCosts[damage];
                 damage++;
             }
@@ -226,6 +227,7 @@ public class Tower extends Building {
     public void upgradeRange() {
         if (range < 11) {
             if (level.blueResource >= rangeCosts[range]) {
+                blueValue += Main.SELL_RATE * rangeCosts[range];
                 level.blueResource -= rangeCosts[range];
                 range++;
             }
@@ -235,6 +237,7 @@ public class Tower extends Building {
     public void upgradeSpeed() {
         if (speed < 11) {
             if (level.yellowResource >= speedCosts[speed]) {
+                yellowValue += Main.SELL_RATE * speedCosts[speed];
                 level.yellowResource -= speedCosts[speed];
                 speed++;
             }
@@ -266,15 +269,15 @@ public class Tower extends Building {
     }
 
     public int getDamageCost() {
-        return damageCosts[damage];
+        return damage < 11 ? damageCosts[damage] : -1;
     }
 
     public int getRangeCost() {
-        return rangeCosts[range];
+        return range < 11 ? rangeCosts[range] : -1;
     }
 
 
     public int getSpeedCost() {
-        return speedCosts[speed];
+        return speed < 11 ? speedCosts[speed] : -1;
     }
 }

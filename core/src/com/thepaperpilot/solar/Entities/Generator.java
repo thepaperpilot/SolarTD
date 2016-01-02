@@ -98,7 +98,7 @@ public class Generator extends Building {
     }
 
     public int getExtractorCost() {
-        return extractorCosts[amount];
+        return amount < 9 ? extractorCosts[amount] : -1;
     }
 
     public void upgradeExtractors() {
@@ -106,18 +106,21 @@ public class Generator extends Building {
             switch (type) {
                 case RED:
                     if (level.redResource >= extractorCosts[amount]) {
+                        redValue += Main.SELL_RATE * extractorCosts[amount];
                         level.redResource -= extractorCosts[amount];
                         amount++;
                     }
                     break;
                 case BLUE:
                     if (level.blueResource >= extractorCosts[amount]) {
+                        blueValue += Main.SELL_RATE * extractorCosts[amount];
                         level.blueResource -= extractorCosts[amount];
                         amount++;
                     }
                     break;
                 case YELLOW:
                     if (level.yellowResource >= extractorCosts[amount]) {
+                        yellowValue += Main.SELL_RATE * extractorCosts[amount];
                         level.yellowResource -= extractorCosts[amount];
                         amount++;
                     }
@@ -135,27 +138,30 @@ public class Generator extends Building {
     }
 
     public int getEfficiencyCost() {
-        return efficiencyCosts[getEfficiencyIndex()];
+        return getEfficiencyIndex() < 9 ? efficiencyCosts[getEfficiencyIndex()] : -1;
     }
 
     public void upgradeEfficiency() {
         if (getEfficiencyIndex() < 9) {
             switch (type) {
                 case RED:
-                    if (level.redResource >= efficiencyCosts[amount]) {
-                        level.redResource -= efficiencyCosts[amount];
+                    if (level.redResource >= efficiencyCosts[getEfficiencyIndex()]) {
+                        redValue += Main.SELL_RATE * efficiencyCosts[getEfficiencyIndex()];
+                        level.redResource -= efficiencyCosts[getEfficiencyIndex()];
                         speed++;
                     }
                     break;
                 case BLUE:
-                    if (level.blueResource >= efficiencyCosts[amount]) {
-                        level.blueResource -= efficiencyCosts[amount];
+                    if (level.blueResource >= efficiencyCosts[getEfficiencyIndex()]) {
+                        blueValue += Main.SELL_RATE * efficiencyCosts[getEfficiencyIndex()];
+                        level.blueResource -= efficiencyCosts[getEfficiencyIndex()];
                         speed++;
                     }
                     break;
                 case YELLOW:
-                    if (level.yellowResource >= efficiencyCosts[amount]) {
-                        level.yellowResource -= efficiencyCosts[amount];
+                    if (level.yellowResource >= efficiencyCosts[getEfficiencyIndex()]) {
+                        yellowValue += Main.SELL_RATE * efficiencyCosts[getEfficiencyIndex()];
+                        level.yellowResource -= efficiencyCosts[getEfficiencyIndex()];
                         speed++;
                     }
                     break;
