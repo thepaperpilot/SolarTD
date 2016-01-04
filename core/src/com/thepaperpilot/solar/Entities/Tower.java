@@ -9,6 +9,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Main;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 public class Tower extends Building {
     private static final ParticleEffectPool redPool;
     private static final ParticleEffectPool red2Pool;
@@ -49,6 +53,7 @@ public class Tower extends Building {
     private int damage;
     private int speed;
     private ParticleEffect effect;
+    private Targeting targeting;
 
     public Tower(float x, float y, Level.Resource type, final Level level) {
         super(x, y, Main.TOWER_RADIUS, level, type);
@@ -57,6 +62,7 @@ public class Tower extends Building {
         speed = 0;
         setDrawable(Main.getDrawable("towers/" + (type == Level.Resource.RED ? "red" : type == Level.Resource.BLUE ? "blue" : "yellow")));
         if (type == Level.Resource.YELLOW) effect = yellowPool.obtain();
+        targeting = type == Level.Resource.RED ? Targeting.FIRST : type == Level.Resource.BLUE ? Targeting.STRONGEST : Targeting.NEAREST;
     }
 
     public static float getRedCost(Level.Resource type) {
@@ -99,17 +105,7 @@ public class Tower extends Building {
 
     public void act(float delta) {
         time += delta * getSpeed();
-        Enemy target = null;
-        float dist = 0;
-        for (Enemy enemy : level.enemies) {
-            float length = enemy.getPosition().cpy().sub(getX(), getY()).len();
-            if (length <= getRange()) {
-                if (target == null || length < dist) { // TODO different ways of preferring enemies. ATM it's closest to tower
-                    target = enemy;
-                    dist = length;
-                }
-            }
-        }
+        Enemy target = targeting.target(this);
         if (target == null) {
             time = Math.min(time, Main.TOWER_SPEED);
             if (type == Level.Resource.YELLOW) {
@@ -144,27 +140,27 @@ public class Tower extends Building {
                         float angle = new Vector2(finalTarget.getX() - getX(), finalTarget.getY() - getY()).angle();
 
                         public void act(float delta) {
-                            Enemy target = finalTarget;
-                            float dist = -1;
-                            for (Enemy enemy : level.enemies) {
-                                float length = enemy.getPosition().cpy().sub(getX(), getY()).len();
-                                if (length <= getRange()) {
-                                    if (dist == -1 || length < dist) {
-                                        target = enemy;
-                                        dist = length;
-                                    }
-                                }
-                            }
-                            if (dist != -1 && dist < Main.BULLET_SPEED * delta) {
-                                if (target.hit(getDamage())) {
-                                    kills++;
-                                    level.totalKills++;
-                                }
+                            if (getX() < 0 || getX() > level.prototype.width || getY() < 0 || getY() > level.prototype.height) {
                                 remove();
                                 effect.allowCompletion();
                                 return;
                             }
-                            if (level.enemies.contains(target)) {
+                            Enemy target;
+                            float length = finalTarget.getPosition().cpy().sub(getX(), getY()).len();
+                            if (level.enemies.contains(finalTarget) && length <= getRange()) {
+                                target = finalTarget;
+                            } else target = targeting.target(Tower.this);
+                            if (target != null) {
+                                float dist = target.getPosition().cpy().sub(getX(), getY()).len();
+                                if (dist < Main.BULLET_SPEED * delta) {
+                                    if (target.hit(getDamage())) {
+                                        kills++;
+                                        level.totalKills++;
+                                    }
+                                    remove();
+                                    effect.allowCompletion();
+                                    return;
+                                }
                                 float newAngle = new Vector2(target.getX() - getX(), target.getY() - getY()).angle();
                                 while (newAngle > angle + 180) newAngle -= 360;
                                 while (newAngle < angle - 180) newAngle += 360;
@@ -287,8 +283,58 @@ public class Tower extends Building {
         return range < 11 ? rangeCosts[range] : -1;
     }
 
-
     public int getSpeedCost() {
         return speed < 11 ? speedCosts[speed] : -1;
+    }
+
+    private enum Targeting implements Comparator<Enemy>{
+        NEAREST {
+            @Override
+            public int compare(Enemy enemy, Enemy oEnemy) {
+                float length = enemy.getPosition().cpy().sub(tower.getX(), tower.getY()).len();
+                float olength = oEnemy.getPosition().cpy().sub(tower.getX(), tower.getY()).len();
+                return (int) (length - olength);
+            }
+        },
+        FIRST {
+            @Override
+            public int compare(Enemy enemy, Enemy oEnemy) {
+                return (int) (enemy.getDistance() - oEnemy.getDistance());
+            }
+        },
+        LAST {
+            @Override
+            public int compare(Enemy enemy, Enemy oEnemy) {
+                return (int) (oEnemy.getDistance() - enemy.getDistance());
+            }
+        },
+        STRONGEST {
+            @Override
+            public int compare(Enemy enemy, Enemy oEnemy) {
+                return (int) (oEnemy.health - enemy.health);
+            }
+        },
+        WEAKEST {
+            @Override
+            public int compare(Enemy enemy, Enemy oEnemy) {
+                return (int) (enemy.health - oEnemy.health);
+            }
+        };
+
+        public Tower tower;
+
+        public Enemy target(Tower tower) {
+            this.tower = tower;
+            ArrayList<Enemy> potential = new ArrayList<>();
+            for (Enemy enemy : tower.level.enemies) {
+                float length = enemy.getPosition().cpy().sub(tower.getX(), tower.getY()).len();
+                if (length <= tower.getRange()) {
+                    potential.add(enemy);
+                }
+            }
+            if (potential.isEmpty()) return null;
+            Collections.sort(potential, this);
+            return potential.get(0);
+        }
     }
 }

@@ -21,7 +21,7 @@ public class Enemy extends Image {
     private final float speed;
     private final Level level;
     public float slowed;
-    private float health;
+    public float health;
     private int path;
 
     public Enemy(EnemyPrototype enemyPrototype, Level level) {
@@ -70,6 +70,14 @@ public class Enemy extends Image {
             } else setPosition(level.path[path].x - Main.ENEMY_SIZE / 2, level.path[path].y - Main.ENEMY_SIZE / 2);
         } else
             setPosition(getX() + tempSpeed * MathUtils.cosDeg(angle) * delta, getY() + tempSpeed * MathUtils.sinDeg(angle) * delta);
+    }
+
+    public float getDistance() {
+        float dist = 0;
+        for (int i = path; i < level.path.length - 1; i++) {
+            dist += new Vector2(level.path[i + 1].x - getX() - Main.ENEMY_SIZE / 2, level.path[i + 1].y - getY() - Main.ENEMY_SIZE / 2).len();
+        }
+        return dist;
     }
 
     public static class EnemyPrototype {

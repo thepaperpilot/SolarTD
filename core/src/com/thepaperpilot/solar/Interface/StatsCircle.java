@@ -68,7 +68,7 @@ public class StatsCircle extends Table {
     }
 
     public void draw (Batch batch, float parentAlpha) {
-        if (level == null) return;
+        if (level == null || level.selectedBuilding == null) return;
         batch.end();
         Vector2 coords = getStage().stageToScreenCoordinates(localToStageCoordinates(new Vector2(SIZE / 2, SIZE / 2)));
         coords.y = getStage().getViewport().getScreenHeight() - coords.y;
