@@ -152,8 +152,8 @@ public class Main extends Game implements Screen {
         }
         // also clean up our shit
         manager.dispose();
-        skin.dispose();
-        batch.dispose();
+        if (skin != null) skin.dispose();
+        if (batch != null) batch.dispose();
     }
 
     @Override

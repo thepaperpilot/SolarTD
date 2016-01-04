@@ -46,6 +46,7 @@ public class Tower extends Building {
 
     public int kills;
     public int shots;
+    public Targeting targeting;
     boolean comboUpgrade;
     private float time;
     private boolean ability;
@@ -53,7 +54,6 @@ public class Tower extends Building {
     private int damage;
     private int speed;
     private ParticleEffect effect;
-    private Targeting targeting;
 
     public Tower(float x, float y, Level.Resource type, final Level level) {
         super(x, y, Main.TOWER_RADIUS, level, type);
@@ -287,7 +287,7 @@ public class Tower extends Building {
         return speed < 11 ? speedCosts[speed] : -1;
     }
 
-    private enum Targeting implements Comparator<Enemy>{
+    public enum Targeting implements Comparator<Enemy>{
         NEAREST {
             @Override
             public int compare(Enemy enemy, Enemy oEnemy) {

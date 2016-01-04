@@ -27,6 +27,11 @@ public class Menu {
     private static final Label speedLabel = new Label("0", Main.skin);
     private static final ProgressBar speedBar = new ProgressBar(0, 11, 1, false, Main.skin);
     private static final TextButton speedUpgrade = new TextButton("0", Main.skin);
+    private static final TextButton nearestButton = new TextButton("Nearest", Main.skin, "toggle");
+    private static final TextButton firstButton = new TextButton("First", Main.skin, "toggle");
+    private static final TextButton lastButton = new TextButton("Last", Main.skin, "toggle");
+    private static final TextButton strongestButton = new TextButton("Strongest", Main.skin, "toggle");
+    private static final TextButton weakestButton = new TextButton("Weakest", Main.skin, "toggle");
     private static final Table generatorTable = new Table(Main.skin);
     private static final Label extractorsLabel = new Label("0", Main.skin);
     private static final ProgressBar extractorsBar = new ProgressBar(0, 9, 1, false, Main.skin);
@@ -49,9 +54,10 @@ public class Menu {
 
     static {
         new ButtonGroup(settingsButton, generalButton);
+        new ButtonGroup(nearestButton, firstButton, lastButton, strongestButton, weakestButton);
 
         menu.setVisible(false);
-        menu.setSize(300, 200);
+        menu.setSize(300, 206);
         menu.setPosition(20, 200);
         menu.setColor(1, 1, 1, 0);
 
@@ -78,46 +84,57 @@ public class Menu {
         Button sellButton = new TextButton("Sell Tower", Main.skin);
         Button moveButton = new TextButton("Move Tower", Main.skin);
         towerTable.pad(2);
-        towerTable.add(new Label("Damage: ", Main.skin)).right();
+        Table upgradesTable = new Table(Main.skin);
+        upgradesTable.add(new Label("Damage: ", Main.skin)).right();
         damageLabel.setColor(1, 0, 0, 1);
-        towerTable.add(damageLabel).right();
+        upgradesTable.add(damageLabel).right();
         damageBar.setColor(1, 0, 0, 1);
-        towerTable.add(damageBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
+        upgradesTable.add(damageBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         damageUpgrade.setColor(1, 0, 0, 1);
-        towerTable.add(damageUpgrade).row();
-        towerTable.add(new Label("Range: ", Main.skin)).right();
+        upgradesTable.add(damageUpgrade).row();
+        upgradesTable.add(new Label("Range: ", Main.skin)).right();
         rangeLabel.setColor(0, 0, 1, 1);
-        towerTable.add(rangeLabel).right();
+        upgradesTable.add(rangeLabel).right();
         rangeBar.setColor(0, 0, 1, 1);
-        towerTable.add(rangeBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
+        upgradesTable.add(rangeBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         rangeUpgrade.setColor(0, 0, 1, 1);
-        towerTable.add(rangeUpgrade).row();
-        towerTable.add(new Label("Speed: ", Main.skin)).right();
+        upgradesTable.add(rangeUpgrade).row();
+        upgradesTable.add(new Label("Speed: ", Main.skin)).right();
         speedLabel.setColor(1, 1, 0, 1);
-        towerTable.add(speedLabel).right();
+        upgradesTable.add(speedLabel).right();
         speedBar.setColor(1, 1, 0, 1);
-        towerTable.add(speedBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
+        upgradesTable.add(speedBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         speedUpgrade.setColor(1, 1, 0, 1);
-        towerTable.add(speedUpgrade).row();
+        upgradesTable.add(speedUpgrade).row();
+        towerTable.add(upgradesTable).row();
+        Table targetingTable = new Table(Main.skin);
+        targetingTable.add(nearestButton);
+        targetingTable.add(firstButton);
+        targetingTable.add(lastButton);
+        targetingTable.add(strongestButton);
+        targetingTable.add(weakestButton);
+        towerTable.add(targetingTable).row();
         Table towerStatsTable = new Table(Main.skin);
         towerStatsTable.add(new Label("Kills: ", Main.skin));
         towerStatsTable.add(towerKillsLabel).row();
         towerStatsTable.add(new Label("Shots: ", Main.skin));
         towerStatsTable.add(towerShotsLabel).row();
-        towerTable.add(towerStatsTable).colspan(4);
+        towerTable.add(towerStatsTable);
         generatorTable.pad(2);
-        generatorTable.add(new Label("Extractors: ", Main.skin)).right();
-        generatorTable.add(extractorsLabel).right();
-        generatorTable.add(extractorsBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
-        generatorTable.add(extractorsUpgrade).row();
-        generatorTable.add(new Label("Efficiency: ", Main.skin)).right();
-        generatorTable.add(efficiencyLabel).right();
-        generatorTable.add(efficiencyBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
-        generatorTable.add(efficiencyUpgrade).row();
+        Table generatorUpgrades = new Table(Main.skin);
+        generatorUpgrades.add(new Label("Extractors: ", Main.skin)).right();
+        generatorUpgrades.add(extractorsLabel).right();
+        generatorUpgrades.add(extractorsBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
+        generatorUpgrades.add(extractorsUpgrade).row();
+        generatorUpgrades.add(new Label("Efficiency: ", Main.skin)).right();
+        generatorUpgrades.add(efficiencyLabel).right();
+        generatorUpgrades.add(efficiencyBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
+        generatorUpgrades.add(efficiencyUpgrade).row();
+        generatorTable.add(generatorUpgrades).row();
         Table generatorStatsTable = new Table(Main.skin);
         generatorStatsTable.add(new Label("Generated Resources: ", Main.skin));
         generatorStatsTable.add(generatedLabel).row();
-        generatorTable.add(generatorStatsTable).colspan(4);
+        generatorTable.add(generatorStatsTable);
         generalTable.top().add(towerTable).fill().row();
         generalTable.add(towerCircle).size(StatsCircle.SIZE).row();
         generalTable.add(sellButton).expandX().fill().row();
@@ -177,6 +194,31 @@ public class Menu {
                 }
             }
         });
+        nearestButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                ((Tower) level.selectedBuilding).targeting = Tower.Targeting.NEAREST;
+            }
+        });
+        firstButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                ((Tower) level.selectedBuilding).targeting = Tower.Targeting.FIRST;
+            }
+        });
+        lastButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                ((Tower) level.selectedBuilding).targeting = Tower.Targeting.LAST;
+            }
+        });
+        strongestButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                ((Tower) level.selectedBuilding).targeting = Tower.Targeting.STRONGEST;
+            }
+        });
+        weakestButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                ((Tower) level.selectedBuilding).targeting = Tower.Targeting.WEAKEST;
+            }
+        });
         extractorsUpgrade.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 if (level.selectedBuilding instanceof Generator) {
@@ -228,6 +270,23 @@ public class Menu {
             speedLabel.setText("" + (int) tower.getSpeed());
             speedBar.setValue(tower.getSpeedIndex());
             speedUpgrade.setText("" + (tower.getSpeedCost() == -1 ? "infinity" : tower.getSpeedCost()));
+            switch(tower.targeting) {
+                case NEAREST:
+                    nearestButton.setChecked(true);
+                    break;
+                case FIRST:
+                    firstButton.setChecked(true);
+                    break;
+                case LAST:
+                    lastButton.setChecked(true);
+                    break;
+                case STRONGEST:
+                    strongestButton.setChecked(true);
+                    break;
+                case WEAKEST:
+                    weakestButton.setChecked(true);
+                    break;
+            }
             if (generalTable.getCell(generatorTable) != null)
                 generalTable.getCell(generatorTable).setActor(towerTable);
         } else {
