@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
@@ -29,6 +30,7 @@ import com.thepaperpilot.solar.Entities.Generator;
 import com.thepaperpilot.solar.Entities.Tower;
 import com.thepaperpilot.solar.Interface.HUD;
 import com.thepaperpilot.solar.Interface.Menu;
+import com.thepaperpilot.solar.Interface.StatsCircle;
 import com.thepaperpilot.solar.Main;
 
 import java.util.ArrayList;
@@ -43,6 +45,7 @@ public class Level implements Screen {
     public final Stage ui;
     public final Wave[] waves;
     public final ArrayList<Building> buildings = new ArrayList<>();
+    private final Image bg;
     private final ParticleEffect pathParticles;
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
     public Building selectedBuilding;
@@ -94,7 +97,7 @@ public class Level implements Screen {
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         ui = new Stage(new StretchViewport(Main.UI_WIDTH, Main.UI_WIDTH * 9f / 16f));
 
-        stage.addActor(new Image(Main.getDrawable("bg")));
+        bg = new Image(Main.getDrawable("bg"));
 
         stage.addListener(new ClickListener(Input.Buttons.LEFT) {
             public void clicked(InputEvent event, float x, float y) {
@@ -260,9 +263,26 @@ public class Level implements Screen {
         Menu.update();
 
         if (!paused) stage.act(delta);
-        stage.draw();
 
         Batch batch = stage.getBatch();
+        batch.begin();
+        bg.draw(batch, 1);
+        batch.end();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        for (Building building : buildings) {
+            if (building instanceof Generator) {
+                Color color = building.type == Level.Resource.RED ? Color.RED : building.type == Level.Resource.BLUE ? Color.BLUE : Color.YELLOW;
+                shapeRenderer.setColor(color.r, color.b, color.g, color.a * batch.getColor().a);
+            }
+            StatsCircle.drawBottom(shapeRenderer, new Vector2(building.area.x, building.area.y), building, 1f, Main.TOWER_RADIUS * 1.2f);
+        }
+        shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+
+        stage.draw();
+
         batch.begin();
         pathParticles.draw(batch, paused ? 0 : delta * .2f);
         for (int i = 0; i < particles.size(); ) {
@@ -276,9 +296,7 @@ public class Level implements Screen {
         }
         batch.end();
 
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
-
+        Gdx.gl20.glEnable(GL20.GL_BLEND);
         if (selectedBuilding != null) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(1, 1, 1, .5f);

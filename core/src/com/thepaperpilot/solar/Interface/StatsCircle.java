@@ -22,13 +22,8 @@ public class StatsCircle extends Table {
     private final Label blueValue;
     private final Label yellowValue;
 
-    private boolean tower;
-    private float red;
-    private float blue;
-    private float yellow;
-    private float efficiency;
-    private float extractor;
     private Color color;
+    private Level level;
 
     public StatsCircle() {
         super(Main.skin);
@@ -46,29 +41,46 @@ public class StatsCircle extends Table {
         add(yellowValue).spaceRight(2).spaceBottom(SIZE);
     }
 
+    public static void drawBottom(ShapeRenderer renderer, Vector2 coords, Building building, float parentAlpha, float size) {
+        if (building instanceof Tower) {
+            Tower tower = ((Tower) building);
+            renderer.setColor(1, 0, 0, parentAlpha / 2f);
+            renderer.arc(coords.x, coords.y, size, 60 - (120 * tower.getDamageIndex() / 11f) / 2f, 120 * tower.getDamageIndex() / 11f);
+            renderer.setColor(0, 0, 1, parentAlpha / 2f);
+            renderer.arc(coords.x, coords.y, size, 180 - (120 * tower.getRangeIndex() / 11f) / 2f, 120 * tower.getRangeIndex() / 11f);
+            renderer.setColor(1, 1, 0, parentAlpha / 2f);
+            renderer.arc(coords.x, coords.y, size, 300 - (120 * tower.getSpeedIndex() / 11f) / 2f, 120 * tower.getSpeedIndex() / 11f);
+        } else {
+            // CAREFUL BUG ALERT
+            // set color BEFORE this method, and give a dummy parentAlpha
+            Generator generator = ((Generator) building);
+            renderer.arc(coords.x, coords.y, size, 120 - (180 * generator.getEfficiencyIndex() / 9f) / 2f, 180 * generator.getEfficiencyIndex() / 9f);
+            renderer.arc(coords.x, coords.y, size, 300 - (180 * generator.getExtractors() / 9f) / 2f, 180 * generator.getExtractors() / 9f);
+        }
+    }
+
+    public static void drawTop(ShapeRenderer renderer, Vector2 coords) {
+        renderer.circle(coords.x, coords.y, SIZE);
+    }
+
+    public void init(Level level) {
+        this.level = level;
+    }
+
     public void draw (Batch batch, float parentAlpha) {
+        if (level == null) return;
         batch.end();
         Vector2 coords = getStage().stageToScreenCoordinates(localToStageCoordinates(new Vector2(SIZE / 2, SIZE / 2)));
         coords.y = getStage().getViewport().getScreenHeight() - coords.y;
         Gdx.gl.glEnable(GL20.GL_BLEND);
         shape.begin(ShapeRenderer.ShapeType.Filled);
-        if (tower) {
-            shape.setColor(1, 0, 0, parentAlpha / 2f);
-            shape.arc(coords.x, coords.y, SIZE, 60 - (120 * red) / 2f, 120 * red);
-            shape.setColor(0, 0, 1, parentAlpha / 2f);
-            shape.arc(coords.x, coords.y, SIZE, 180 - (120 * blue) / 2f, 120 * blue);
-            shape.setColor(1, 1, 0, parentAlpha / 2f);
-            shape.arc(coords.x, coords.y, SIZE, 300 - (120 * yellow) / 2f, 120 * yellow);
-        } else {
-            shape.setColor(color.r, color.g, color.b, color.a * parentAlpha);
-            shape.arc(coords.x, coords.y, SIZE, 120 - (180 * efficiency) / 2f, 180 * efficiency);
-            shape.arc(coords.x, coords.y, SIZE, 300 - (180 * extractor) / 2f, 180 * extractor);
-        }
+        if (color != null) shape.setColor(color.r, color.b, color.g, color.a * parentAlpha);
+        drawBottom(shape, coords, level.selectedBuilding, parentAlpha, SIZE);
         shape.end();
-        shape.begin(ShapeRenderer.ShapeType.Line);
         Gdx.gl20.glLineWidth(4);
         shape.setColor(.5f, .5f, .5f, parentAlpha);
-        shape.circle(coords.x, coords.y, SIZE);
+        shape.begin(ShapeRenderer.ShapeType.Line);
+        drawTop(shape, coords);
         shape.end();
         Gdx.gl20.glLineWidth(1);
         Gdx.gl.glDisable(GL20.GL_BLEND);
@@ -77,17 +89,9 @@ public class StatsCircle extends Table {
     }
 
     public void update(Building building) {
-        tower = building instanceof Tower;
-        if (tower) {
-            Tower tower = ((Tower) building);
-            red = tower.getDamageIndex() / 11f;
-            blue = tower.getRangeIndex() / 11f;
-            yellow = tower.getSpeedIndex() / 11f;
-        } else {
+        if (building instanceof Generator) {
             Generator generator = ((Generator) building);
             color = generator.type == Level.Resource.RED ? Color.RED : generator.type == Level.Resource.BLUE ? Color.BLUE : Color.YELLOW;
-            efficiency = generator.getEfficiencyIndex() / 9f;
-            extractor = generator.getExtractors() / 9f;
         }
         redValue.setText("" + (int) building.redValue);
         blueValue.setText("" + (int) building.blueValue);

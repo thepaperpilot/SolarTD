@@ -267,6 +267,7 @@ public class Menu {
 
     public static void init(Level level) {
         Menu.level = level;
+        towerCircle.init(level);
 
         level.ui.addActor(menu);
     }
