@@ -296,7 +296,7 @@ public class Level implements Screen {
         }
         batch.end();
 
-        Gdx.gl20.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
         if (selectedBuilding != null) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(1, 1, 1, .5f);

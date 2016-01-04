@@ -59,7 +59,7 @@ public class StatsCircle extends Table {
         }
     }
 
-    public static void drawTop(ShapeRenderer renderer, Vector2 coords) {
+    private static void drawTop(ShapeRenderer renderer, Vector2 coords) {
         renderer.circle(coords.x, coords.y, SIZE);
     }
 
@@ -77,12 +77,12 @@ public class StatsCircle extends Table {
         if (color != null) shape.setColor(color.r, color.b, color.g, color.a * parentAlpha);
         drawBottom(shape, coords, level.selectedBuilding, parentAlpha, SIZE);
         shape.end();
-        Gdx.gl20.glLineWidth(4);
+        Gdx.gl.glLineWidth(4);
         shape.setColor(.5f, .5f, .5f, parentAlpha);
         shape.begin(ShapeRenderer.ShapeType.Line);
         drawTop(shape, coords);
         shape.end();
-        Gdx.gl20.glLineWidth(1);
+        Gdx.gl.glLineWidth(1);
         Gdx.gl.glDisable(GL20.GL_BLEND);
         batch.begin();
         super.draw(batch, parentAlpha);

@@ -17,11 +17,11 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Levels.Wave;
 
-public class MenuScreen implements Screen{
-    Batch batch;
-    Stage stage;
+class MenuScreen implements Screen{
+    private final Batch batch;
+    private final Stage stage;
 
-    ParticleEffect stars;
+    private final ParticleEffect stars;
 
     public MenuScreen() {
         batch = new SpriteBatch();

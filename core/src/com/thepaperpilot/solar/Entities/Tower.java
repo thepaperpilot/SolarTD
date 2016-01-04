@@ -40,10 +40,10 @@ public class Tower extends Building {
         bluePool = new ParticleEffectPool(particleEffect, 0, 100);
     }
 
-    public float time;
     public int kills;
     public int shots;
     boolean comboUpgrade;
+    private float time;
     private boolean ability;
     private int range;
     private int damage;
@@ -81,7 +81,7 @@ public class Tower extends Building {
         return false;
     }
 
-    public static float getBaseDamage(Level.Resource resource) {
+    private static float getBaseDamage(Level.Resource resource) {
         return resource == Level.Resource.RED ? 3 : resource == Level.Resource.BLUE ? 6 : 1;
     }
 
@@ -89,7 +89,7 @@ public class Tower extends Building {
         return resource == Level.Resource.RED ? 100 : resource == Level.Resource.BLUE ? 150 : 50;
     }
 
-    public static float getBaseSpeed(Level.Resource resource) {
+    private static float getBaseSpeed(Level.Resource resource) {
         return resource == Level.Resource.RED ? 2 : resource == Level.Resource.BLUE ? 1 : 6;
     }
 
