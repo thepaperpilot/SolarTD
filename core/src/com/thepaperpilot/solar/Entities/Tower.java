@@ -49,6 +49,7 @@ public class Tower extends Building {
     public int shots;
     public Targeting targeting;
     public boolean comboUpgrade;
+    public float comboTimer;
     private float time;
     private boolean ability = false;
     private int range;
@@ -107,6 +108,8 @@ public class Tower extends Building {
 
     public void act(float delta) {
         time += delta * getSpeed();
+        if (comboUpgrade) comboTimer += delta * getSpeed();
+        // TODO fire combos
         Enemy target = targeting.target(this, new Vector2(getX(), getY()));
         if ((target == null && !(type == Level.Resource.BLUE && ability)) || (type == Level.Resource.BLUE && missiles >= getSpeed())) {
             time = Math.min(time, Main.TOWER_SPEED);

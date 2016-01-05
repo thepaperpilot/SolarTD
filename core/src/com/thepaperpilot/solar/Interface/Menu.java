@@ -19,6 +19,7 @@ public class Menu {
     private static final TextButton settingsButton = new TextButton("Settings", Main.skin, "toggle");
     private static final TextButton comboButton = new TextButton("Combos", Main.skin, "toggle");
     private static final TextButton generalButton = new TextButton("General", Main.skin, "toggle");
+    private static final TextButton towerComboButton = new TextButton("Combo", Main.skin, "toggle");
     private static final Table buildingTable = new Table(Main.skin);
     private static final Table towerTable = new Table(Main.skin);
     private static final Label damageLabel = new Label("0", Main.skin);
@@ -53,13 +54,17 @@ public class Menu {
     private static final Table settingsTable = new Table(Main.skin);
     private static final ScrollPane comboPane;
     private static final Table comboTable = new Table(Main.skin);
+    private static final ProgressBar comboBar = new ProgressBar(0, 100, 1, false, Main.skin);
+    private static final Label comboLabel = new Label("0%", Main.skin);
+    private static final ScrollPane towerComboPane;
+    private static final Table towerComboTable = new Table(Main.skin);
     private static final Window menu = new Window("Settings", Main.skin, "large");
     private static Table currentTab;
 
     private static Level level;
 
     static {
-        new ButtonGroup(settingsButton, generalButton, comboButton);
+        new ButtonGroup(settingsButton, comboButton, generalButton, towerComboButton);
         new ButtonGroup(nearestButton, firstButton, lastButton, strongestButton, weakestButton);
 
         menu.setVisible(false);
@@ -73,7 +78,8 @@ public class Menu {
         buttonsTable.add(comboButton).expandX().fill().spaceBottom(4).row();
         buildingLabel.setAlignment(Align.center);
         buildingTable.center().add(buildingLabel).expandX().fill().spaceBottom(4).row();
-        buildingTable.add(generalButton).expandX().fill();
+        buildingTable.add(generalButton).expandX().fill().spaceBottom(4).row();
+        buildingTable.add(towerComboButton).expandX().fill().spaceBottom(4).row();
         buttonsTable.add(buildingTable).spaceTop(8).expandX().fill().row();
         settingsButton.setChecked(true);
 
@@ -164,6 +170,7 @@ public class Menu {
         generalTable.add(moveButton).expandX().fill().row();
         buildingTable.setVisible(false);
 
+        comboTable.setName("Combos");
         Table combos = new Table(Main.skin);
         combos.top();
         for (Combo combo : Combo.values()) {
@@ -174,6 +181,15 @@ public class Menu {
         comboPane.setScrollingDisabled(true, false);
         comboPane.setFadeScrollBars(false);
         comboTable.add(comboPane).spaceTop(2).expand().fill();
+
+        towerComboTable.setName("Combo Tower");
+        towerComboTable.add(comboBar).minWidth(1).expandX().fill();
+        towerComboTable.add(comboLabel).width(25).spaceLeft(2).row();
+        towerComboPane = new ScrollPane(new Table(), Main.skin);
+        towerComboPane.setSmoothScrolling(true);
+        towerComboPane.setScrollingDisabled(true, false);
+        towerComboPane.setFadeScrollBars(false);
+        towerComboTable.add(towerComboPane).colspan(2).spaceTop(2).expand().fill();
 
         menu.left().add(buttonsTable).expandY().fill();
         menu.add(settingsTable).expand().fill();
@@ -204,14 +220,19 @@ public class Menu {
                 switchTab(settingsTable);
             }
         });
+        comboButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                switchTab(comboTable);
+            }
+        });
         generalButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 switchTab(generalTable);
             }
         });
-        comboButton.addListener(new ClickListener() {
+        towerComboButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                switchTab(comboTable);
+                switchTab(towerComboTable);
             }
         });
         damageUpgrade.addListener(new ClickListener() {
@@ -295,7 +316,7 @@ public class Menu {
 
     public static void deselect() {
         buildingTable.setVisible(false);
-        if (currentTab == generalTable) {
+        if (currentTab == generalTable || currentTab == towerComboTable) {
             settingsButton.setChecked(true);
             switchTab(settingsTable);
         }
@@ -340,6 +361,7 @@ public class Menu {
             comboUpgrade.setBackground(Main.skin.getDrawable(tower.comboUpgrade ? "default-round-down" : "default-round"));
             if (generalTable.getCell(generatorTable) != null)
                 generalTable.getCell(generatorTable).setActor(towerTable);
+            towerComboButton.setVisible(tower.comboUpgrade);
         } else {
             Generator generator = ((Generator) level.selectedBuilding);
             Color color = generator.type == Level.Resource.RED ? Color.RED : generator.type == Level.Resource.BLUE ? Color.BLUE : Color.YELLOW;
@@ -357,6 +379,7 @@ public class Menu {
             efficiencyUpgrade.setColor(color);
             if (generalTable.getCell(towerTable) != null)
                 generalTable.getCell(towerTable).setActor(generatorTable);
+            towerComboButton.setVisible(false);
         }
         generalTable.setName(level.selectedBuilding.getName());
         if (currentTab == generalTable) menu.getTitleLabel().setText(level.selectedBuilding.getName());
@@ -369,6 +392,11 @@ public class Menu {
             Tower tower = ((Tower) level.selectedBuilding);
             towerKillsLabel.setText("" + tower.kills);
             towerShotsLabel.setText("" + tower.shots);
+            if (((Tower) level.selectedBuilding).comboUpgrade) {
+                float time = ((Tower) level.selectedBuilding).comboTimer;
+                comboLabel.setText(time >= 100 ? "READY" : (int) time + "%");
+                comboBar.setValue(time);
+            }
         } else if (level.selectedBuilding != null){
             Generator generator = ((Generator) level.selectedBuilding);
             generatedLabel.setText("" + generator.generated);
