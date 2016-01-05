@@ -38,7 +38,7 @@ public class Enemy extends Image {
             level.enemies.remove(this);
             remove();
             ParticleEffect effect = deathPool.obtain();
-            effect.setPosition(getX(), getY());
+            effect.setPosition(getX() + Main.ENEMY_SIZE / 2, getY() + Main.ENEMY_SIZE / 2);
             level.particles.add(effect);
             return true;
         }

@@ -323,6 +323,7 @@ public class Tower extends Building {
             level.blueResource -= 50;
             level.yellowResource -= 50;
             comboUpgrade = true;
+            setDrawable(Main.getDrawable("towers/" + (type == Level.Resource.RED ? "redUp" : type == Level.Resource.BLUE ? "blueUp" : "yellowUp")));
         }
     }
 
