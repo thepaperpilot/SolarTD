@@ -74,7 +74,7 @@ public class StatsCircle extends Table {
         coords.y = getStage().getViewport().getScreenHeight() - coords.y;
         Gdx.gl.glEnable(GL20.GL_BLEND);
         shape.begin(ShapeRenderer.ShapeType.Filled);
-        if (color != null) shape.setColor(color.r, color.b, color.g, color.a * parentAlpha);
+        if (color != null) shape.setColor(color.r, color.g, color.b, color.a * parentAlpha);
         drawBottom(shape, coords, level.selectedBuilding, parentAlpha, SIZE);
         shape.end();
         Gdx.gl.glLineWidth(4);
