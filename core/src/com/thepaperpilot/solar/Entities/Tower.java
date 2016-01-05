@@ -3,6 +3,7 @@ package com.thepaperpilot.solar.Entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
@@ -49,10 +50,11 @@ public class Tower extends Building {
     public Targeting targeting;
     public boolean comboUpgrade;
     private float time;
-    private boolean ability;
+    private boolean ability = false;
     private int range;
     private int damage;
     private int speed;
+    private int missiles;
     private ParticleEffect effect;
 
     public Tower(float x, float y, Level.Resource type, final Level level) {
@@ -105,8 +107,8 @@ public class Tower extends Building {
 
     public void act(float delta) {
         time += delta * getSpeed();
-        Enemy target = targeting.target(this);
-        if (target == null) {
+        Enemy target = targeting.target(this, new Vector2(getX(), getY()));
+        if ((target == null && !(type == Level.Resource.BLUE && ability)) || (type == Level.Resource.BLUE && missiles >= getSpeed())) {
             time = Math.min(time, Main.TOWER_SPEED);
             if (type == Level.Resource.YELLOW) {
                 effect.allowCompletion();
@@ -126,30 +128,48 @@ public class Tower extends Building {
                         kills++;
                         level.totalKills++;
                     }
+                    if (ability) {
+                        Circle area = new Circle(target.getX(), target.getY(), 2 * Main.TOWER_RADIUS);
+                        for (int i = 0; i < level.enemies.size(); ) {
+                            Enemy enemy = level.enemies.get(i);
+                            if (area.contains(enemy.getPosition())) {
+                                if (enemy.hit(getDamage())) {
+                                    kills++;
+                                    level.totalKills++;
+                                    continue;
+                                }
+                            }
+                            i++;
+                        }
+                    }
                     shots++;
                 }
                 break;
             case BLUE:
-                while (time >= Main.TOWER_SPEED) {
+                while (time >= Main.TOWER_SPEED && missiles < getSpeed()) {
                     time -= Main.TOWER_SPEED;
                     ParticleEffect effect = bluePool.obtain();
                     effect.setPosition(getX() + Main.TOWER_RADIUS, getY() + Main.TOWER_RADIUS);
                     level.particles.add(effect);
                     final Enemy finalTarget = target;
                     level.stage.addActor(new ParticleEffectActor(effect, getX() + Main.TOWER_RADIUS, getY() + Main.TOWER_RADIUS) {
-                        float angle = new Vector2(finalTarget.getX() - getX(), finalTarget.getY() - getY()).angle();
+                        float angle = new Vector2(finalTarget == null ? MathUtils.random() : finalTarget.getX() - getX(), finalTarget == null ? MathUtils.random() : finalTarget.getY() - getY()).angle();
 
                         public void act(float delta) {
                             if (getX() < 0 || getX() > level.prototype.width || getY() < 0 || getY() > level.prototype.height) {
                                 remove();
+                                missiles--;
                                 effect.allowCompletion();
                                 return;
                             }
                             Enemy target;
-                            float length = finalTarget.getPosition().cpy().sub(getX(), getY()).len();
-                            if (level.enemies.contains(finalTarget) && length <= getRange()) {
-                                target = finalTarget;
-                            } else target = targeting.target(Tower.this);
+                            if (finalTarget == null) target = targeting.target(Tower.this, new Vector2(getX(), getY()));
+                            else {
+                                float length = finalTarget.getPosition().cpy().sub(getX(), getY()).len();
+                                if (level.enemies.contains(finalTarget) && length <= getRange()) {
+                                    target = finalTarget;
+                                } else target = targeting.target(Tower.this, new Vector2(getX(), getY()));
+                            }
                             if (target != null) {
                                 float dist = target.getPosition().cpy().sub(getX(), getY()).len();
                                 if (dist < Main.BULLET_SPEED * delta) {
@@ -158,6 +178,7 @@ public class Tower extends Building {
                                         level.totalKills++;
                                     }
                                     remove();
+                                    missiles--;
                                     effect.allowCompletion();
                                     return;
                                 }
@@ -169,12 +190,13 @@ public class Tower extends Building {
                                 else if (newAngle > angle)
                                     angle += Main.TURN_RADIUS;
                                 else angle -= Main.TURN_RADIUS;
-                            }
+                            } else if (ability) angle += Main.TURN_RADIUS / 4f;
                             setPosition(getX() + Main.BULLET_SPEED * MathUtils.cosDeg(angle) * delta, getY() + Main.BULLET_SPEED * MathUtils.sinDeg(angle) * delta);
                             super.act(delta);
                         }
                     });
                     shots++;
+                    missiles++;
                 }
                 break;
             case YELLOW:
@@ -202,6 +224,11 @@ public class Tower extends Building {
                         Enemy enemy = level.enemies.get(i);
                         if (area.contains(enemy.getPosition())) {
                             enemy.slowed = getDamage();
+                            if (ability && enemy.hit(getDamage())) {
+                                kills++;
+                                level.totalKills++;
+                                continue;
+                            }
                         }
                         i++;
                     }
@@ -227,6 +254,7 @@ public class Tower extends Building {
                 redValue += Main.SELL_RATE * damageCosts[damage];
                 level.redResource -= damageCosts[damage];
                 damage++;
+                if (damage == 11 && type == Level.Resource.RED) ability = true;
             }
         }
     }
@@ -237,6 +265,7 @@ public class Tower extends Building {
                 blueValue += Main.SELL_RATE * rangeCosts[range];
                 level.blueResource -= rangeCosts[range];
                 range++;
+                if(range == 11 && type == Level.Resource.BLUE) ability = true;
             }
         }
     }
@@ -247,6 +276,7 @@ public class Tower extends Building {
                 yellowValue += Main.SELL_RATE * speedCosts[speed];
                 level.yellowResource -= speedCosts[speed];
                 speed++;
+                if (speed == 11 && type == Level.Resource.YELLOW) ability = true;
             }
         }
     }
@@ -300,8 +330,8 @@ public class Tower extends Building {
         NEAREST {
             @Override
             public int compare(Enemy enemy, Enemy oEnemy) {
-                float length = enemy.getPosition().cpy().sub(tower.getX(), tower.getY()).len();
-                float olength = oEnemy.getPosition().cpy().sub(tower.getX(), tower.getY()).len();
+                float length = enemy.getPosition().cpy().sub(point).len();
+                float olength = oEnemy.getPosition().cpy().sub(point).len();
                 return (int) (length - olength);
             }
         },
@@ -331,12 +361,14 @@ public class Tower extends Building {
         };
 
         public Tower tower;
+        public Vector2 point;
 
-        public Enemy target(Tower tower) {
+        public Enemy target(Tower tower, Vector2 point) {
             this.tower = tower;
+            this.point = point;
             ArrayList<Enemy> potential = new ArrayList<>();
             for (Enemy enemy : tower.level.enemies) {
-                float length = enemy.getPosition().cpy().sub(tower.getX(), tower.getY()).len();
+                float length = enemy.getPosition().cpy().sub(point).len();
                 if (length <= tower.getRange()) {
                     potential.add(enemy);
                 }
