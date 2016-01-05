@@ -140,6 +140,9 @@ public class Level implements Screen {
                     selectedBuilding.setPosition(coords.x - (selectedBuilding instanceof Tower ? 1 : 2) * Main.TOWER_RADIUS, coords.y - (selectedBuilding instanceof Tower ? 1 : 2) * Main.TOWER_RADIUS);
                     selectedBuilding.area.setPosition(coords.x, coords.y);
                     movingBuilding = false;
+                    if (selectedBuilding instanceof Tower) {
+                        Tower.refreshNeighbors(Level.this);
+                    }
                     return;
                 }
                 boolean paid = false;
@@ -161,6 +164,7 @@ public class Level implements Screen {
                     Tower tower = new Tower(coords.x - Main.TOWER_RADIUS, coords.y - Main.TOWER_RADIUS, selectedResource, Level.this);
                     buildings.add(tower);
                     stage.addActor(tower);
+                    Tower.refreshNeighbors(Level.this);
                 } else {
                     Generator generator = new Generator(coords.x - 2 * Main.TOWER_RADIUS, coords.y - 2 * Main.TOWER_RADIUS, selectedResource, Level.this);
                     buildings.add(generator);
@@ -170,6 +174,7 @@ public class Level implements Screen {
                     placingBuilding = false;
                     HUD.deselect();
                 }
+                Menu.select();
             }
         });
 
@@ -314,6 +319,8 @@ public class Level implements Screen {
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
                 shapeRenderer.setColor(0, 1, 0, .5f);
                 shapeRenderer.circle(selectedBuilding.area.x, selectedBuilding.area.y, ((Tower) selectedBuilding).getRange());
+                shapeRenderer.setColor(1, 1, 0, .5f);
+                shapeRenderer.circle(selectedBuilding.area.x, selectedBuilding.area.y, 4 * Main.TOWER_RADIUS);
                 shapeRenderer.end();
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
                 shapeRenderer.setColor(0, 1, 0, .25f);

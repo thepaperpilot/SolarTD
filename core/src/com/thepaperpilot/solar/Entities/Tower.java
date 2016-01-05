@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
+import com.thepaperpilot.solar.Combo;
+import com.thepaperpilot.solar.Interface.Menu;
 import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Main;
 
@@ -45,11 +47,14 @@ public class Tower extends Building {
         bluePool = new ParticleEffectPool(particleEffect, 0, 100);
     }
 
+    public final ArrayList<Tower> neighbors = new ArrayList<>();
     public int kills;
     public int shots;
     public Targeting targeting;
     public boolean comboUpgrade;
     public float comboTimer;
+    public float comboParticleTimer;
+    public ParticleEffect comboEffect;
     private float time;
     private boolean ability = false;
     private int range;
@@ -57,6 +62,7 @@ public class Tower extends Building {
     private int speed;
     private int missiles;
     private ParticleEffect effect;
+    private Combo combo;
 
     public Tower(float x, float y, Level.Resource type, final Level level) {
         super(x, y, Main.TOWER_RADIUS, level, type);
@@ -66,6 +72,9 @@ public class Tower extends Building {
         setDrawable(Main.getDrawable("towers/" + (type == Level.Resource.RED ? "red" : type == Level.Resource.BLUE ? "blue" : "yellow")));
         if (type == Level.Resource.YELLOW) effect = yellowPool.obtain();
         targeting = type == Level.Resource.RED ? Targeting.FIRST : type == Level.Resource.BLUE ? Targeting.STRONGEST : Targeting.NEAREST;
+        comboEffect = new ParticleEffect();
+        comboEffect.load(Gdx.files.internal("particles/combo.p"), Gdx.files.internal("particles/"));
+        level.particles.add(comboEffect);
     }
 
     public static float getRedCost(Level.Resource type) {
@@ -106,10 +115,62 @@ public class Tower extends Building {
         return type == Level.Resource.RED ? "A medium range fast shooting tower" : type == Level.Resource.BLUE ? "A long range high damage tower" : "A short range AoE tower that slows enemies";
     }
 
+    public static void refreshNeighbors(Level level) {
+        for (Building building : level.buildings) {
+            if (building instanceof Generator) continue;
+            ((Tower) building).neighbors.clear();
+        }
+        for (Building building : level.buildings) {
+            if (building instanceof Generator) continue;
+            Tower tower = ((Tower) building);
+            for (Building oBuilding : level.buildings) {
+                if (oBuilding instanceof Generator) continue;
+                if (tower == oBuilding) continue;
+                if (tower.neighbors.contains(oBuilding)) continue;
+                if (new Vector2(building.getX(), building.getY()).dst(oBuilding.getX(), oBuilding.getY()) <= 4 * Main.TOWER_RADIUS) {
+                    tower.neighbors.add(((Tower) oBuilding));
+                    ((Tower) oBuilding).neighbors.add(tower);
+                }
+            }
+            if (tower.getCurrentCombo() == null || !tower.getCombos().contains(tower.getCurrentCombo())) tower.getNewCombo();
+            if (level.selectedBuilding == building) Menu.select();
+        }
+    }
+
     public void act(float delta) {
         time += delta * getSpeed();
-        if (comboUpgrade) comboTimer += delta * getSpeed();
-        // TODO fire combos
+        if (comboUpgrade && getCurrentCombo() != null) {
+            comboTimer += delta * getSpeed();
+            comboParticleTimer += delta * getSpeed();
+            if (comboTimer >= 100) {
+                Combo combo = getCurrentCombo();
+                combo.fire();
+                getNewCombo();
+                // TODO fire combos (and make it pretty)
+            }
+            while (comboTimer < 100 && comboParticleTimer >= 1) {
+                Combo combo = getCurrentCombo();
+                comboParticleTimer -= 1;
+                int red = combo.red;
+                int blue = combo.blue;
+                int yellow = combo.yellow;
+                for (Tower tower : neighbors) {
+                    if (!tower.comboUpgrade) continue;
+                    if ((tower.type == Level.Resource.RED && red > 0) || (tower.type == Level.Resource.BLUE && blue > 0) || (tower.type == Level.Resource.YELLOW && yellow > 0)){
+                        if (tower.type == Level.Resource.RED) red--;
+                        if (tower.type == Level.Resource.BLUE) blue--;
+                        if (tower.type == Level.Resource.YELLOW) yellow--;
+                        ParticleEffect effect = tower.comboEffect;
+                        effect.getEmitters().first().getAngle().setHigh(new Vector2(getX() - tower.getX(), getY() - tower.getY()).angle());
+                        float dist = new Vector2(tower.getX(), tower.getY()).dst(getX(), getY());
+                        effect.getEmitters().first().getLife().setHigh(dist * 10);
+                        effect.getEmitters().first().getTint().setColors(new float[]{tower.type == Level.Resource.RED || tower.type == Level.Resource.YELLOW ? 1 : 0, tower.type == Level.Resource.YELLOW ? 1 : 0, type == Level.Resource.BLUE ? 1 : 0});
+                        effect.setPosition(tower.getX() + Main.TOWER_RADIUS, tower.getY() + Main.TOWER_RADIUS);
+                        effect.getEmitters().first().addParticle();
+                    }
+                }
+            }
+        } else comboTimer = comboParticleTimer = 0;
         Enemy target = targeting.target(this, new Vector2(getX(), getY()));
         if ((target == null && !(type == Level.Resource.BLUE && ability)) || (type == Level.Resource.BLUE && missiles >= getSpeed())) {
             time = Math.min(time, Main.TOWER_SPEED);
@@ -196,6 +257,7 @@ public class Tower extends Building {
                             } else if (ability) angle += Main.TURN_RADIUS / 4f;
                             setPosition(getX() + Main.BULLET_SPEED * MathUtils.cosDeg(angle) * delta, getY() + Main.BULLET_SPEED * MathUtils.sinDeg(angle) * delta);
                             super.act(delta);
+                            effect.getEmitters().first().getAngle().setLow(angle);
                         }
                     });
                     shots++;
@@ -245,6 +307,9 @@ public class Tower extends Building {
         if (type == Level.Resource.YELLOW)
             level.particles.remove(effect);
         super.sell();
+        refreshNeighbors(level);
+        for (Tower tower : neighbors)
+            if (!tower.getCombos().contains(tower.getCurrentCombo())) tower.getNewCombo();
     }
 
     public String getName() {
@@ -326,8 +391,45 @@ public class Tower extends Building {
             level.blueResource -= 50;
             level.yellowResource -= 50;
             comboUpgrade = true;
+            getNewCombo();
+            for (Tower tower : neighbors)
+                if (tower.getCurrentCombo() == null) tower.getNewCombo();
             setDrawable(Main.getDrawable("towers/" + (type == Level.Resource.RED ? "redUp" : type == Level.Resource.BLUE ? "blueUp" : "yellowUp")));
         }
+    }
+
+    private Combo getCurrentCombo() {
+        return combo;
+    }
+
+    private void getNewCombo() {
+        combo = null;
+        ArrayList<Combo> combos = getCombos();
+        if (!combos.isEmpty())
+            combo = combos.get(MathUtils.random(combos.size() - 1));
+    }
+
+    public ArrayList<Combo> getCombos() {
+        ArrayList<Combo> combos = new ArrayList<>();
+        int red = 0, blue = 0, yellow = 0;
+        for (Tower tower : neighbors) {
+            if (!tower.comboUpgrade) continue;
+            switch (tower.type) {
+                case RED:
+                    red++;
+                    break;
+                case BLUE:
+                    blue++;
+                    break;
+                case YELLOW:
+                    yellow++;
+                    break;
+            }
+        }
+        for (Combo combo : Combo.values()) {
+            if (combo.type == type && red >= combo.red && blue >= combo.blue && yellow >= combo.yellow) combos.add(combo);
+        }
+        return combos;
     }
 
     public enum Targeting implements Comparator<Enemy>{

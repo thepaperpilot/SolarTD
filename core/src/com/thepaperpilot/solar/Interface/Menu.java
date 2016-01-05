@@ -185,7 +185,9 @@ public class Menu {
         towerComboTable.setName("Combo Tower");
         towerComboTable.add(comboBar).minWidth(1).expandX().fill();
         towerComboTable.add(comboLabel).width(25).spaceLeft(2).row();
-        towerComboPane = new ScrollPane(new Table(), Main.skin);
+        Table temp = new Table(Main.skin);
+        temp.top();
+        towerComboPane = new ScrollPane(temp, Main.skin);
         towerComboPane.setSmoothScrolling(true);
         towerComboPane.setScrollingDisabled(true, false);
         towerComboPane.setFadeScrollBars(false);
@@ -362,6 +364,15 @@ public class Menu {
             if (generalTable.getCell(generatorTable) != null)
                 generalTable.getCell(generatorTable).setActor(towerTable);
             towerComboButton.setVisible(tower.comboUpgrade);
+            if (!tower.comboUpgrade && currentTab == towerComboTable) {
+                settingsButton.setChecked(true);
+                switchTab(settingsTable);
+            }
+            Table combos = (Table) towerComboPane.getWidget();
+            combos.clearChildren();
+            for (Combo combo : tower.getCombos()) {
+                combos.add(combo.table).spaceBottom(2).expandX().fill().row();
+            }
         } else {
             Generator generator = ((Generator) level.selectedBuilding);
             Color color = generator.type == Level.Resource.RED ? Color.RED : generator.type == Level.Resource.BLUE ? Color.BLUE : Color.YELLOW;

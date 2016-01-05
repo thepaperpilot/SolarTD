@@ -8,25 +8,37 @@ import com.thepaperpilot.solar.Levels.Level;
 public enum Combo {
     // Max: 6
     // or else they won't fit
-    MINE(new Level.Resource[]{Level.Resource.RED, Level.Resource.RED}) {
-        void fire() {
+    MINE(1, 0, 0, Level.Resource.RED) {
+        public void fire() {
 
         }
     };
 
     public final Table table;
-    private final Level.Resource[] towers;
+    public final int red;
+    public final int blue;
+    public final int yellow;
+    public final Level.Resource type;
 
-    Combo(Level.Resource[] towers) {
-        this.towers = towers;
+    Combo(int red, int blue, int yellow, Level.Resource type) { // values do not include the tower firing
+        this.red = red;
+        this.blue = blue;
+        this.yellow = yellow;
+        this.type = type;
         table = new Table(Main.skin);
-        table.left().pad(4).add(new Label(name(), Main.skin)).left().spaceLeft(2).colspan(towers.length).row();
-        table.add(new Image(Main.getDrawable("towers/" + (towers[0] == Level.Resource.RED ? "redStoreDown" : towers[0] == Level.Resource.BLUE ? "blueStoreDown" : "yellowStoreDown")))).size(32);
-        for (int i = 1; i < towers.length; i++) {
-            table.add(new Image(Main.getDrawable("towers/" + (towers[i] == Level.Resource.RED ? "redStore" : towers[i] == Level.Resource.BLUE ? "blueStore" : "yellowStore")))).size(32);
+        table.left().pad(4).add(new Label(name(), Main.skin)).left().spaceLeft(2).colspan(1 + red + blue + yellow).row();
+        table.add(new Image(Main.getDrawable("towers/" + (type == Level.Resource.RED ? "redStoreDown" : type == Level.Resource.BLUE ? "blueStoreDown" : "yellowStoreDown")))).size(32);
+        for (int i = 0; i < red; i++) {
+            table.add(new Image(Main.getDrawable("towers/redStore"))).size(32);
+        }
+        for (int i = 0; i < blue; i++) {
+            table.add(new Image(Main.getDrawable("towers/blueStore"))).size(32);
+        }
+        for (int i = 0; i < yellow; i++) {
+            table.add(new Image(Main.getDrawable("towers/yellowStore"))).size(32);
         }
         table.setBackground(Main.skin.getDrawable("default-rect"));
     }
 
-    abstract void fire();
+    public abstract void fire();
 }
