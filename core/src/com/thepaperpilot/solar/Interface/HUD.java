@@ -200,7 +200,6 @@ public class HUD {
         if (level != null) {
             level.placingBuilding = button.isChecked();
             if (level.placingBuilding) {
-                level.selectedBuilding = null;
                 level.movingBuilding = false;
             }
             level.selectedType = tower ? 1 : 2;

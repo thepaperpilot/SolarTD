@@ -335,8 +335,21 @@ public class Level implements Screen {
                 shapeRenderer.setColor(1, 1, 1, .25f);
                 shapeRenderer.circle(coords.x, coords.y, range);
                 shapeRenderer.setColor(1, 1, 1, .5f);
-                for (Building building : buildings)
-                    if (!(movingBuilding && selectedBuilding == building)) shapeRenderer.circle(building.area.x, building.area.y, building.area.radius);
+                for (Building building : buildings) {
+                    if (!(movingBuilding && selectedBuilding == building))
+                        shapeRenderer.circle(building.area.x, building.area.y, building.area.radius);
+                    if (building instanceof Tower && coords.dst(building.area.x, building.area.y) <= 4 * Main.TOWER_RADIUS) {
+                        if (placingBuilding && selectedType == 1) {
+                            shapeRenderer.setColor(1, 1, ((Tower) building).comboUpgrade ? 0 : 1, .75f);
+                            shapeRenderer.line(coords, new Vector2(building.area.x, building.area.y));
+                            shapeRenderer.setColor(1, 1, 1, .5f);
+                        } else if (movingBuilding && selectedBuilding != null && selectedBuilding != building && selectedBuilding instanceof Tower) {
+                            shapeRenderer.setColor(1, 1, ((Tower) building).comboUpgrade ? 0 : 1, .75f);
+                            shapeRenderer.rectLine(coords, new Vector2(building.area.x, building.area.y), ((Tower) selectedBuilding).comboUpgrade ? 2 : 1);
+                            shapeRenderer.setColor(1, 1, 1, .5f);
+                        }
+                    }
+                }
                 shapeRenderer.setColor(0, placingBuilding ? 1 : 0, movingBuilding ? 1 : 0, .5f);
                 for (Building building : buildings)
                     if (building.area.overlaps(new Circle(coords, selectedType * Main.TOWER_RADIUS))) {

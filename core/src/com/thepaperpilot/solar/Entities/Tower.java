@@ -47,7 +47,7 @@ public class Tower extends Building {
     public int kills;
     public int shots;
     public Targeting targeting;
-    boolean comboUpgrade;
+    public boolean comboUpgrade;
     private float time;
     private boolean ability;
     private int range;
@@ -285,6 +285,15 @@ public class Tower extends Building {
 
     public int getSpeedCost() {
         return speed < 11 ? speedCosts[speed] : -1;
+    }
+
+    public void comboUpgrade() {
+        if (!comboUpgrade && level.redResource >= 50 && level.blueResource >= 50 && level.yellowResource >= 50) {
+            level.redResource -= 50;
+            level.blueResource -= 50;
+            level.yellowResource -= 50;
+            comboUpgrade = true;
+        }
     }
 
     public enum Targeting implements Comparator<Enemy>{
