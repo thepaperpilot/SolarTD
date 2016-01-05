@@ -83,7 +83,7 @@ default-round
   rotate: false
   xy: 2, 91
   size: 20, 12
-  split: 5, 5, 5, 5
+  split: 6, 5, 5, 5
   orig: 20, 12
   offset: 0, 0
   index: -1

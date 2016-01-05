@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.thepaperpilot.solar.Combo;
 import com.thepaperpilot.solar.Entities.Generator;
 import com.thepaperpilot.solar.Entities.Tower;
 import com.thepaperpilot.solar.Levels.Level;
@@ -16,6 +17,7 @@ import com.thepaperpilot.solar.MenuScreen;
 public class Menu {
     private static final Label buildingLabel = new Label("Building", Main.skin);
     private static final TextButton settingsButton = new TextButton("Settings", Main.skin, "toggle");
+    private static final TextButton comboButton = new TextButton("Combos", Main.skin, "toggle");
     private static final TextButton generalButton = new TextButton("General", Main.skin, "toggle");
     private static final Table buildingTable = new Table(Main.skin);
     private static final Table towerTable = new Table(Main.skin);
@@ -33,7 +35,7 @@ public class Menu {
     private static final TextButton lastButton = new TextButton("Last", Main.skin, "toggle");
     private static final TextButton strongestButton = new TextButton("Strongest", Main.skin, "toggle");
     private static final TextButton weakestButton = new TextButton("Weakest", Main.skin, "toggle");
-    private static final Table comboTable = new Table(Main.skin);
+    private static final Table comboUpgrade = new Table(Main.skin);
     private static final Table generatorTable = new Table(Main.skin);
     private static final Label extractorsLabel = new Label("0", Main.skin);
     private static final ProgressBar extractorsBar = new ProgressBar(0, 9, 1, false, Main.skin);
@@ -49,13 +51,15 @@ public class Menu {
     private static final Label towerShotsLabel = new Label("", Main.skin);
     private static final Label generatedLabel = new Label("", Main.skin);
     private static final Table settingsTable = new Table(Main.skin);
+    private static final ScrollPane comboPane;
+    private static final Table comboTable = new Table(Main.skin);
     private static final Window menu = new Window("Settings", Main.skin, "large");
     private static Table currentTab;
 
     private static Level level;
 
     static {
-        new ButtonGroup(settingsButton, generalButton);
+        new ButtonGroup(settingsButton, generalButton, comboButton);
         new ButtonGroup(nearestButton, firstButton, lastButton, strongestButton, weakestButton);
 
         menu.setVisible(false);
@@ -65,7 +69,8 @@ public class Menu {
 
         Table buttonsTable = new Table(Main.skin);
         buttonsTable.setBackground(Main.skin.getDrawable("default-round"));
-        buttonsTable.top().add(settingsButton).expandX().fill().row();
+        buttonsTable.top().add(settingsButton).expandX().fill().spaceBottom(4).row();
+        buttonsTable.add(comboButton).expandX().fill().spaceBottom(4).row();
         buildingLabel.setAlignment(Align.center);
         buildingTable.center().add(buildingLabel).expandX().fill().spaceBottom(4).row();
         buildingTable.add(generalButton).expandX().fill();
@@ -118,20 +123,20 @@ public class Menu {
         targetingTable.add(strongestButton);
         targetingTable.add(weakestButton);
         towerTable.add(targetingTable).row();
-        comboTable.right().add(new Label("Enable Combo-ing", Main.skin)).colspan(3).row();
+        comboUpgrade.right().add(new Label("Enable Combo-ing", Main.skin)).colspan(3).row();
         Label redLabel = new Label("50", Main.skin);
         redLabel.setAlignment(Align.center);
         redLabel.setColor(1, 0, 0, 1);
-        comboTable.add(redLabel).expand().fill();
+        comboUpgrade.add(redLabel).expand().fill();
         Label blueLabel = new Label("50", Main.skin);
         blueLabel.setAlignment(Align.center);
         blueLabel.setColor(0, 0, 1, 1);
-        comboTable.add(blueLabel).expand().fill();
+        comboUpgrade.add(blueLabel).expand().fill();
         Label yellowLabel = new Label("50", Main.skin);
         yellowLabel.setAlignment(Align.center);
         yellowLabel.setColor(1, 1, 0, 1);
-        comboTable.add(yellowLabel).expand().fill();
-        towerTable.add(comboTable).row();
+        comboUpgrade.add(yellowLabel).expand().fill();
+        towerTable.add(comboUpgrade).row();
         Table towerStatsTable = new Table(Main.skin);
         towerStatsTable.add(new Label("Kills: ", Main.skin));
         towerStatsTable.add(towerKillsLabel).row();
@@ -158,6 +163,17 @@ public class Menu {
         generalTable.add(sellButton).expandX().fill().row();
         generalTable.add(moveButton).expandX().fill().row();
         buildingTable.setVisible(false);
+
+        Table combos = new Table(Main.skin);
+        combos.top();
+        for (Combo combo : Combo.values()) {
+            combos.add(combo.table).spaceBottom(2).expandX().fill().row();
+        }
+        comboPane = new ScrollPane(combos, Main.skin);
+        comboPane.setSmoothScrolling(true);
+        comboPane.setScrollingDisabled(true, false);
+        comboPane.setFadeScrollBars(false);
+        comboTable.add(comboPane).spaceTop(2).expand().fill();
 
         menu.left().add(buttonsTable).expandY().fill();
         menu.add(settingsTable).expand().fill();
@@ -191,6 +207,11 @@ public class Menu {
         generalButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 switchTab(generalTable);
+            }
+        });
+        comboButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                switchTab(comboTable);
             }
         });
         damageUpgrade.addListener(new ClickListener() {
@@ -242,7 +263,7 @@ public class Menu {
                 ((Tower) level.selectedBuilding).targeting = Tower.Targeting.WEAKEST;
             }
         });
-        comboTable.addListener(new ClickListener() {
+        comboUpgrade.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 ((Tower) level.selectedBuilding).comboUpgrade();
                 select();
@@ -316,7 +337,7 @@ public class Menu {
                     weakestButton.setChecked(true);
                     break;
             }
-            comboTable.setBackground(Main.skin.getDrawable(tower.comboUpgrade ? "default-round-down" : "default-round"));
+            comboUpgrade.setBackground(Main.skin.getDrawable(tower.comboUpgrade ? "default-round-down" : "default-round"));
             if (generalTable.getCell(generatorTable) != null)
                 generalTable.getCell(generatorTable).setActor(towerTable);
         } else {

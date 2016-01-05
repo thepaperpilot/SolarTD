@@ -18,7 +18,7 @@
   large: { down: default-round-down, up: default-round, font: large, fontColor: white }
 },
   com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
-  default: { vScroll: default-scroll, hScrollKnob: default-round-large, background: default-rect, hScroll: default-scroll, vScrollKnob: default-round-large }
+  default: { hScrollKnob: default-slider, background: default-round, vScrollKnob: default-slider }
 },
   com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
   default-vertical: { handle: default-splitpane-vertical },
