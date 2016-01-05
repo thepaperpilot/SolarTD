@@ -163,8 +163,8 @@ public class Main extends Game implements Screen {
     @Override
     public void render() {
         // we're a passthrough!
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClearColor(0, .015f, .025f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         getScreen().render(Gdx.graphics.getDeltaTime());
     }

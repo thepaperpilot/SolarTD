@@ -4,8 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -16,14 +14,12 @@ import com.thepaperpilot.solar.Levels.Level;
 public class MenuScreen implements Screen{
     public static final MenuScreen instance = new MenuScreen();
 
-    private final Batch batch;
     private final Stage stage;
     private final ParticleEffect stars;
 
     private int level = 1;
 
     public MenuScreen() {
-        batch = new SpriteBatch();
         stage = new Stage(new StretchViewport(320, 180));
 
         Image bg = new Image(Main.getDrawable("title"));
@@ -56,8 +52,9 @@ public class MenuScreen implements Screen{
         stage.addActor(levels);
 
         stars = new ParticleEffect();
-        stars.load(Gdx.files.internal("particles/stars.p"), Gdx.files.internal("particles/"));
-        stars.setPosition(320, 180);
+        stars.load(Gdx.files.internal("particles/menu.p"), Gdx.files.internal("particles/"));
+        stars.setPosition(160, 90);
+        stars.scaleEffect(.25f);
         for (int i = 0; i < 100; i++) {
             stars.update(.1f);
         }
@@ -70,9 +67,7 @@ public class MenuScreen implements Screen{
 
     @Override
     public void render(float delta) {
-        final Matrix4 trans = new Matrix4();
-        trans.scale(Gdx.graphics.getWidth() / 1280, Gdx.graphics.getHeight() / 720, 1);
-        batch.setTransformMatrix(trans);
+        Batch batch = stage.getBatch();
         batch.begin();
         stars.draw(batch, delta);
         batch.end();
@@ -103,7 +98,6 @@ public class MenuScreen implements Screen{
 
     @Override
     public void dispose() {
-        batch.dispose();
         stage.dispose();
     }
 }

@@ -48,6 +48,7 @@ public class Level implements Screen {
     private final Image bg;
     private final ParticleEffect pathParticles;
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private final ParticleEffect stars;
     public Building selectedBuilding;
     public boolean placingBuilding;
     public boolean movingBuilding;
@@ -91,6 +92,12 @@ public class Level implements Screen {
         pathParticles.getEmitters().get(pathParticles.getEmitters().size - 1).getTint().setTimeline(new float[]{0, 1});
         for (int i = 0; i < 100; i++) {
             pathParticles.update(.1f);
+        }
+
+        stars = new ParticleEffect();
+        stars.load(Gdx.files.internal("particles/stars.p"), Gdx.files.internal("particles/"));
+        for (int i = 0; i < 100; i++) {
+            stars.update(.1f);
         }
 
         stage = new Stage(new StretchViewport(levelPrototype.width, levelPrototype.height));
@@ -267,6 +274,7 @@ public class Level implements Screen {
         Batch batch = stage.getBatch();
         batch.begin();
         bg.draw(batch, 1);
+        stars.draw(batch, delta);
         batch.end();
         Gdx.gl.glEnable(GL20.GL_BLEND);
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
