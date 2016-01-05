@@ -8,42 +8,52 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.thepaperpilot.solar.Levels.Level;
-import com.thepaperpilot.solar.Levels.Wave;
 
-class MenuScreen implements Screen{
+public class MenuScreen implements Screen{
+    public static final MenuScreen instance = new MenuScreen();
+
     private final Batch batch;
     private final Stage stage;
-
     private final ParticleEffect stars;
+
+    private int level = 1;
 
     public MenuScreen() {
         batch = new SpriteBatch();
-        stage = new Stage(new StretchViewport(1280, 720));
+        stage = new Stage(new StretchViewport(320, 180));
 
-        stage.addActor(new Image(Main.getDrawable("title")));
+        Image bg = new Image(Main.getDrawable("title"));
+        bg.setScale(.25f);
+        stage.addActor(bg);
 
-        // TODO level select
-        Button start = new TextButton("Start Game", Main.skin, "large");
-        start.align(Align.center);
-        start.addListener(new ClickListener() {
-           public void clicked(InputEvent event, float x, float y) {
-               Level.LevelPrototype levelPrototype = new Level.LevelPrototype();
-               levelPrototype.width = 980;
-               levelPrototype.height = 540;
-               levelPrototype.path = new float[]{980, 200, 500, 200, 300, 300, 300, 200, 100, 400, 980, 400};
-               levelPrototype.waves = new Wave.WavePrototype[]{};
-               Main.changeScreen(new Level(levelPrototype));
-           }
+        Table levels = new Table(Main.skin);
+        levels.setFillParent(true);
+        levels.bottom().pad(8);
+        TextButton level1 = new TextButton("1", Main.skin, "toggle-large");
+        level1.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                level = 1;
+            }
         });
-        start.setPosition(640 - start.getWidth() / 2, 40);
-        stage.addActor(start);
+        levels.add(level1).spaceBottom(4);
+
+        levels.row();
+        Button start = new TextButton("Start Game", Main.skin);
+        start.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                Main.changeScreen(Level.readLevel("level" + level + ".json"));
+            }
+        });
+        levels.add(start);
+
+        new ButtonGroup(level1);
+        level1.setChecked(true);
+
+        stage.addActor(levels);
 
         stars = new ParticleEffect();
         stars.load(Gdx.files.internal("particles/stars.p"), Gdx.files.internal("particles/"));

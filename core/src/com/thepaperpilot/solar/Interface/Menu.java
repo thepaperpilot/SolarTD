@@ -11,6 +11,7 @@ import com.thepaperpilot.solar.Entities.Generator;
 import com.thepaperpilot.solar.Entities.Tower;
 import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Main;
+import com.thepaperpilot.solar.MenuScreen;
 
 public class Menu {
     private static final Label buildingLabel = new Label("Building", Main.skin);
@@ -74,6 +75,8 @@ public class Menu {
         settingsTable.setName("Settings");
         Button restart = new TextButton("Restart Level", Main.skin);
         settingsTable.top().add(restart).expandX().fill().row();
+        Button main = new TextButton("Main Menu", Main.skin);
+        settingsTable.add(main).expandX().fill().row();
         Table statsTable = new Table(Main.skin);
         statsTable.add(new Label("Total Kills: ", Main.skin));
         statsTable.add(totalKillsLabel).row();
@@ -163,6 +166,11 @@ public class Menu {
         restart.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 Main.changeScreen(new Level(level.prototype));
+            }
+        });
+        main.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                Main.changeScreen(MenuScreen.instance);
             }
         });
         sellButton.addListener(new ClickListener() {

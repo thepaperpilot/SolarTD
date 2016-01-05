@@ -415,11 +415,10 @@ public class Level implements Screen {
     }
 
     public static class LevelPrototype {
-        // TODO when you make the generators make these local again
         public float width;
         public float height;
 
-        public float[] path;
-        public Wave.WavePrototype[] waves;
+        float[] path;
+        Wave.WavePrototype[] waves;
     }
 }

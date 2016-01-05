@@ -39,7 +39,11 @@ public class Main extends Game implements Screen {
 
     // TODO TextureAtlas
     public static Drawable getDrawable(String name) {
-        return new Image(Main.manager.get(name + ".png", Texture.class)).getDrawable();
+        Texture texture = Main.manager.get(name + ".png", Texture.class);
+        // the atlas will fix this, but for now we'll set the filters here
+        // this is not a pixel art game, so we want linear filtering (as opposed to nearest neighbor)
+        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        return new Image(texture).getDrawable();
     }
 
     @Override
@@ -111,7 +115,7 @@ public class Main extends Game implements Screen {
             skin.getFont("font").getData().setScale(.25f);
 
             // go to the menu screen
-            setScreen(new MenuScreen());
+            setScreen(MenuScreen.instance);
         }
     }
 

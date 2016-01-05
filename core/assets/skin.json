@@ -14,6 +14,7 @@
   com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
   default: { down: default-round-down, up: default-round, font: font, fontColor: white },
   toggle: {down: default-round-down, up: default-round, checked: default-round-down, font: font, fontColor: white },
+  toggle-large: {down: default-round-down, up: default-round, checked: default-round-down, font: large, fontColor: white },
   large: { down: default-round-down, up: default-round, font: large, fontColor: white }
 },
   com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
