@@ -43,7 +43,7 @@ public class Level implements Screen {
     public final ArrayList<Enemy> enemies = new ArrayList<>();
     public final ArrayList<ParticleEffect> particles = new ArrayList<>();
     public final Stage ui;
-    public final Wave[] waves;
+    public final Wave.WavePrototype[] waves;
     public final ArrayList<Building> buildings = new ArrayList<>();
     private final Image bg;
     private final ParticleEffect pathParticles;
@@ -56,10 +56,10 @@ public class Level implements Screen {
     public int blueResource = 100;
     public int yellowResource = 100;
     public int population = 1;
-    public Wave finalWave;
     public boolean paused;
-    public float time = -10;
-    public int currWave;
+    public float time;
+    public int wave;
+    public Wave currWave;
     public Resource selectedResource = Resource.RED;
     public int selectedType = 1; // 1 is tower, 2 is generator
     public int totalKills = 0;
@@ -71,10 +71,7 @@ public class Level implements Screen {
         for (int i = 0; i < levelPrototype.path.length - 1; i += 2) {
             path[i / 2] = new Vector2(levelPrototype.path[i], levelPrototype.path[i + 1]);
         }
-        waves = new Wave[levelPrototype.waves.length];
-        for (int i = 0; i < levelPrototype.waves.length; i++) {
-            waves[i] = new Wave(levelPrototype.waves[i]);
-        }
+        waves = levelPrototype.waves;
 
         pathParticles = new ParticleEffect();
         pathParticles.load(Gdx.files.internal("particles/path.p"), Gdx.files.internal("particles/"));
@@ -182,6 +179,8 @@ public class Level implements Screen {
         Menu.init(this);
         HUD.deselect();
         Menu.deselect();
+        currWave = new Wave(new Wave.WavePrototype(), this);
+        time = -Main.WAVE_INTERVAL;
 
         stage.addListener(new InputListener() {
             @Override
@@ -236,40 +235,8 @@ public class Level implements Screen {
             blueResource++;
             yellowResource++;
         }
-        if (currWave < waves.length) {
-            if (time >= waves[currWave].enemyDistance) {
-                time -= waves[currWave].enemyDistance;
-                // TODO enemy pool
-                final Enemy enemy = waves[currWave].getEnemy(this);
-                if (waves[currWave].isEmpty()) {
-                    currWave++;
-                    population += currWave;
-                    time -= 10;
-                }
-                addEnemy(enemy);
-            }
-        } else {
-            if (finalWave == null || finalWave.isEmpty()) {
-                Wave.WavePrototype wavePrototype = new Wave.WavePrototype();
-                wavePrototype.enemyDistance = 1;
-                Enemy.EnemyPrototype enemyPrototype = new Enemy.EnemyPrototype();
-                enemyPrototype.speed = 1;
-                enemyPrototype.health = (float) Math.pow(currWave, 1.2f);
-                enemyPrototype.count = 10;
-                enemyPrototype.name = "alien";
-                wavePrototype.enemies = new Enemy.EnemyPrototype[]{enemyPrototype};
-                finalWave = new Wave(wavePrototype);
-            }
-            if (time >= finalWave.enemyDistance) {
-                time -= finalWave.enemyDistance;
-                final Enemy enemy = finalWave.getEnemy(this);
-                if (finalWave.isEmpty()) {
-                    currWave++;
-                    population += currWave;
-                    time -= 10;
-                }
-                addEnemy(enemy);
-            }
+        if (time >= currWave.getTime() + Main.WAVE_INTERVAL) {
+            nextWave();
         }
 
         Menu.update();
@@ -390,7 +357,15 @@ public class Level implements Screen {
         ui.draw();
     }
 
-    private void addEnemy(final Enemy enemy) {
+    public void nextWave() {
+        time = 0;
+        Wave newWave = new Wave(waves[wave % waves.length], this);
+        newWave.setPosition(path[0].x, path[0].y);
+        stage.addActor(newWave);
+        currWave = newWave;
+    }
+
+    public void addEnemy(final Enemy enemy) {
         stage.addActor(enemy);
         enemy.setPosition(path[0].x - Main.ENEMY_SIZE / 2, path[0].y - Main.ENEMY_SIZE / 2);
         enemies.add(enemy);

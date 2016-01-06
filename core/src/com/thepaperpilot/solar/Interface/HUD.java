@@ -95,11 +95,12 @@ public class HUD {
 
         Table timerTable = new Table(Main.skin);
         timerTable.setBackground(Main.skin.getDrawable("default-round"));
-        timerTable.add(new Label("Next Enemy", Main.skin, "large")).row();
+        timerTable.add(new Label("Next Wave", Main.skin, "large")).row();
         Table enemyTable = new Table(Main.skin);
         enemyTable.setBackground(Main.getDrawable("alien"));
         enemyTable.add(timeLabel);
         timerTable.add(enemyTable).size(32);
+        timerTable.setTouchable(Touchable.enabled);
         ui.add(timerTable).spaceLeft(8).uniformY();
 
         cost.setColor(1, 1, 1, .5f);
@@ -158,7 +159,7 @@ public class HUD {
         });
         timerTable.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                level.time = level.currWave < level.waves.length ? level.waves[level.currWave].enemyDistance : level.finalWave.enemyDistance;
+                level.nextWave();
             }
         });
     }
@@ -226,8 +227,8 @@ public class HUD {
         blueRes.setText("" + level.blueResource);
         yellowRes.setText("" + level.yellowResource);
         livesLabel.setText("" + level.population);
-        wavesLabel.setText("" + level.currWave);
-        timeLabel.setText("" + Math.round(level.time <= 0 ? Math.abs(level.time) : (level.currWave < level.waves.length ? level.waves[level.currWave].enemyDistance : level.finalWave.enemyDistance) - level.time));
+        wavesLabel.setText("" + level.wave);
+        timeLabel.setText("" + Math.round(level.currWave.getTime() + Main.WAVE_INTERVAL - level.time));
 
         if (!cost.isVisible()) return;
 
