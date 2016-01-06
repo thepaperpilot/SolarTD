@@ -80,6 +80,7 @@ public class Main extends Game implements Screen {
         manager.load("bg.png", Texture.class);
         manager.load("title.png", Texture.class);
         manager.load("alien.png", Texture.class);
+        manager.load("mine.png", Texture.class);
 
         // show this screen while it loads
         setScreen(this);

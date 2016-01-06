@@ -3,14 +3,19 @@ package com.thepaperpilot.solar;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.thepaperpilot.solar.Entities.Mine;
+import com.thepaperpilot.solar.Entities.Tower;
 import com.thepaperpilot.solar.Levels.Level;
 
 public enum Combo {
     // Max: 6
     // or else they won't fit
     MINE(1, 0, 0, Level.Resource.RED) {
-        public void fire() {
-
+        public boolean fire(Tower tower) {
+            Mine mine = new Mine(tower.getDamage(), tower.getRange(), tower.level);
+            mine.setPosition(tower.getX(), tower.getY());
+            tower.level.stage.addActor(mine);
+            return true;
         }
     };
 
@@ -40,5 +45,5 @@ public enum Combo {
         table.setBackground(Main.skin.getDrawable("default-rect"));
     }
 
-    public abstract void fire();
+    public abstract boolean fire(Tower tower);
 }

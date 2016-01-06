@@ -12,7 +12,7 @@ public abstract class Building extends Image {
 
     public final Circle area;
     public final Level.Resource type;
-    final Level level;
+    public final Level level;
     public float redValue;
     public float blueValue;
     public float yellowValue;

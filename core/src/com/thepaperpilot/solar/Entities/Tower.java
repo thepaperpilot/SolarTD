@@ -142,11 +142,12 @@ public class Tower extends Building {
         if (comboUpgrade && getCurrentCombo() != null) {
             comboTimer += delta * getSpeed();
             comboParticleTimer += delta * getSpeed();
-            if (comboTimer >= 100) {
+            if (comboTimer >= 100 && targeting.target(this, new Vector2(getX(), getY())) != null) {
                 Combo combo = getCurrentCombo();
-                combo.fire();
-                getNewCombo();
-                // TODO fire combos (and make it pretty)
+                if(combo.fire(this)) {
+                    getNewCombo();
+                    comboTimer -= 100;
+                }
             }
             while (comboTimer < 100 && comboParticleTimer >= 1) {
                 Combo combo = getCurrentCombo();
