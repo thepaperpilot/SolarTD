@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.thepaperpilot.solar.Levels.Level;
+import com.thepaperpilot.solar.Levels.Wave;
 
 public class MenuScreen implements Screen{
     public static final MenuScreen instance = new MenuScreen();
@@ -41,7 +42,14 @@ public class MenuScreen implements Screen{
         Button start = new TextButton("Start Game", Main.skin);
         start.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                Main.changeScreen(Level.readLevel("level" + level + ".json"));
+                Level.LevelPrototype levelPrototype = new Level.LevelPrototype();
+                levelPrototype.width = 980;
+                levelPrototype.height = 540;
+                levelPrototype.path = new float[]{980, 200, 500, 200, 300, 300, 300, 200, 100, 400, 980, 400};
+                levelPrototype.waves = new Wave.WavePrototype[]{};
+                Main.changeScreen(new Level(levelPrototype));
+                // Not working with GWT for some reason
+                // Main.changeScreen(Level.readLevel("level" + level + ".json"));
             }
         });
         levels.add(start);

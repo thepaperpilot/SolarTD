@@ -433,7 +433,7 @@ public class Level implements Screen {
         public float width;
         public float height;
 
-        float[] path;
-        Wave.WavePrototype[] waves;
+        public float[] path;
+        public Wave.WavePrototype[] waves;
     }
 }

@@ -3,11 +3,11 @@
 <module rename-to="html">
 	<inherits name='com.badlogic.gdx.backends.gdx_backends_gwt' />
 	<inherits name='libgdx-utils' />
-	<inherits name='com.kotcrab.vis.vis-ui' />
-	<inherits name='com.kotcrab.vis.vis-runtime' />
 
 	<inherits name='Main' />
 	<entry-point class='com.thepaperpilot.solar.client.HtmlLauncher' />
 	
 	<set-configuration-property name="gdx.assetpath" value="../core/assets" />
+
+	<extend-configuration-property name="gdx.reflect.include" value="com.thepaperpilot.solar.Levels" />
 </module>
