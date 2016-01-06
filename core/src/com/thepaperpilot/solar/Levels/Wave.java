@@ -6,8 +6,8 @@ import com.thepaperpilot.solar.Entities.Enemy;
 
 public class Wave extends Actor{
     public final float enemyDistance;
+    public final Enemy.EnemyPrototype[] enemies;
     private final Level level;
-    private final Enemy.EnemyPrototype[] enemies;
     public float tempDistance;
     private int currEnemyType;
     private int currEnemyCount;

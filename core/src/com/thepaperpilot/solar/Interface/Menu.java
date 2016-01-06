@@ -9,9 +9,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.thepaperpilot.solar.Combo;
+import com.thepaperpilot.solar.Entities.Enemy;
 import com.thepaperpilot.solar.Entities.Generator;
 import com.thepaperpilot.solar.Entities.Tower;
 import com.thepaperpilot.solar.Levels.Level;
+import com.thepaperpilot.solar.Levels.Wave;
 import com.thepaperpilot.solar.Main;
 import com.thepaperpilot.solar.MenuScreen;
 
@@ -21,6 +23,7 @@ public class Menu {
     private static final TextButton comboButton = new TextButton("Combos", Main.skin, "toggle");
     private static final TextButton generalButton = new TextButton("General", Main.skin, "toggle");
     private static final TextButton towerComboButton = new TextButton("Combo", Main.skin, "toggle");
+    private static final TextButton nextWaveButton = new TextButton("Next Wave", Main.skin, "toggle");
     private static final Table buildingTable = new Table(Main.skin);
     private static final Table towerTable = new Table(Main.skin);
     private static final Label damageLabel = new Label("0", Main.skin);
@@ -59,13 +62,16 @@ public class Menu {
     private static final Label comboLabel = new Label("0%", Main.skin);
     private static final ScrollPane towerComboPane;
     private static final Table towerComboTable = new Table(Main.skin);
+    private static final ScrollPane currentWavePane;
+    private static final ScrollPane nextWavePane;
+    private static final Table nextWaveTable = new Table(Main.skin);
     private static final Window menu = new Window("Settings", Main.skin, "large");
     private static Table currentTab;
 
     private static Level level;
 
     static {
-        new ButtonGroup(settingsButton, comboButton, generalButton, towerComboButton);
+        new ButtonGroup(settingsButton, comboButton, generalButton, towerComboButton, nextWaveButton);
         new ButtonGroup(nearestButton, firstButton, lastButton, strongestButton, weakestButton);
 
         menu.setVisible(false);
@@ -81,7 +87,8 @@ public class Menu {
         buildingTable.center().add(buildingLabel).expandX().fill().spaceBottom(4).row();
         buildingTable.add(generalButton).expandX().fill().spaceBottom(4).row();
         buildingTable.add(towerComboButton).expandX().fill().spaceBottom(4).row();
-        buttonsTable.add(buildingTable).spaceTop(8).expandX().fill().row();
+        buttonsTable.add(buildingTable).spaceTop(8).expand().fillX().top().row();
+        buttonsTable.add(nextWaveButton).expandX().fill();
         settingsButton.setChecked(true);
 
         settingsTable.setName("Settings");
@@ -195,6 +202,26 @@ public class Menu {
         towerComboPane.setFadeScrollBars(false);
         towerComboTable.add(towerComboPane).colspan(2).spaceTop(2).expand().fill();
 
+        nextWaveTable.setName("Next Wave");
+        nextWaveTable.add(new Label("Current Wave", Main.skin)).left().pad(2).row();
+        temp = new Table(Main.skin);
+        temp.top();
+        currentWavePane = new ScrollPane(temp, Main.skin);
+        currentWavePane.setSmoothScrolling(true);
+        currentWavePane.setScrollingDisabled(true, false);
+        currentWavePane.setFadeScrollBars(false);
+        nextWaveTable.add(currentWavePane).expand().fill().uniform().row();
+        nextWaveTable.add(new Label("Next Wave", Main.skin)).left().pad(2).row();
+        temp = new Table(Main.skin);
+        temp.top();
+        nextWavePane = new ScrollPane(temp, Main.skin);
+        nextWavePane.setSmoothScrolling(true);
+        nextWavePane.setScrollingDisabled(true, false);
+        nextWavePane.setFadeScrollBars(false);
+        nextWaveTable.add(nextWavePane).expand().fill().uniform().row();
+        TextButton sendWave = new TextButton("Send Next Wave", Main.skin);
+        nextWaveTable.add(sendWave).expandX().fill().bottom();
+
         menu.left().add(buttonsTable).expandY().fill();
         menu.add(settingsTable).expand().fill();
 
@@ -219,6 +246,11 @@ public class Menu {
                 level.movingBuilding = !level.movingBuilding;
             }
         });
+        sendWave.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                level.nextWave();
+            }
+        });
         settingsButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 switchTab(settingsTable);
@@ -237,6 +269,11 @@ public class Menu {
         towerComboButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 switchTab(towerComboTable);
+            }
+        });
+        nextWaveButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                switchTab(nextWaveTable);
             }
         });
         damageUpgrade.addListener(new ClickListener() {
@@ -413,6 +450,20 @@ public class Menu {
         } else if (level.selectedBuilding != null){
             Generator generator = ((Generator) level.selectedBuilding);
             generatedLabel.setText("" + generator.generated);
+        }
+    }
+
+    public static void updateWaves() {
+        Table current = (Table) currentWavePane.getWidget();
+        current.clearChildren();
+        for (Enemy.EnemyPrototype enemy : level.currWave.enemies) {
+            current.add(Enemy.getTable(enemy)).expandX().fill().row();
+        }
+        Table next = (Table) nextWavePane.getWidget();
+        next.clearChildren();
+        Wave nextWave = new Wave(level.waves[(level.wave + 1) % level.waves.length], level);
+        for (Enemy.EnemyPrototype enemy : nextWave.enemies) {
+            next.add(Enemy.getTable(enemy)).expandX().fill().row();
         }
     }
 

@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Main;
 
@@ -30,6 +32,24 @@ public class Enemy extends Image {
         this.health = enemyPrototype.health;
         this.speed = enemyPrototype.speed;
         this.level = level;
+    }
+
+    public static Table getTable(EnemyPrototype prototype) {
+        Table table = new Table(Main.skin);
+        table.add(new Image(Main.getDrawable(prototype.name))).size(32).left();
+        Table count = new Table(Main.skin);
+        count.add(new Label("Count", Main.skin)).row();
+        count.add(new Label("" + prototype.count, Main.skin, "large"));
+        table.add(count).expand();
+        Table health = new Table(Main.skin);
+        health.add(new Label("Health", Main.skin)).row();
+        health.add(new Label("" + prototype.health, Main.skin, "large"));
+        table.add(health).expand();
+        Table speed = new Table(Main.skin);
+        speed.add(new Label("Speed", Main.skin)).row();
+        speed.add(new Label("" + prototype.speed, Main.skin, "large"));
+        table.add(speed).expand();
+        return table;
     }
 
     public boolean hit(float damage) {

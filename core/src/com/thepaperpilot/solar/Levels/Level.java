@@ -175,12 +175,13 @@ public class Level implements Screen {
             }
         });
 
+        currWave = new Wave(new Wave.WavePrototype(), this);
+        time = -Main.WAVE_INTERVAL;
         HUD.init(this);
         Menu.init(this);
         HUD.deselect();
         Menu.deselect();
-        currWave = new Wave(new Wave.WavePrototype(), this);
-        time = -Main.WAVE_INTERVAL;
+        Menu.updateWaves();
 
         stage.addListener(new InputListener() {
             @Override
@@ -359,10 +360,12 @@ public class Level implements Screen {
 
     public void nextWave() {
         time = 0;
+        wave++;
         Wave newWave = new Wave(waves[wave % waves.length], this);
         newWave.setPosition(path[0].x, path[0].y);
         stage.addActor(newWave);
         currWave = newWave;
+        Menu.updateWaves();
     }
 
     public void addEnemy(final Enemy enemy) {
