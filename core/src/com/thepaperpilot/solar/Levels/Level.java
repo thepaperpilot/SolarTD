@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -102,6 +103,8 @@ public class Level implements Screen {
         ui = new Stage(new StretchViewport(Main.UI_WIDTH, Main.UI_WIDTH * 9f / 16f));
 
         bg = new Image(Main.getDrawable("bg"));
+        bg.setScale(prototype.width / Gdx.graphics.getWidth());
+        bg.setPosition(MathUtils.random(bg.getImageWidth() - prototype.width), MathUtils.random(bg.getImageHeight() - prototype.height));
 
         stage.addListener(new ClickListener(Input.Buttons.LEFT) {
             public void clicked(InputEvent event, float x, float y) {
