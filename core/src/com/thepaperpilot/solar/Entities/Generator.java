@@ -10,7 +10,7 @@ public class Generator extends Building {
     private static final int[] extractorCosts = new int[]{100, 150, 200, 250, 300, 350, 400, 450, 500};
     private static final int[] efficiencyCosts = new int[]{200, 300, 400, 500, 600, 700, 800, 900, 1000};
     public int generated;
-    private float time;
+    public float time;
     private int amount = 0;
     private int speed = 4;
 
@@ -42,15 +42,15 @@ public class Generator extends Building {
     }
 
     public static int getRedCost(Level.Resource type) {
-        return type == Level.Resource.RED ? 50 : 25;
+        return type == Level.Resource.RED ? 100 : 50;
     }
 
     public static int getBlueCost(Level.Resource type) {
-        return type == Level.Resource.BLUE ? 50 : 25;
+        return type == Level.Resource.BLUE ? 100 : 50;
     }
 
     public static int getYellowCost(Level.Resource type) {
-        return type == Level.Resource.YELLOW ? 50 : 25;
+        return type == Level.Resource.YELLOW ? 100 : 50;
     }
 
     public static String getDescription(Level.Resource type) {
@@ -60,9 +60,10 @@ public class Generator extends Building {
     public void act(float delta) {
         time += delta * speed;
         rotateBy(10 * delta);
-        while (time >= Main.GENERATOR_SPEED) {
-            time -= Main.GENERATOR_SPEED;
-            final Label increase = new Label("+" + (amount + 1), Main.skin);
+        if (time >= Main.GENERATOR_SPEED) {
+            double temp = Math.floor(time / Main.GENERATOR_SPEED);
+            time -= Main.GENERATOR_SPEED * temp;
+            final Label increase = new Label("+" + (int) (temp * (amount + 1)), Main.skin);
             increase.setPosition(getX() + 2 * Main.TOWER_RADIUS, getY() + 2 * Main.TOWER_RADIUS);
             increase.addAction(Actions.sequence(Actions.parallel(Actions.moveBy(0, 20, .5f), Actions.fadeOut(.5f)), Actions.run(new Runnable() {
                 @Override
@@ -73,20 +74,20 @@ public class Generator extends Building {
             switch (type) {
                 default:
                 case RED:
-                    level.redResource += amount + 1;
+                    level.redResource += temp * (amount + 1);
                     increase.setColor(1, 0, 0, 1);
                     break;
                 case BLUE:
-                    level.blueResource += amount + 1;
+                    level.blueResource += temp * (amount + 1);
                     increase.setColor(0, 0, 1, 1);
                     break;
                 case YELLOW:
-                    level.yellowResource += amount + 1;
+                    level.yellowResource += temp * (amount + 1);
                     increase.setColor(1, 1, 0, 1);
                     break;
             }
             level.stage.addActor(increase);
-            generated += amount + 1;
+            generated += temp * (amount + 1);
         }
     }
 

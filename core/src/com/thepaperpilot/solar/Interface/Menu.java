@@ -58,7 +58,7 @@ public class Menu {
     private static final Table settingsTable = new Table(Main.skin);
     private static final ScrollPane comboPane;
     private static final Table comboTable = new Table(Main.skin);
-    private static final ProgressBar comboBar = new ProgressBar(0, 100, 1, false, Main.skin);
+    private static final ProgressBar comboBar = new ProgressBar(0, Main.COMBO_TIME, 1, false, Main.skin);
     private static final Label comboLabel = new Label("0%", Main.skin);
     private static final ScrollPane towerComboPane;
     private static final Table towerComboTable = new Table(Main.skin);
@@ -405,7 +405,7 @@ public class Menu {
             towerComboButton.setVisible(tower.comboUpgrade);
             if (!tower.comboUpgrade && currentTab == towerComboTable) {
                 settingsButton.setChecked(true);
-                switchTab(settingsTable);
+                switchTab(generalTable);
             }
             Table combos = (Table) towerComboPane.getWidget();
             combos.clearChildren();
@@ -444,7 +444,7 @@ public class Menu {
             towerShotsLabel.setText("" + tower.shots);
             if (((Tower) level.selectedBuilding).comboUpgrade) {
                 float time = ((Tower) level.selectedBuilding).comboTimer;
-                comboLabel.setText(time >= 100 ? "READY" : (int) time + "%");
+                comboLabel.setText(time >= Main.COMBO_TIME ? "READY" : (int) (time / Main.COMBO_TIME) + "%");
                 comboBar.setValue(time);
             }
         } else if (level.selectedBuilding != null){
@@ -457,13 +457,13 @@ public class Menu {
         Table current = (Table) currentWavePane.getWidget();
         current.clearChildren();
         for (Enemy.EnemyPrototype enemy : level.currWave.enemies) {
-            current.add(Enemy.getTable(enemy)).expandX().fill().row();
+            current.add(Enemy.getTable(enemy, level.wave)).expandX().fill().row();
         }
         Table next = (Table) nextWavePane.getWidget();
         next.clearChildren();
         Wave nextWave = new Wave(level.waves[(level.wave + 1) % level.waves.length], level);
         for (Enemy.EnemyPrototype enemy : nextWave.enemies) {
-            next.add(Enemy.getTable(enemy)).expandX().fill().row();
+            next.add(Enemy.getTable(enemy, level.wave + 1)).expandX().fill().row();
         }
     }
 

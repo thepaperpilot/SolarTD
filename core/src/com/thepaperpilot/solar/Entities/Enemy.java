@@ -23,6 +23,7 @@ public class Enemy extends Image {
     private final float speed;
     private final Level level;
     public float slowed;
+    public float slowSpeed;
     public float health;
     private int path;
 
@@ -34,7 +35,7 @@ public class Enemy extends Image {
         this.level = level;
     }
 
-    public static Table getTable(EnemyPrototype prototype) {
+    public static Table getTable(EnemyPrototype prototype, int wave) {
         Table table = new Table(Main.skin);
         table.add(new Image(Main.getDrawable(prototype.name))).size(32).left();
         Table count = new Table(Main.skin);
@@ -43,7 +44,7 @@ public class Enemy extends Image {
         table.add(count).expand();
         Table health = new Table(Main.skin);
         health.add(new Label("Health", Main.skin)).row();
-        health.add(new Label("" + prototype.health, Main.skin, "large"));
+        health.add(new Label("" + (int) (prototype.health * Math.pow(wave, Main.HEALTH_RATE)), Main.skin, "large"));
         table.add(health).expand();
         Table speed = new Table(Main.skin);
         speed.add(new Label("Speed", Main.skin)).row();
@@ -73,7 +74,7 @@ public class Enemy extends Image {
         float tempSpeed = speed * Main.ENEMY_SPEED;
         if (slowed > 0) {
             slowed -= delta;
-            tempSpeed *= .5f; // TODO make this dynamic somehow
+            tempSpeed *= 10 / (slowSpeed + 10);
             // maybe a condition class?
         } else slowed = 0;
         Vector2 dist = new Vector2(level.path[path + 1].x - getX() - Main.ENEMY_SIZE / 2, level.path[path + 1].y - getY() - Main.ENEMY_SIZE / 2);

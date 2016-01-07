@@ -3,6 +3,7 @@ package com.thepaperpilot.solar.Levels;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.thepaperpilot.solar.Entities.Enemy;
+import com.thepaperpilot.solar.Main;
 
 public class Wave extends Actor{
     public final float enemyDistance;
@@ -34,11 +35,7 @@ public class Wave extends Actor{
         if (time >= tempDistance) {
             time -= tempDistance;
             level.addEnemy(getEnemy(level));
-            if (isEmpty()) {
-                level.wave++;
-                level.population += level.wave;
-                remove();
-            }
+            if (isEmpty()) remove();
         }
     }
 
@@ -48,7 +45,7 @@ public class Wave extends Actor{
 
     public Enemy getEnemy(Level level) {
         Enemy enemy = new Enemy(enemies[currEnemyType], level);
-        enemy.health *= Math.pow(level.wave, 1.2f);
+        enemy.health *= Math.pow(level.wave, Main.HEALTH_RATE);
         currEnemyCount++;
         if (currEnemyCount == enemies[currEnemyType].count) {
             currEnemyType++;

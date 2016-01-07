@@ -142,14 +142,14 @@ public class Tower extends Building {
         if (comboUpgrade && getCurrentCombo() != null) {
             comboTimer += delta * getSpeed();
             comboParticleTimer += delta * getSpeed();
-            if (comboTimer >= 100 && targeting.target(this, new Vector2(getX(), getY())) != null) {
+            if (comboTimer >= Main.COMBO_TIME && targeting.target(this, new Vector2(getX(), getY())) != null) {
                 Combo combo = getCurrentCombo();
                 if(combo.fire(this)) {
                     getNewCombo();
-                    comboTimer -= 100;
+                    comboTimer = 0;
                 }
             }
-            while (comboTimer < 100 && comboParticleTimer >= 1) {
+            if (comboTimer < Main.COMBO_TIME && comboParticleTimer >= 1) {
                 Combo combo = getCurrentCombo();
                 comboParticleTimer -= 1;
                 int red = combo.red;
@@ -194,7 +194,8 @@ public class Tower extends Building {
                         level.totalKills++;
                     }
                     if (ability) {
-                        Circle area = new Circle(target.getX(), target.getY(), 2 * Main.TOWER_RADIUS);
+                        Circle area = new Circle(target.getX(), target.getY(), range / 2);
+                        effect.getEmitters().first().getLife().setHigh(range);
                         for (int i = 0; i < level.enemies.size(); ) {
                             Enemy enemy = level.enemies.get(i);
                             if (area.contains(enemy.getPosition())) {
@@ -289,7 +290,8 @@ public class Tower extends Building {
                     for (int i = 0; i < level.enemies.size(); ) {
                         Enemy enemy = level.enemies.get(i);
                         if (area.contains(enemy.getPosition())) {
-                            enemy.slowed = getDamage();
+                            enemy.slowed = getSpeed();
+                            enemy.slowSpeed = getDamage();
                             if (ability && enemy.hit(getDamage())) {
                                 kills++;
                                 level.totalKills++;
@@ -439,31 +441,31 @@ public class Tower extends Building {
             public int compare(Enemy enemy, Enemy oEnemy) {
                 float length = enemy.getPosition().cpy().sub(point).len();
                 float olength = oEnemy.getPosition().cpy().sub(point).len();
-                return (int) (length - olength);
+                return MathUtils.round(length - olength);
             }
         },
         FIRST {
             @Override
             public int compare(Enemy enemy, Enemy oEnemy) {
-                return (int) (enemy.getDistance() - oEnemy.getDistance());
+                return MathUtils.round(enemy.getDistance() - oEnemy.getDistance());
             }
         },
         LAST {
             @Override
             public int compare(Enemy enemy, Enemy oEnemy) {
-                return (int) (oEnemy.getDistance() - enemy.getDistance());
+                return MathUtils.round(oEnemy.getDistance() - enemy.getDistance());
             }
         },
         STRONGEST {
             @Override
             public int compare(Enemy enemy, Enemy oEnemy) {
-                return (int) (oEnemy.health - enemy.health);
+                return MathUtils.round(oEnemy.health - enemy.health);
             }
         },
         WEAKEST {
             @Override
             public int compare(Enemy enemy, Enemy oEnemy) {
-                return (int) (enemy.health - oEnemy.health);
+                return MathUtils.round(enemy.health - oEnemy.health);
             }
         };
 

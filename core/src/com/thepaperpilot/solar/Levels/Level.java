@@ -55,7 +55,7 @@ public class Level implements Screen {
     public int redResource = 100;
     public int blueResource = 100;
     public int yellowResource = 100;
-    public int population = 1;
+    public int population = 10;
     public boolean paused;
     public float time;
     public int wave;
@@ -230,8 +230,8 @@ public class Level implements Screen {
             time += delta;
             resourceTime += delta;
         }
-        while (resourceTime > 4) {
-            resourceTime -= 4;
+        while (resourceTime > 2) {
+            resourceTime -= 2;
             redResource++;
             blueResource++;
             yellowResource++;
@@ -255,7 +255,7 @@ public class Level implements Screen {
         for (Building building : buildings) {
             if (building instanceof Generator) {
                 Color color = building.type == Level.Resource.RED ? Color.RED : building.type == Level.Resource.BLUE ? Color.BLUE : Color.YELLOW;
-                shapeRenderer.setColor(color.r, color.b, color.g, color.a * batch.getColor().a);
+                shapeRenderer.setColor(color.r, color.g, color.b, color.a * batch.getColor().a);
             }
             StatsCircle.drawBottom(shapeRenderer, new Vector2(building.area.x, building.area.y), building, 1f, Main.TOWER_RADIUS * 1.2f);
         }
@@ -359,8 +359,13 @@ public class Level implements Screen {
     }
 
     public void nextWave() {
+        resourceTime += (2 * Main.WAVE_INTERVAL + currWave.getTime() - time) * 1.5f;
+        for (Building building : buildings) {
+            if (building instanceof Generator) ((Generator) building).time += (2 * Main.WAVE_INTERVAL + currWave.getTime() - time) * 1.5f;
+        }
         time = 0;
         wave++;
+        population += 10;
         Wave newWave = new Wave(waves[wave % waves.length], this);
         newWave.setPosition(path[0].x, path[0].y);
         stage.addActor(newWave);
