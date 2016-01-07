@@ -260,7 +260,7 @@ public class Level implements Screen {
                 Color color = building.type == Level.Resource.RED ? Color.RED : building.type == Level.Resource.BLUE ? Color.BLUE : Color.YELLOW;
                 shapeRenderer.setColor(color.r, color.g, color.b, color.a * batch.getColor().a);
             }
-            StatsCircle.drawBottom(shapeRenderer, new Vector2(building.area.x, building.area.y), building, 1f, Main.TOWER_RADIUS * 1.2f);
+            StatsCircle.drawBottom(shapeRenderer, new Vector2(building.area.x, building.area.y), building, 1f, Main.TOWER_RADIUS);
         }
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);

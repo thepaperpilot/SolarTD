@@ -16,9 +16,9 @@ public class HUD {
     private static final Button red = new Button(Main.getDrawable("towers/redStore"), Main.getDrawable("towers/redStoreDown"), Main.getDrawable("towers/redStoreDown"));
     private static final Button blue = new Button(Main.getDrawable("towers/blueStore"), Main.getDrawable("towers/blueStoreDown"), Main.getDrawable("towers/blueStoreDown"));
     private static final Button yellow = new Button(Main.getDrawable("towers/yellowStore"), Main.getDrawable("towers/yellowStoreDown"), Main.getDrawable("towers/yellowStoreDown"));
-    private static final Button redGen = new Button(Main.getDrawable("towers/redGenStore"), Main.getDrawable("towers/redGenStoreDown"), Main.getDrawable("towers/redGenStoreDown"));
-    private static final Button blueGen = new Button(Main.getDrawable("towers/blueGenStore"), Main.getDrawable("towers/blueGenStoreDown"), Main.getDrawable("towers/blueGenStoreDown"));
-    private static final Button yellowGen = new Button(Main.getDrawable("towers/yellowGenStore"), Main.getDrawable("towers/yellowGenStoreDown"), Main.getDrawable("towers/yellowGenStoreDown"));
+    private static final Button redGen = new Button(Main.getDrawable("towers/redGen"), Main.getDrawable("towers/redGenStoreDown"), Main.getDrawable("towers/redGenStoreDown"));
+    private static final Button blueGen = new Button(Main.getDrawable("towers/blueGen"), Main.getDrawable("towers/blueGenStoreDown"), Main.getDrawable("towers/blueGenStoreDown"));
+    private static final Button yellowGen = new Button(Main.getDrawable("towers/yellowGen"), Main.getDrawable("towers/yellowGenStoreDown"), Main.getDrawable("towers/yellowGenStoreDown"));
     private static final Label redRes = new Label("", Main.skin, "large");
     private static final Label blueRes = new Label("", Main.skin, "large");
     private static final Label yellowRes = new Label("", Main.skin, "large");
