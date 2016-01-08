@@ -120,6 +120,7 @@ public class HUD {
         menu.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 Menu.toggle();
+                Main.getSound("select").play();
             }
         });
         pause.addListener(new ClickListener() {
@@ -130,36 +131,43 @@ public class HUD {
         red.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 updateStore(Level.Resource.RED, true);
+                Main.getSound("select").play();
             }
         });
         blue.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 updateStore(Level.Resource.BLUE, true);
+                Main.getSound("select").play();
             }
         });
         yellow.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 updateStore(Level.Resource.YELLOW, true);
+                Main.getSound("select").play();
             }
         });
         redGen.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 updateStore(Level.Resource.RED, false);
+                Main.getSound("select").play();
             }
         });
         blueGen.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 updateStore(Level.Resource.BLUE, false);
+                Main.getSound("select").play();
             }
         });
         yellowGen.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 updateStore(Level.Resource.YELLOW, false);
+                Main.getSound("select").play();
             }
         });
         timerTable.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 level.nextWave();
+                Main.getSound("select").play();
             }
         });
     }

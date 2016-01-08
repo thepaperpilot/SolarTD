@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -49,6 +50,10 @@ public class Main extends Game implements Screen {
         return new Image(texture).getDrawable();
     }
 
+    public static Sound getSound(String name) {
+        return manager.get("audio/" + name + ".wav", Sound.class);
+    }
+
     @Override
     public void create() {
         // use this so I can make a static changeScreen function
@@ -81,6 +86,14 @@ public class Main extends Game implements Screen {
         manager.load("title.png", Texture.class);
         manager.load("alien.png", Texture.class);
         manager.load("mine.png", Texture.class);
+        manager.load("audio/blue.wav", Sound.class);
+        manager.load("audio/build.wav", Sound.class);
+        manager.load("audio/death.wav", Sound.class);
+        manager.load("audio/generate.wav", Sound.class);
+        manager.load("audio/hit.wav", Sound.class);
+        manager.load("audio/lose.wav", Sound.class);
+        manager.load("audio/red.wav", Sound.class);
+        manager.load("audio/select.wav", Sound.class);
 
         // show this screen while it loads
         setScreen(this);
