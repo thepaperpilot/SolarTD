@@ -28,45 +28,143 @@ public class MenuScreen implements Screen{
         bg.setScale(.25f);
         stage.addActor(bg);
 
+        Table ui = new Table(Main.skin);
+        ui.setFillParent(true);
+        ui.bottom().pad(8);
+
         Table levels = new Table(Main.skin);
-        levels.setFillParent(true);
-        levels.bottom().pad(8);
-        TextButton level1 = new TextButton("1", Main.skin, "toggle-large");
+        final TextButton level1 = new TextButton("1", Main.skin, "toggle-large");
         level1.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 level = 1;
             }
         });
-        levels.add(level1).spaceBottom(4);
+        levels.add(level1).spaceRight(4);
+        final TextButton level2 = new TextButton("2", Main.skin, "toggle-large");
+        level2.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                level = 2;
+            }
+        });
+        levels.add(level2).spaceRight(4);
+        final TextButton level3 = new TextButton("3", Main.skin, "toggle-large");
+        level3.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                level = 3;
+            }
+        });
+        levels.add(level3).spaceRight(4);
+        final TextButton level4 = new TextButton("4", Main.skin, "toggle-large");
+        level4.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                level = 4;
+            }
+        });
+        levels.add(level4).spaceRight(4);
+        final TextButton level5 = new TextButton("5", Main.skin, "toggle-large");
+        level5.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                level = 5;
+            }
+        });
+        levels.add(level5).spaceRight(4);
+        ui.add(new Label("Map:", Main.skin)).left().row();
+        ui.add(levels).spaceBottom(4).row();
 
-        levels.row();
-        Button start = new TextButton("Start Game", Main.skin);
+        Table difficulty = new Table(Main.skin);
+        TextButton easy = new TextButton("Easy", Main.skin, "toggle");
+        easy.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                Level.difficulty = -1;
+            }
+        });
+        TextButton normal = new TextButton("Normal", Main.skin, "toggle");
+        normal.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                Level.difficulty = 0;
+            }
+        });
+        TextButton hard = new TextButton("Hard", Main.skin, "toggle");
+        hard.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                Level.difficulty = 1;
+            }
+        });
+        difficulty.add(easy).spaceRight(4);
+        difficulty.add(normal).spaceRight(4);
+        difficulty.add(hard).spaceRight(4).row();
+        new ButtonGroup<>(easy, normal, hard);
+        if (Level.difficulty == 1) hard.setChecked(true);
+        else if (Level.difficulty == 0) normal.setChecked(true);
+        else easy.setChecked(true);
+        ui.add(new Label("Difficulty:", Main.skin)).left().row();
+        ui.add(difficulty).spaceBottom(4).row();
+
+        Button start = new TextButton("Start Game", Main.skin, "large");
         start.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                Level.LevelPrototype levelPrototype = new Level.LevelPrototype();
-                levelPrototype.width = 980;
-                levelPrototype.height = 540;
-                levelPrototype.path = new float[]{980, 200, 500, 200, 300, 300, 300, 200, 100, 400, 980, 400};
-                Wave.WavePrototype wavePrototype = new Wave.WavePrototype();
                 Enemy.EnemyPrototype enemyPrototype = new Enemy.EnemyPrototype();
                 enemyPrototype.name = "alien";
                 enemyPrototype.speed = 1;
                 enemyPrototype.count = 10;
                 enemyPrototype.health = 1;
+                Enemy.EnemyPrototype enemyPrototype2 = new Enemy.EnemyPrototype();
+                enemyPrototype2.name = "alien";
+                enemyPrototype2.speed = 2;
+                enemyPrototype2.count = 15;
+                enemyPrototype2.health = .7f;
+                Enemy.EnemyPrototype enemyPrototype3 = new Enemy.EnemyPrototype();
+                enemyPrototype3.name = "alien";
+                enemyPrototype3.speed = .5f;
+                enemyPrototype3.count = 1;
+                enemyPrototype3.health = 15;
+                Wave.WavePrototype wavePrototype = new Wave.WavePrototype();
                 wavePrototype.enemies = new Enemy.EnemyPrototype[]{enemyPrototype};
                 wavePrototype.enemyDistance = 1;
-                levelPrototype.waves = new Wave.WavePrototype[]{wavePrototype};
+                Wave.WavePrototype wavePrototype2 = new Wave.WavePrototype();
+                wavePrototype2.enemies = new Enemy.EnemyPrototype[]{enemyPrototype2};
+                wavePrototype2.enemyDistance = .5f;
+                Wave.WavePrototype wavePrototype3 = new Wave.WavePrototype();
+                wavePrototype3.enemies = new Enemy.EnemyPrototype[]{enemyPrototype3};
+                wavePrototype3.enemyDistance = 1;
+                Level.LevelPrototype levelPrototype = new Level.LevelPrototype();
+                levelPrototype.waves = new Wave.WavePrototype[]{wavePrototype, wavePrototype2, wavePrototype3};
+                switch (level) {
+                    default:case 1:
+                        levelPrototype.width = 980;
+                        levelPrototype.height = 540;
+                        levelPrototype.path = new float[]{980, 200, 500, 200, 300, 300, 300, 200, 100, 400, 980, 400};
+                        break;
+                    case 2:
+                        levelPrototype.width = 1280;
+                        levelPrototype.height = 720;
+                        levelPrototype.path = new float[]{0, 620, 1180, 620, 1180, 200, 100, 200, 100, 720};
+                        break;
+                    case 3:
+                        levelPrototype.width = 1280;
+                        levelPrototype.height = 720;
+                        levelPrototype.path = new float[]{1080, 720, 1080, 200, 200, 200, 200, 620, 880, 620, 880, 400, 400, 400, 400, 510, 1280, 510};
+                        break;
+                    case 4:
+                        levelPrototype.width = 1280;
+                        levelPrototype.height = 720;
+                        levelPrototype.path = new float[]{140, 720, 140, 200, 340, 200, 340, 520, 540, 520, 540, 200, 740, 200, 740, 520, 940, 520, 940, 200, 1140, 200, 1140, 720};
+                        break;
+                    case 5:
+                        levelPrototype.width = 1920;
+                        levelPrototype.height = 1080;
+                        levelPrototype.path = new float[]{0, 200, 980, 690, 1920, 980};
+                        break;
+                }
                 Main.changeScreen(new Level(levelPrototype));
-                // Not working with GWT for some reason
-                // Main.changeScreen(Level.readLevel("level" + level + ".json"));
             }
         });
-        levels.add(start);
+        ui.add(start);
 
-        new ButtonGroup(level1);
+        new ButtonGroup(level1, level2, level3, level4, level5);
         level1.setChecked(true);
 
-        stage.addActor(levels);
+        stage.addActor(ui);
 
         stars = new ParticleEffect();
         stars.load(Gdx.files.internal("particles/menu.p"), Gdx.files.internal("particles/"));

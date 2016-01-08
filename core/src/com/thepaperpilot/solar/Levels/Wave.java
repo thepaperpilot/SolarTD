@@ -3,7 +3,6 @@ package com.thepaperpilot.solar.Levels;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.thepaperpilot.solar.Entities.Enemy;
-import com.thepaperpilot.solar.Main;
 
 public class Wave extends Actor{
     public final float enemyDistance;
@@ -45,7 +44,7 @@ public class Wave extends Actor{
 
     public Enemy getEnemy(Level level) {
         Enemy enemy = new Enemy(enemies[currEnemyType], level);
-        enemy.health *= Math.pow(level.wave, Main.HEALTH_RATE);
+        enemy.health = MathUtils.ceil(enemy.health * (float) Math.pow(level.wave, Level.getHealthRate()));
         currEnemyCount++;
         if (currEnemyCount == enemies[currEnemyType].count) {
             currEnemyType++;

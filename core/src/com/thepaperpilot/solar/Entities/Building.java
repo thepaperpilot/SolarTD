@@ -40,6 +40,12 @@ public abstract class Building extends Image {
         });
     }
 
+    public static int balancedCost(int value) {
+        if (Level.difficulty == -1) value *= .9f;
+        else if (Level.difficulty == 1) value *= 1.2f;
+        return value;
+    }
+
     public String getName() {
         return "Building";
     }

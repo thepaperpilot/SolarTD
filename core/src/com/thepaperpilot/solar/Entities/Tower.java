@@ -78,15 +78,15 @@ public class Tower extends Building {
     }
 
     public static float getRedCost(Level.Resource type) {
-        return type == Level.Resource.RED ? 25 : 0;
+        return type == Level.Resource.RED ? balancedCost(25) : 0;
     }
 
     public static float getBlueCost(Level.Resource type) {
-        return type == Level.Resource.BLUE ? 25 : 0;
+        return type == Level.Resource.BLUE ? balancedCost(25) : 0;
     }
 
     public static float getYellowCost(Level.Resource type) {
-        return type == Level.Resource.YELLOW ? 25 : 0;
+        return type == Level.Resource.YELLOW ? balancedCost(25) : 0;
     }
 
     public static boolean pay(Level.Resource type, Level level) {
@@ -321,9 +321,9 @@ public class Tower extends Building {
 
     public void upgradeDamage() {
         if (damage < 11) {
-            if (level.redResource >= damageCosts[damage]) {
-                redValue += Main.SELL_RATE * damageCosts[damage];
-                level.redResource -= damageCosts[damage];
+            if (level.redResource >= balancedCost(damageCosts[damage])) {
+                redValue += Main.SELL_RATE * balancedCost(damageCosts[damage]);
+                level.redResource -= balancedCost(damageCosts[damage]);
                 damage++;
                 if (damage == 11 && type == Level.Resource.RED) ability = true;
             }
@@ -332,9 +332,9 @@ public class Tower extends Building {
 
     public void upgradeRange() {
         if (range < 11) {
-            if (level.blueResource >= rangeCosts[range]) {
-                blueValue += Main.SELL_RATE * rangeCosts[range];
-                level.blueResource -= rangeCosts[range];
+            if (level.blueResource >= balancedCost(rangeCosts[range])) {
+                blueValue += Main.SELL_RATE * balancedCost(rangeCosts[range]);
+                level.blueResource -= balancedCost(rangeCosts[range]);
                 range++;
                 if(range == 11 && type == Level.Resource.BLUE) ability = true;
             }
@@ -343,9 +343,9 @@ public class Tower extends Building {
 
     public void upgradeSpeed() {
         if (speed < 11) {
-            if (level.yellowResource >= speedCosts[speed]) {
-                yellowValue += Main.SELL_RATE * speedCosts[speed];
-                level.yellowResource -= speedCosts[speed];
+            if (level.yellowResource >= balancedCost(speedCosts[speed])) {
+                yellowValue += Main.SELL_RATE * balancedCost(speedCosts[speed]);
+                level.yellowResource -= balancedCost(speedCosts[speed]);
                 speed++;
                 if (speed == 11 && type == Level.Resource.YELLOW) ability = true;
             }
@@ -377,15 +377,15 @@ public class Tower extends Building {
     }
 
     public int getDamageCost() {
-        return damage < 11 ? damageCosts[damage] : -1;
+        return damage < 11 ? balancedCost(damageCosts[damage]) : -1;
     }
 
     public int getRangeCost() {
-        return range < 11 ? rangeCosts[range] : -1;
+        return range < 11 ? balancedCost(rangeCosts[range]) : -1;
     }
 
     public int getSpeedCost() {
-        return speed < 11 ? speedCosts[speed] : -1;
+        return speed < 11 ? balancedCost(speedCosts[speed]) : -1;
     }
 
     public void comboUpgrade() {

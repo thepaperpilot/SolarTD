@@ -42,15 +42,15 @@ public class Generator extends Building {
     }
 
     public static int getRedCost(Level.Resource type) {
-        return type == Level.Resource.RED ? 100 : 50;
+        return balancedCost(type == Level.Resource.RED ? 100 : 50);
     }
 
     public static int getBlueCost(Level.Resource type) {
-        return type == Level.Resource.BLUE ? 100 : 50;
+        return balancedCost(type == Level.Resource.BLUE ? 100 : 50);
     }
 
     public static int getYellowCost(Level.Resource type) {
-        return type == Level.Resource.YELLOW ? 100 : 50;
+        return balancedCost(type == Level.Resource.YELLOW ? 100 : 50);
     }
 
     public static String getDescription(Level.Resource type) {
@@ -100,7 +100,7 @@ public class Generator extends Building {
     }
 
     public int getExtractorCost() {
-        return amount < 9 ? extractorCosts[amount] : -1;
+        return amount < 9 ? balancedCost(extractorCosts[amount]) : -1;
     }
 
     public void upgradeExtractors() {
@@ -140,7 +140,7 @@ public class Generator extends Building {
     }
 
     public int getEfficiencyCost() {
-        return getEfficiencyIndex() < 9 ? efficiencyCosts[getEfficiencyIndex()] : -1;
+        return getEfficiencyIndex() < 9 ? balancedCost(efficiencyCosts[getEfficiencyIndex()]) : -1;
     }
 
     public void upgradeEfficiency() {

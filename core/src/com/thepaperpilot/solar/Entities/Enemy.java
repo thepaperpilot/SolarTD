@@ -44,7 +44,7 @@ public class Enemy extends Image {
         table.add(count).expand();
         Table health = new Table(Main.skin);
         health.add(new Label("Health", Main.skin)).row();
-        health.add(new Label("" + (int) (prototype.health * Math.pow(wave, Main.HEALTH_RATE)), Main.skin, "large"));
+        health.add(new Label("" + MathUtils.ceil(prototype.health * (float) Math.pow(wave, Level.getHealthRate())), Main.skin, "large"));
         table.add(health).expand();
         Table speed = new Table(Main.skin);
         speed.add(new Label("Speed", Main.skin)).row();

@@ -38,6 +38,7 @@ import java.util.ArrayList;
 
 public class Level implements Screen {
     private final static Json json = new Json();
+    public static int difficulty = 0;
     public final LevelPrototype prototype;
     public final Stage stage;
     public final Vector2[] path;
@@ -217,9 +218,8 @@ public class Level implements Screen {
         });
     }
 
-    public static Level readLevel(String fileName) {
-        // read the level from a JSON file
-        return new Level(json.fromJson(LevelPrototype.class, Gdx.files.internal(fileName)));
+    public static float getHealthRate() {
+        return difficulty == -1 ? Main.HEALTH_RATE * .9f : difficulty == 0 ? Main.HEALTH_RATE : Main.HEALTH_RATE * 1.2f;
     }
 
     @Override
@@ -369,7 +369,7 @@ public class Level implements Screen {
         time = 0;
         wave++;
         population += 10;
-        Wave newWave = new Wave(waves[wave % waves.length], this);
+        Wave newWave = new Wave(waves[(wave - 1) % waves.length], this);
         newWave.setPosition(path[0].x, path[0].y);
         stage.addActor(newWave);
         currWave = newWave;

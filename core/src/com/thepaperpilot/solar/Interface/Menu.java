@@ -461,7 +461,7 @@ public class Menu {
         }
         Table next = (Table) nextWavePane.getWidget();
         next.clearChildren();
-        Wave nextWave = new Wave(level.waves[(level.wave + 1) % level.waves.length], level);
+        Wave nextWave = new Wave(level.waves[(level.wave) % level.waves.length], level);
         for (Enemy.EnemyPrototype enemy : nextWave.enemies) {
             next.add(Enemy.getTable(enemy, level.wave + 1)).expandX().fill().row();
         }
