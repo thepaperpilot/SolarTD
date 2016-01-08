@@ -444,7 +444,7 @@ public class Menu {
             towerShotsLabel.setText("" + tower.shots);
             if (((Tower) level.selectedBuilding).comboUpgrade) {
                 float time = ((Tower) level.selectedBuilding).comboTimer;
-                comboLabel.setText(time >= Main.COMBO_TIME ? "READY" : (int) (time / Main.COMBO_TIME) + "%");
+                comboLabel.setText(time >= Main.COMBO_TIME ? "READY" : (int) (100 * time / Main.COMBO_TIME) + "%");
                 comboBar.setValue(time);
             }
         } else if (level.selectedBuilding != null){
