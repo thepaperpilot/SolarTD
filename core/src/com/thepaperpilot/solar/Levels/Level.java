@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -109,6 +110,7 @@ public class Level implements Screen {
         gameOver.setFillParent(true);
         gameOver.setAlignment(Align.center);
         gameOver.setFontScale(2);
+        gameOver.setTouchable(Touchable.disabled);
 
         bg = new Image(Main.getDrawable("bg"));
         bg.setScale(prototype.width / Gdx.graphics.getWidth());
@@ -195,6 +197,7 @@ public class Level implements Screen {
         HUD.deselect();
         Menu.deselect();
         Menu.updateWaves();
+        HUD.updateWaves();
 
         stage.addListener(new InputListener() {
             @Override
@@ -388,6 +391,7 @@ public class Level implements Screen {
         stage.addActor(newWave);
         currWave = newWave;
         Menu.updateWaves();
+        HUD.updateWaves();
     }
 
     public void addEnemy(final Enemy enemy) {

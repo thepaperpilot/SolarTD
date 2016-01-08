@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.thepaperpilot.solar.Entities.Generator;
 import com.thepaperpilot.solar.Entities.Tower;
 import com.thepaperpilot.solar.Levels.Level;
+import com.thepaperpilot.solar.Levels.Wave;
 import com.thepaperpilot.solar.Main;
 
 public class HUD {
@@ -29,6 +30,7 @@ public class HUD {
     private static final Label livesLabel = new Label("", Main.skin, "large");
     private static final Label wavesLabel = new Label("", Main.skin, "large");
     private static final Label timeLabel = new Label("", Main.skin, "large");
+    private static final Table enemyTable = new Table(Main.skin);
     private static final ButtonGroup buildings = new ButtonGroup(red, blue, yellow, redGen, blueGen, yellowGen);
     private static final Table resourcesTable = new Table(Main.skin); // we need a reference to this in order to get its x position
     private static final Table cost = new Table(Main.skin);
@@ -96,7 +98,6 @@ public class HUD {
         Table timerTable = new Table(Main.skin);
         timerTable.setBackground(Main.skin.getDrawable("default-round"));
         timerTable.add(new Label("Next Wave", Main.skin, "large")).row();
-        Table enemyTable = new Table(Main.skin);
         enemyTable.setBackground(Main.getDrawable("alien"));
         enemyTable.add(timeLabel);
         timerTable.add(enemyTable).size(32);
@@ -251,6 +252,12 @@ public class HUD {
         blueCost.setColor(0, 0, 1, level.blueResource >= (type == 1 ? Tower.getBlueCost(resource) : Generator.getBlueCost(resource)) ? 1 : .5f);
         yellowCost.setText("" + (int) (type == 1 ? Tower.getYellowCost(resource) : Generator.getYellowCost(resource)));
         yellowCost.setColor(1, 1, 0, level.yellowResource >= (type == 1 ? Tower.getYellowCost(resource) : Generator.getYellowCost(resource)) ? 1 : .5f);
+    }
+
+    public static void updateWaves() {
+        Wave wave = new Wave(level.waves[(level.wave) % level.waves.length], level);
+        if (wave.enemies.length > 0)
+            enemyTable.setBackground(Main.getDrawable(wave.enemies[0].name));
     }
 
     public static void pause() {
