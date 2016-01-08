@@ -76,7 +76,6 @@ public class Enemy extends Image {
         if (slowed > 0) {
             slowed -= delta;
             tempSpeed *= 10 / (slowSpeed + 10);
-            // maybe a condition class?
         } else slowed = 0;
         Vector2 dist = new Vector2(level.path[path + 1].x - getX() - Main.ENEMY_SIZE / 2, level.path[path + 1].y - getY() - Main.ENEMY_SIZE / 2);
         float angle = dist.angle();
@@ -87,7 +86,7 @@ public class Enemy extends Image {
                 if (level.enemies.contains(this)) {
                     level.enemies.remove(this);
                     remove();
-                    level.population -= health;
+                    level.hit(health);
                 }
             } else setPosition(level.path[path].x - Main.ENEMY_SIZE / 2, level.path[path].y - Main.ENEMY_SIZE / 2);
         } else

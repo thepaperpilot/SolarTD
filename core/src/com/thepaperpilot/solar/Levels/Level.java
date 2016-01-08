@@ -51,6 +51,7 @@ public class Level implements Screen {
     private final ParticleEffect pathParticles;
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
     private final ParticleEffect stars;
+    private final Label gameOver;
     public Building selectedBuilding;
     public boolean placingBuilding;
     public boolean movingBuilding;
@@ -103,6 +104,11 @@ public class Level implements Screen {
         stage = new Stage(new StretchViewport(levelPrototype.width, levelPrototype.height));
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         ui = new Stage(new StretchViewport(Main.UI_WIDTH, Main.UI_WIDTH * 9f / 16f));
+
+        gameOver = new Label("Game Over", Main.skin, "large");
+        gameOver.setFillParent(true);
+        gameOver.setAlignment(Align.center);
+        gameOver.setFontScale(2);
 
         bg = new Image(Main.getDrawable("bg"));
         bg.setScale(prototype.width / Gdx.graphics.getWidth());
@@ -230,7 +236,7 @@ public class Level implements Screen {
 
     @Override
     public void render(float delta) {
-        if (!paused) {
+        if (!paused && population > 0) {
             time += delta;
             resourceTime += delta;
         }
@@ -246,7 +252,7 @@ public class Level implements Screen {
 
         Menu.update();
 
-        if (!paused) stage.act(delta);
+        if (!paused && population > 0) stage.act(delta);
 
         Batch batch = stage.getBatch();
         batch.begin();
@@ -274,10 +280,10 @@ public class Level implements Screen {
         stage.draw();
 
         batch.begin();
-        pathParticles.draw(batch, paused ? 0 : delta * .2f);
+        pathParticles.draw(batch, paused || population <= 0 ? 0 : delta * .2f);
         for (int i = 0; i < particles.size(); ) {
             ParticleEffect effect = particles.get(i);
-            effect.draw(batch, paused ? 0 : delta);
+            effect.draw(batch, paused || population <= 0 ? 0 : delta);
             if (effect.isComplete() && !effect.getEmitters().first().isContinuous()) {
                 particles.remove(effect);
                 if (effect instanceof ParticleEffectPool.PooledEffect)
@@ -388,6 +394,11 @@ public class Level implements Screen {
         enemies.add(enemy);
     }
 
+    public void gameOver() {
+        ui.addActor(gameOver);
+        Menu.gameOver();
+    }
+
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height);
@@ -413,6 +424,11 @@ public class Level implements Screen {
     public void dispose() {
         stage.dispose();
         ui.dispose();
+    }
+
+    public void hit(float damage) {
+        population -= damage;
+        if (population <= 0) gameOver();
     }
 
     public enum Resource {

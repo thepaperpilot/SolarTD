@@ -504,4 +504,10 @@ public class Menu {
             }), Actions.alpha(.5f, .25f)));
         }
     }
+
+    public static void gameOver() {
+        menu.setVisible(true);
+        settingsButton.setChecked(true);
+        switchTab(settingsTable);
+    }
 }
