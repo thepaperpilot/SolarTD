@@ -86,7 +86,7 @@ public class Generator extends Building {
                     increase.setColor(1, 1, 0, 1);
                     break;
             }
-            Main.getSound("generate").play(.1f);
+            Main.getSound("generate").play(.1f * Main.volume);
             level.stage.addActor(increase);
             generated += temp * (amount + 1);
         }

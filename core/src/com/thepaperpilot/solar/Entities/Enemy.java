@@ -64,7 +64,7 @@ public class Enemy extends Image {
         if (health <= 0) {
             level.enemies.remove(this);
             remove();
-            Main.getSound("death").play();
+            Main.getSound("death").play(Main.volume);
             ParticleEffect effect = deathPool.obtain();
             effect.setPosition(getX() + Main.ENEMY_SIZE / 2, getY() + Main.ENEMY_SIZE / 2);
             level.particles.add(effect);
@@ -93,7 +93,7 @@ public class Enemy extends Image {
                     level.enemies.remove(this);
                     remove();
                     level.hit(health);
-                    Main.getSound("hit").play();
+                    Main.getSound("hit").play(Main.volume);
                     ParticleEffect effect = death2Pool.obtain();
                     effect.setPosition(getX() + Main.ENEMY_SIZE / 2, getY() + Main.ENEMY_SIZE / 2);
                     level.particles.add(effect);

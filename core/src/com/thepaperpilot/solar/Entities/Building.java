@@ -36,7 +36,7 @@ public abstract class Building extends Image {
                     Menu.select();
                 }
                 event.reset();
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
     }

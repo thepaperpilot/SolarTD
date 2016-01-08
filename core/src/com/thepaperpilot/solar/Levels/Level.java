@@ -151,7 +151,7 @@ public class Level implements Screen {
                     if (selectedBuilding instanceof Tower) {
                         Tower.refreshNeighbors(Level.this);
                     }
-                    Main.getSound("build").play();
+                    Main.getSound("build").play(Main.volume);
                     return;
                 }
                 boolean paid = false;
@@ -184,7 +184,7 @@ public class Level implements Screen {
                     HUD.deselect();
                 }
                 Menu.select();
-                Main.getSound("build").play();
+                Main.getSound("build").play(Main.volume);
             }
         });
 
@@ -399,7 +399,7 @@ public class Level implements Screen {
     public void gameOver() {
         ui.addActor(gameOver);
         Menu.gameOver();
-        Main.getSound("lose").play();
+        Main.getSound("lose").play(Main.volume);
     }
 
     @Override

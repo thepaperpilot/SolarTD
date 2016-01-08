@@ -31,6 +31,7 @@ public class Main extends Game implements Screen {
     public static final float COMBO_TIME = 40;
     private static final AssetManager manager = new AssetManager();
     public static Skin skin;
+    public static float volume = 1;
     private static Main instance;
     private static SpriteBatch batch;
     private Stage loadingStage;

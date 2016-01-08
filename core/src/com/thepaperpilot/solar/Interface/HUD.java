@@ -120,7 +120,7 @@ public class HUD {
         menu.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 Menu.toggle();
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         pause.addListener(new ClickListener() {
@@ -131,43 +131,43 @@ public class HUD {
         red.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 updateStore(Level.Resource.RED, true);
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         blue.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 updateStore(Level.Resource.BLUE, true);
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         yellow.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 updateStore(Level.Resource.YELLOW, true);
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         redGen.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 updateStore(Level.Resource.RED, false);
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         blueGen.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 updateStore(Level.Resource.BLUE, false);
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         yellowGen.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 updateStore(Level.Resource.YELLOW, false);
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         timerTable.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 level.nextWave();
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
     }

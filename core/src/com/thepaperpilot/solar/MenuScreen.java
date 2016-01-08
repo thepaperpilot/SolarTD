@@ -37,7 +37,7 @@ public class MenuScreen implements Screen{
         level1.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 level = 1;
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         levels.add(level1).spaceRight(4);
@@ -45,7 +45,7 @@ public class MenuScreen implements Screen{
         level2.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 level = 2;
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         levels.add(level2).spaceRight(4);
@@ -53,7 +53,7 @@ public class MenuScreen implements Screen{
         level3.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 level = 3;
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         levels.add(level3).spaceRight(4);
@@ -61,7 +61,7 @@ public class MenuScreen implements Screen{
         level4.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 level = 4;
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         levels.add(level4).spaceRight(4);
@@ -69,7 +69,7 @@ public class MenuScreen implements Screen{
         level5.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 level = 5;
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         levels.add(level5).spaceRight(4);
@@ -81,21 +81,21 @@ public class MenuScreen implements Screen{
         easy.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 Level.difficulty = -1;
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         TextButton normal = new TextButton("Normal", Main.skin, "toggle");
         normal.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 Level.difficulty = 0;
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         TextButton hard = new TextButton("Hard", Main.skin, "toggle");
         hard.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 Level.difficulty = 1;
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         difficulty.add(easy).spaceRight(4);
@@ -165,7 +165,7 @@ public class MenuScreen implements Screen{
                         break;
                 }
                 Main.changeScreen(new Level(levelPrototype));
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         ui.add(start);

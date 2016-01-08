@@ -182,7 +182,7 @@ public class Tower extends Building {
             default:
             case RED:
                 while (time >= Main.TOWER_SPEED) {
-                    Main.getSound("red").play();
+                    Main.getSound("red").play(Main.volume);
                     time -= Main.TOWER_SPEED;
                     ParticleEffect effect = redPool.obtain();
                     effect.setPosition(getX() + Main.TOWER_RADIUS, getY() + Main.TOWER_RADIUS);
@@ -214,7 +214,7 @@ public class Tower extends Building {
                 break;
             case BLUE:
                 while (time >= Main.TOWER_SPEED && missiles < getSpeed()) {
-                    Main.getSound("blue").play();
+                    Main.getSound("blue").play(Main.volume);
                     time -= Main.TOWER_SPEED;
                     ParticleEffect effect = bluePool.obtain();
                     effect.setPosition(getX() + Main.TOWER_RADIUS, getY() + Main.TOWER_RADIUS);

@@ -102,6 +102,14 @@ public class Menu {
         enemyHealth.getLabelCell().spaceLeft(4);
         enemyHealth.setChecked(true);
         settingsTable.add(enemyHealth).spaceBottom(4).row();
+        Table sliders = new Table(Main.skin);
+        final Label sound = new Label("Sound Effects Volume: ", Main.skin);
+        sound.setAlignment(Align.right);
+        final Slider soundVolume = new Slider(0, 1, .01f, false, Main.skin);
+        soundVolume.setValue(Main.volume);
+        sliders.add(sound).row();
+        sliders.add(soundVolume).expand().row();
+        settingsTable.add(sliders).spaceBottom(4).row();
         Table statsTable = new Table(Main.skin);
         statsTable.add(new Label("Total Kills: ", Main.skin));
         statsTable.add(totalKillsLabel).row();
@@ -235,68 +243,75 @@ public class Menu {
         restart.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 Main.changeScreen(new Level(level.prototype));
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         main.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 Main.changeScreen(MenuScreen.instance);
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         enemyHealth.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 level.enemyHealth = enemyHealth.isChecked();
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
+            }
+        });
+        soundVolume.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Main.volume = soundVolume.getValue();
+                Main.getSound("select").play(Main.volume);
             }
         });
         sellButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 level.selectedBuilding.sell();
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         moveButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 level.movingBuilding = !level.movingBuilding;
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         sendWave.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 level.nextWave();
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         settingsButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 switchTab(settingsTable);
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         comboButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 switchTab(comboTable);
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         generalButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 switchTab(generalTable);
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         towerComboButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 switchTab(towerComboTable);
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         nextWaveButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 switchTab(nextWaveTable);
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         damageUpgrade.addListener(new ClickListener() {
@@ -305,7 +320,7 @@ public class Menu {
                     ((Tower) level.selectedBuilding).upgradeDamage();
                     select();
                 }
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         rangeUpgrade.addListener(new ClickListener() {
@@ -314,7 +329,7 @@ public class Menu {
                     ((Tower) level.selectedBuilding).upgradeRange();
                     select();
                 }
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         speedUpgrade.addListener(new ClickListener() {
@@ -323,44 +338,44 @@ public class Menu {
                     ((Tower) level.selectedBuilding).upgradeSpeed();
                     select();
                 }
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         nearestButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 ((Tower) level.selectedBuilding).targeting = Tower.Targeting.NEAREST;
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         firstButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 ((Tower) level.selectedBuilding).targeting = Tower.Targeting.FIRST;
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         lastButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 ((Tower) level.selectedBuilding).targeting = Tower.Targeting.LAST;
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         strongestButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 ((Tower) level.selectedBuilding).targeting = Tower.Targeting.STRONGEST;
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         weakestButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 ((Tower) level.selectedBuilding).targeting = Tower.Targeting.WEAKEST;
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         comboUpgrade.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 ((Tower) level.selectedBuilding).comboUpgrade();
                 select();
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         extractorsUpgrade.addListener(new ClickListener() {
@@ -369,7 +384,7 @@ public class Menu {
                     ((Generator) level.selectedBuilding).upgradeExtractors();
                     select();
                 }
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
         efficiencyUpgrade.addListener(new ClickListener() {
@@ -378,7 +393,7 @@ public class Menu {
                     ((Generator) level.selectedBuilding).upgradeEfficiency();
                     select();
                 }
-                Main.getSound("select").play();
+                Main.getSound("select").play(Main.volume);
             }
         });
     }
