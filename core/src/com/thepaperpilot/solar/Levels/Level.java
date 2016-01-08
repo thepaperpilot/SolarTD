@@ -63,6 +63,7 @@ public class Level implements Screen {
     public int wave;
     public Wave currWave;
     public Resource selectedResource = Resource.RED;
+    public boolean enemyHealth = true;
     public int selectedType = 1; // 1 is tower, 2 is generator
     public int totalKills = 0;
     private float resourceTime = -10;
@@ -262,9 +263,11 @@ public class Level implements Screen {
             }
             StatsCircle.drawBottom(shapeRenderer, new Vector2(building.area.x, building.area.y), building, 1f, Main.TOWER_RADIUS);
         }
-        shapeRenderer.setColor(1, 1, 1, .25f);
-        for (Enemy enemy : enemies)
-            shapeRenderer.arc(enemy.getX() + Main.ENEMY_SIZE / 2, enemy.getY() + Main.ENEMY_SIZE / 2, 3 * Main.ENEMY_SIZE / 4, 90, 360 * enemy.health / enemy.totalHealth);
+        if (enemyHealth) {
+            shapeRenderer.setColor(1, 1, 1, .25f);
+            for (Enemy enemy : enemies)
+                shapeRenderer.arc(enemy.getX() + Main.ENEMY_SIZE / 2, enemy.getY() + Main.ENEMY_SIZE / 2, 3 * Main.ENEMY_SIZE / 4, 90, 360 * enemy.health / enemy.totalHealth);
+        }
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
 

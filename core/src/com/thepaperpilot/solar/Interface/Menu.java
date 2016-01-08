@@ -2,10 +2,12 @@ package com.thepaperpilot.solar.Interface;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.thepaperpilot.solar.Combo;
@@ -95,7 +97,11 @@ public class Menu {
         Button restart = new TextButton("Restart Level", Main.skin);
         settingsTable.top().add(restart).expandX().fill().row();
         Button main = new TextButton("Main Menu", Main.skin);
-        settingsTable.add(main).expandX().fill().row();
+        settingsTable.add(main).expandX().fill().spaceBottom(4).row();
+        final CheckBox enemyHealth = new CheckBox("Show Enemy Health", Main.skin);
+        enemyHealth.getLabelCell().spaceLeft(4);
+        enemyHealth.setChecked(true);
+        settingsTable.add(enemyHealth).spaceBottom(4).row();
         Table statsTable = new Table(Main.skin);
         statsTable.add(new Label("Total Kills: ", Main.skin));
         statsTable.add(totalKillsLabel).row();
@@ -234,6 +240,12 @@ public class Menu {
         main.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 Main.changeScreen(MenuScreen.instance);
+            }
+        });
+        enemyHealth.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                level.enemyHealth = enemyHealth.isChecked();
             }
         });
         sellButton.addListener(new ClickListener() {
