@@ -8,7 +8,6 @@
 },
   com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
   default: { down: default-round-down, up: default-round },
-  transparent: { },
   toggle: { down: default-round-down, checked: default-round-down, up: default-round },
 },
   com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
@@ -20,35 +19,22 @@
   com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
   default: { hScrollKnob: default-slider, background: default-round, vScrollKnob: default-slider }
 },
-  com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
-  default-vertical: { handle: default-splitpane-vertical },
-  default-horizontal: { handle: default-splitpane }
-},
   com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
   default: { titleFont: font, background: default-window, titleFontColor: white },
-  large: {titleFont: large, background: default-window, titleFontColor: white},
-  transparent: { titleFont: large, titleFontColor: white },
-  button: { titleFont: large, background: default-round-down, titleFontColor: white }
+  large: {titleFont: large, background: default-window, titleFontColor: white}
 },
   com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
   default-horizontal: { background: default-slider, knob: default-slider-knob }
 },
   com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
   default: { font: font, fontColor: white },
-  dialogue: { font: large, fontColor: white, background: default-round },
   large: { font: large, fontColor: white }
 },
   com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
-  default: { selection: selection, background: textfield, font: font, fontColor: grey, cursor: cursor }
+  default: { background: default-round-down, font: font, fontColor: grey }
 },
   com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
   default: { checkboxOn: check-on, checkboxOff: check-off, font: font, fontColor: white }
-},
-  com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
-  default: { fontColorUnselected: grey, selection: default-rect-pad, fontColorSelected: blue, font: font }
-},
-  com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
-  default: { background: default-pane, knob: default-round-large }
 },
   com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
   default-horizontal: { background: progress-bar, knobBefore: default-slider }
