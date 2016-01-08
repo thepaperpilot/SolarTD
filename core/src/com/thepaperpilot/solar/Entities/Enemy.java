@@ -13,11 +13,16 @@ import com.thepaperpilot.solar.Main;
 
 public class Enemy extends Image {
     private static final ParticleEffectPool deathPool;
+    private static final ParticleEffectPool death2Pool;
 
     static {
         ParticleEffect particleEffect = new ParticleEffect();
         particleEffect.load(Gdx.files.internal("particles/death.p"), Gdx.files.internal("particles/"));
         deathPool = new ParticleEffectPool(particleEffect, 0, 100);
+
+        particleEffect = new ParticleEffect();
+        particleEffect.load(Gdx.files.internal("particles/death2.p"), Gdx.files.internal("particles/"));
+        death2Pool = new ParticleEffectPool(particleEffect, 0, 100);
     }
 
     private final float speed;
@@ -87,6 +92,9 @@ public class Enemy extends Image {
                     level.enemies.remove(this);
                     remove();
                     level.hit(health);
+                    ParticleEffect effect = death2Pool.obtain();
+                    effect.setPosition(getX() + Main.ENEMY_SIZE / 2, getY() + Main.ENEMY_SIZE / 2);
+                    level.particles.add(effect);
                 }
             } else setPosition(level.path[path].x - Main.ENEMY_SIZE / 2, level.path[path].y - Main.ENEMY_SIZE / 2);
         } else
