@@ -25,6 +25,7 @@ public class Enemy extends Image {
     public float slowed;
     public float slowSpeed;
     public float health;
+    public float totalHealth;
     private int path;
 
     public Enemy(EnemyPrototype enemyPrototype, Level level) {

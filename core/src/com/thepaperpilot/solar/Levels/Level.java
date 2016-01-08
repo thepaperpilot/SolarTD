@@ -262,6 +262,9 @@ public class Level implements Screen {
             }
             StatsCircle.drawBottom(shapeRenderer, new Vector2(building.area.x, building.area.y), building, 1f, Main.TOWER_RADIUS);
         }
+        shapeRenderer.setColor(1, 1, 1, .25f);
+        for (Enemy enemy : enemies)
+            shapeRenderer.arc(enemy.getX() + Main.ENEMY_SIZE / 2, enemy.getY() + Main.ENEMY_SIZE / 2, 3 * Main.ENEMY_SIZE / 4, 90, 360 * enemy.health / enemy.totalHealth);
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
