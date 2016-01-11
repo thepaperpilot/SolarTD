@@ -113,8 +113,13 @@ public class Level implements Screen {
         gameOver.setTouchable(Touchable.disabled);
 
         bg = new Image(Main.getDrawable("bg"));
-        bg.setScale(prototype.width / Gdx.graphics.getWidth());
-        bg.setPosition(MathUtils.random(bg.getImageWidth() - prototype.width), MathUtils.random(bg.getImageHeight() - prototype.height));
+        float scale = Math.min(prototype.width / Gdx.graphics.getWidth(), prototype.height / Gdx.graphics.getHeight());
+        bg.setScale(scale);
+        float x = bg.getDrawable().getMinWidth();
+        float y = bg.getDrawable().getMinHeight();
+        x *= scale;
+        y *= scale;
+        bg.setPosition(MathUtils.random(prototype.width - x), MathUtils.random(prototype.height - y));
 
         stage.addListener(new ClickListener(Input.Buttons.LEFT) {
             public void clicked(InputEvent event, float x, float y) {
