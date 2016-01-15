@@ -27,7 +27,7 @@ public class Main extends Game implements Screen {
     public static final float SELL_RATE = .75f;
     public static final float GENERATOR_SPEED = 8;
     public static final float WAVE_INTERVAL = 10;
-    public static final float HEALTH_RATE = 1.2f;
+    public static final float HEALTH_RATE = 1.15f;
     public static final float COMBO_TIME = 40;
     private static final AssetManager manager = new AssetManager();
     public static Skin skin;

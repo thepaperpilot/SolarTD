@@ -38,7 +38,6 @@ import com.thepaperpilot.solar.Main;
 import java.util.ArrayList;
 
 public class Level implements Screen {
-    private final static Json json = new Json();
     public static int difficulty = 0;
     public final LevelPrototype prototype;
     public final Stage stage;

@@ -77,7 +77,7 @@ public class Menu {
         new ButtonGroup(nearestButton, firstButton, lastButton, strongestButton, weakestButton);
 
         menu.setVisible(false);
-        menu.setSize(300, 226);
+        menu.setSize(210, 226);
         menu.setPosition(20, 200);
         menu.setColor(1, 1, 1, 0);
 
@@ -144,13 +144,15 @@ public class Menu {
         speedUpgrade.setColor(1, 1, 0, 1);
         upgradesTable.add(speedUpgrade).row();
         towerTable.add(upgradesTable).row();
-        Table targetingTable = new Table(Main.skin);
-        targetingTable.add(nearestButton);
-        targetingTable.add(firstButton);
-        targetingTable.add(lastButton);
-        targetingTable.add(strongestButton);
-        targetingTable.add(weakestButton);
-        towerTable.add(targetingTable).row();
+        Table targetingTableTop = new Table(Main.skin);
+        targetingTableTop.add(nearestButton);
+        targetingTableTop.add(firstButton);
+        targetingTableTop.add(lastButton);
+        Table targetingTableBot = new Table(Main.skin);
+        targetingTableBot.add(strongestButton);
+        targetingTableBot.add(weakestButton);
+        towerTable.add(targetingTableTop).row();
+        towerTable.add(targetingTableBot).row();
         comboUpgrade.right().add(new Label("Enable Combo-ing", Main.skin)).colspan(3).row();
         Label redLabel = new Label("50", Main.skin);
         redLabel.setAlignment(Align.center);

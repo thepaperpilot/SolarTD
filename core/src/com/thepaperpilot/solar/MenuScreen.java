@@ -114,18 +114,18 @@ public class MenuScreen implements Screen{
                 Enemy.EnemyPrototype enemyPrototype = new Enemy.EnemyPrototype();
                 enemyPrototype.name = "alien";
                 enemyPrototype.speed = 1;
-                enemyPrototype.count = 10;
+                enemyPrototype.count = 8;
                 enemyPrototype.health = 1;
                 Enemy.EnemyPrototype enemyPrototype2 = new Enemy.EnemyPrototype();
                 enemyPrototype2.name = "speed";
-                enemyPrototype2.speed = 2;
-                enemyPrototype2.count = 15;
-                enemyPrototype2.health = .7f;
+                enemyPrototype2.speed = 1.5f;
+                enemyPrototype2.count = 12;
+                enemyPrototype2.health = .5f;
                 Enemy.EnemyPrototype enemyPrototype3 = new Enemy.EnemyPrototype();
                 enemyPrototype3.name = "angry";
                 enemyPrototype3.speed = .5f;
                 enemyPrototype3.count = 1;
-                enemyPrototype3.health = 15;
+                enemyPrototype3.health = 10;
                 Wave.WavePrototype wavePrototype = new Wave.WavePrototype();
                 wavePrototype.enemies = new Enemy.EnemyPrototype[]{enemyPrototype};
                 wavePrototype.enemyDistance = 1;
@@ -139,9 +139,9 @@ public class MenuScreen implements Screen{
                 levelPrototype.waves = new Wave.WavePrototype[]{wavePrototype, wavePrototype2, wavePrototype3};
                 switch (level) {
                     default:case 1:
-                        levelPrototype.width = 980;
-                        levelPrototype.height = 540;
-                        levelPrototype.path = new float[]{980, 200, 500, 200, 300, 300, 300, 200, 100, 400, 980, 400};
+                        levelPrototype.width = 1280;
+                        levelPrototype.height = 720;
+                        levelPrototype.path = new float[]{140, 720, 140, 200, 340, 200, 340, 520, 540, 520, 540, 200, 740, 200, 740, 520, 940, 520, 940, 200, 1140, 200, 1140, 720};
                         break;
                     case 2:
                         levelPrototype.width = 1280;
@@ -154,9 +154,9 @@ public class MenuScreen implements Screen{
                         levelPrototype.path = new float[]{1080, 720, 1080, 200, 200, 200, 200, 620, 880, 620, 880, 400, 400, 400, 400, 510, 1280, 510};
                         break;
                     case 4:
-                        levelPrototype.width = 1280;
-                        levelPrototype.height = 720;
-                        levelPrototype.path = new float[]{140, 720, 140, 200, 340, 200, 340, 520, 540, 520, 540, 200, 740, 200, 740, 520, 940, 520, 940, 200, 1140, 200, 1140, 720};
+                        levelPrototype.width = 980;
+                        levelPrototype.height = 540;
+                        levelPrototype.path = new float[]{980, 200, 500, 200, 300, 300, 300, 200, 100, 400, 980, 400};
                         break;
                     case 5:
                         levelPrototype.width = 1920;

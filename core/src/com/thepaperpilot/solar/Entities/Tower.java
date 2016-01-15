@@ -197,9 +197,12 @@ public class Tower extends Building {
                     if (ability) {
                         Circle area = new Circle(target.getX(), target.getY(), range / 2);
                         effect.getEmitters().first().getLife().setHigh(range);
+                        int maxHit = (int) getSpeed() * 10;
                         for (int i = 0; i < level.enemies.size(); ) {
                             Enemy enemy = level.enemies.get(i);
                             if (area.contains(enemy.getPosition())) {
+                                maxHit--;
+                                if (maxHit < 0) break;
                                 if (enemy.hit(getDamage())) {
                                     kills++;
                                     level.totalKills++;
