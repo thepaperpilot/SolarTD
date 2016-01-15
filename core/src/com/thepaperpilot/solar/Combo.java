@@ -15,6 +15,66 @@ public enum Combo {
             tower.level.stage.addActor(mine);
             return true;
         }
+    },
+    CLUSTER_BOMB(0, 1, 0, Level.Resource.RED) {
+        public boolean fire(Tower tower) {
+            return true;
+        }
+    },
+    SPARKY_CLUSTER_BOMB(0, 1, 1, Level.Resource.RED) {
+        public boolean fire(Tower tower) {
+            return true;
+        }
+    },
+    BIG_MINE(1, 1, 0, Level.Resource.RED) {
+        public boolean fire(Tower tower) {
+            return true;
+        }
+    },
+    SPARKY_MINE(1, 0, 1, Level.Resource.RED) {
+        public boolean fire(Tower tower) {
+            return true;
+        }
+    },
+    BIG_CLUSTER_BOMB(0, 2, 0, Level.Resource.RED) {
+        public boolean fire(Tower tower) {
+            return true;
+        }
+    },
+    BIG_CLUSTER_BOMB_MINE(1, 2, 0, Level.Resource.RED) {
+        public boolean fire(Tower tower) {
+            return true;
+        }
+    },
+    TAZER_ROCKETS(0, 0, 1, Level.Resource.BLUE) {
+        public boolean fire(Tower tower) {
+            return true;
+        }
+    },
+    POISON_GAS_ROCKETS(1, 0, 1, Level.Resource.BLUE) {
+        public boolean fire(Tower tower) {
+            return true;
+        }
+    },
+    NUKE(2, 0, 0, Level.Resource.BLUE) {
+        public boolean fire(Tower tower) {
+            return true;
+        }
+    },
+    NAPALM_ROCKET(1, 1, 1, Level.Resource.BLUE) {
+        public boolean fire(Tower tower) {
+            return true;
+        }
+    },
+    ROCKET_BFG(1, 2, 0, Level.Resource.BLUE) {
+        public boolean fire(Tower tower) {
+            return true;
+        }
+    },
+    BFG(1, 1, 1, Level.Resource.YELLOW) {
+        public boolean fire(Tower tower) {
+            return true;
+        }
     };
 
     public final Table table;
@@ -29,7 +89,7 @@ public enum Combo {
         this.yellow = yellow;
         this.type = type;
         table = new Table(Main.skin);
-        table.left().pad(4).add(new Label(name(), Main.skin)).left().spaceLeft(2).colspan(1 + red + blue + yellow).row();
+        table.left().pad(4).add(new Label(name().replaceAll("_", " "), Main.skin)).left().spaceLeft(2).colspan(1 + red + blue + yellow).row();
         table.add(new Image(Main.getDrawable("towers/" + (type == Level.Resource.RED ? "redStoreDown" : type == Level.Resource.BLUE ? "blueStoreDown" : "yellowStoreDown")))).size(32);
         for (int i = 0; i < red; i++) {
             table.add(new Image(Main.getDrawable("towers/redStore"))).size(32);

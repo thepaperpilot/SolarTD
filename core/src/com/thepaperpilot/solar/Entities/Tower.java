@@ -408,7 +408,7 @@ public class Tower extends Building {
         }
     }
 
-    private Combo getCurrentCombo() {
+    public Combo getCurrentCombo() {
         return combo;
     }
 
@@ -417,6 +417,7 @@ public class Tower extends Building {
         ArrayList<Combo> combos = getCombos();
         if (!combos.isEmpty())
             combo = combos.get(MathUtils.random(combos.size() - 1));
+        if (level.selectedBuilding == this) Menu.select();
     }
 
     public ArrayList<Combo> getCombos() {

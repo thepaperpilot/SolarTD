@@ -62,6 +62,7 @@ public class Menu {
     private static final Table comboTable = new Table(Main.skin);
     private static final ProgressBar comboBar = new ProgressBar(0, Main.COMBO_TIME, 1, false, Main.skin);
     private static final Label comboLabel = new Label("0%", Main.skin);
+    private static final Label currentCombo = new Label("No Current Combo", Main.skin);
     private static final ScrollPane towerComboPane;
     private static final Table towerComboTable = new Table(Main.skin);
     private static final ScrollPane currentWavePane;
@@ -210,6 +211,7 @@ public class Menu {
         towerComboTable.setName("Combo Tower");
         towerComboTable.add(comboBar).minWidth(1).expandX().fill();
         towerComboTable.add(comboLabel).width(25).spaceLeft(2).row();
+        towerComboTable.add(currentCombo).expandX().fill().row();
         Table temp = new Table(Main.skin);
         temp.top();
         towerComboPane = new ScrollPane(temp, Main.skin);
@@ -463,6 +465,7 @@ public class Menu {
             for (Combo combo : tower.getCombos()) {
                 combos.add(combo.table).spaceBottom(2).expandX().fill().row();
             }
+            currentCombo.setText(tower.getCurrentCombo() == null ? "No Current Combo" : "Current Combo: " + tower.getCurrentCombo().name().replaceAll("_", " "));
         } else {
             Generator generator = ((Generator) level.selectedBuilding);
             Color color = generator.type == Level.Resource.RED ? Color.RED : generator.type == Level.Resource.BLUE ? Color.BLUE : Color.YELLOW;
