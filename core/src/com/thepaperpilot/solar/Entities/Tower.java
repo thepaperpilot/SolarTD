@@ -332,7 +332,7 @@ public class Tower extends Building {
                 redValue += Main.SELL_RATE * balancedCost(damageCosts[damage]);
                 level.redResource -= balancedCost(damageCosts[damage]);
                 damage++;
-                if (damage == 11 && type == Level.Resource.RED) ability = true;
+                if (damage == 6 && type == Level.Resource.RED) ability = true;
             }
         }
     }
@@ -343,7 +343,7 @@ public class Tower extends Building {
                 blueValue += Main.SELL_RATE * balancedCost(rangeCosts[range]);
                 level.blueResource -= balancedCost(rangeCosts[range]);
                 range++;
-                if(range == 11 && type == Level.Resource.BLUE) ability = true;
+                if(range == 6 && type == Level.Resource.BLUE) ability = true;
             }
         }
     }
@@ -354,7 +354,7 @@ public class Tower extends Building {
                 yellowValue += Main.SELL_RATE * balancedCost(speedCosts[speed]);
                 level.yellowResource -= balancedCost(speedCosts[speed]);
                 speed++;
-                if (speed == 11 && type == Level.Resource.YELLOW) ability = true;
+                if (speed == 6 && type == Level.Resource.YELLOW) ability = true;
             }
         }
     }
