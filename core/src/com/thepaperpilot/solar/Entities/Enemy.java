@@ -104,9 +104,9 @@ public class Enemy extends Image {
     }
 
     public float getDistance() {
-        float dist = 0;
-        for (int i = path; i < level.path.length - 1; i++) {
-            dist += new Vector2(level.path[i + 1].x - getX() - Main.ENEMY_SIZE / 2, level.path[i + 1].y - getY() - Main.ENEMY_SIZE / 2).len();
+        float dist = new Vector2(level.path[path + 1].x - getX() - Main.ENEMY_SIZE / 2, level.path[path + 1].y - getY() - Main.ENEMY_SIZE / 2).len();
+        for (int i = path + 1; i < level.path.length - 1; i++) {
+            dist += new Vector2(level.path[i + 1].x - level.path[i].x - Main.ENEMY_SIZE / 2, level.path[i + 1].y - level.path[i].y - Main.ENEMY_SIZE / 2).len();
         }
         return dist;
     }
