@@ -8,8 +8,6 @@ import com.thepaperpilot.solar.Entities.Tower;
 import com.thepaperpilot.solar.Levels.Level;
 
 public enum Combo {
-    // Max: 6
-    // or else they won't fit
     MINE(1, 0, 0, Level.Resource.RED) {
         public boolean fire(Tower tower) {
             Mine mine = new Mine(tower.getDamage(), tower.getRange(), tower.level);
@@ -35,12 +33,15 @@ public enum Combo {
         table.add(new Image(Main.getDrawable("towers/" + (type == Level.Resource.RED ? "redStoreDown" : type == Level.Resource.BLUE ? "blueStoreDown" : "yellowStoreDown")))).size(32);
         for (int i = 0; i < red; i++) {
             table.add(new Image(Main.getDrawable("towers/redStore"))).size(32);
+            if ((table.getChildren().size - 1) % 4 == 0) table.row();
         }
         for (int i = 0; i < blue; i++) {
             table.add(new Image(Main.getDrawable("towers/blueStore"))).size(32);
+            if ((table.getChildren().size - 1) % 4 == 0) table.row();
         }
         for (int i = 0; i < yellow; i++) {
             table.add(new Image(Main.getDrawable("towers/yellowStore"))).size(32);
+            if ((table.getChildren().size - 1) % 4 == 0) table.row();
         }
         table.setBackground(Main.skin.getDrawable("default-rect"));
     }

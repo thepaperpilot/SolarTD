@@ -77,7 +77,7 @@ public class Menu {
         new ButtonGroup(nearestButton, firstButton, lastButton, strongestButton, weakestButton);
 
         menu.setVisible(false);
-        menu.setSize(210, 210);
+        menu.setSize(215, 210);
         menu.setPosition(20, 200);
         menu.setColor(1, 1, 1, 0);
 
