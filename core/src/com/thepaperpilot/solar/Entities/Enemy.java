@@ -116,6 +116,7 @@ public class Enemy extends Image {
             setPosition(getX() + tempSpeed * MathUtils.cosDeg(angle) * delta, getY() + tempSpeed * MathUtils.sinDeg(angle) * delta);
         if (getEndHealth() <= 0) dead = true;
         if (getHealth() <= 0) {
+            level.enemies.remove(this);
             remove();
             Main.getSound("death").play(Main.volume);
             ParticleEffect effect = deathPool.obtain();
