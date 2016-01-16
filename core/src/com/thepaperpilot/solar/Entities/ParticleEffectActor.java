@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-class ParticleEffectActor extends Actor {
-    final ParticleEffect effect;
+public class ParticleEffectActor extends Actor {
+    public final ParticleEffect effect;
 
     public ParticleEffectActor(ParticleEffect effect, float x, float y) {
         this.effect = effect;

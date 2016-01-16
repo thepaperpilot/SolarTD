@@ -29,6 +29,8 @@ public class Enemy extends Image {
     private final Level level;
     public float slowed;
     public float slowSpeed;
+    public float poison;
+    public float poisonDamage;
     public float health;
     public float totalHealth;
     private int path;
@@ -83,6 +85,10 @@ public class Enemy extends Image {
             slowed -= delta;
             tempSpeed *= 10 / (slowSpeed + 10);
         } else slowed = 0;
+        if (poison > 0) {
+            poison -= delta;
+            hit(delta * poisonDamage);
+        }
         Vector2 dist = new Vector2(level.path[path + 1].x - getX() - Main.ENEMY_SIZE / 2, level.path[path + 1].y - getY() - Main.ENEMY_SIZE / 2);
         float angle = dist.angle();
         angle += 4 * MathUtils.sinDeg(dist.len());

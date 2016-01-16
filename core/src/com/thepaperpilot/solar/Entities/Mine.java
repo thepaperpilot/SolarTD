@@ -20,45 +20,61 @@ public class Mine extends Image{
         normalPool = new ParticleEffectPool(particleEffect, 0, 100);
     }
 
-    private final float damage;
-    private final float range;
-    private final Level level;
+    protected final Tower tower;
+    protected final float damage;
+    protected final float range;
+    protected final Level level;
 
-    public Mine(float damage, float range, Level level) {
+    public Mine(Vector2 pos, Tower tower, float damage, float range, Level level) {
         super(Main.getDrawable("mine"));
-        setSize(Main.TOWER_RADIUS, Main.TOWER_RADIUS);
-        int path = MathUtils.random(level.path.length - 2);
-        Vector2 newPosition = new Vector2(level.path[path].x, level.path[path].y);
-        Vector2 difference = new Vector2(level.path[path + 1].x - level.path[path].x, level.path[path + 1].y - level.path[path].y);
-        difference.setLength(MathUtils.random(difference.len()));
-        newPosition.add(difference);
-        newPosition.sub(Main.TOWER_RADIUS / 2, Main.TOWER_RADIUS / 2);
-        addAction(Actions.moveTo(newPosition.x, newPosition.y, 1));
+        this.tower = tower;
         this.damage = damage;
         this.range = range;
         this.level = level;
+
+        float pathLength = 0;
+        for (int i = 0; i < level.path.length - 1; i++) {
+            pathLength += new Vector2(level.path[i + 1].x - level.path[i].x, level.path[i + 1].y - level.path[i].y).len();
+        }
+        float targetLength = MathUtils.random(pathLength);
+        int i = 0;
+        while (targetLength > new Vector2(level.path[i + 1].x - level.path[i].x, level.path[i + 1].y - level.path[i].y).len()) {
+            targetLength -= new Vector2(level.path[i + 1].x - level.path[i].x, level.path[i + 1].y - level.path[i].y).len();
+            i++;
+        }
+        Vector2 target = new Vector2(level.path[i + 1].x - level.path[i].x, level.path[i + 1].y - level.path[i].y).setLength(targetLength).add(new Vector2(level.path[i].x, level.path[i].y));
+        addAction(Actions.moveTo(target.x, target.y, target.cpy().sub(pos).len() / 600));
+
+        setPosition(pos.x, pos.y);
+        setSize(Main.TOWER_RADIUS, Main.TOWER_RADIUS);
+        level.stage.addActor(this);
     }
 
     public void act(float delta) {
         super.act(delta);
         for (Enemy enemy : level.enemies) {
-            Circle area = new Circle(getX() + Main.TOWER_RADIUS / 2, getY() + Main.TOWER_RADIUS / 2, Main.TOWER_RADIUS);
+            Circle area = new Circle(getX() + getWidth() / 2, getY() + getHeight() / 2, Main.TOWER_RADIUS);
             if (area.contains(enemy.getPosition())) {
                 area.radius = range / 2;
                 ParticleEffect effect = normalPool.obtain();
                 effect.getEmitters().first().getLife().setHigh(range * 2, range * 3);
-                effect.setPosition(getX() + Main.TOWER_RADIUS / 2, getY() + Main.TOWER_RADIUS / 2);
+                effect.setPosition(getX() + getWidth() / 2, getY() + getHeight() / 2);
                 level.particles.add(effect);
                 for (int i = 0; i < level.enemies.size(); ) {
                     Enemy enemy1 = level.enemies.get(i);
-                    if (area.contains(enemy1.getPosition()) && enemy1.hit(damage)) {
-                        continue;
+                    if (area.contains(enemy1.getPosition())) {
+                        if (enemy1.hit(damage)) continue;
                     }
                     i++;
                 }
+                hit();
                 remove();
                 break;
             }
         }
+    }
+
+    protected void hit() {
+
     }
 }

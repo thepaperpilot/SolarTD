@@ -78,7 +78,7 @@ public class Menu {
         new ButtonGroup(nearestButton, firstButton, lastButton, strongestButton, weakestButton);
 
         menu.setVisible(false);
-        menu.setSize(215, 210);
+        menu.setSize(235, 210);
         menu.setPosition(20, 200);
         menu.setColor(1, 1, 1, 0);
 
@@ -200,7 +200,7 @@ public class Menu {
         Table combos = new Table(Main.skin);
         combos.top();
         for (Combo combo : Combo.values()) {
-            combos.add(combo.table).spaceBottom(2).expandX().fill().row();
+            combos.add(combo.getTable()).spaceBottom(2).expandX().fill().row();
         }
         comboPane = new ScrollPane(combos, Main.skin);
         comboPane.setSmoothScrolling(true);
@@ -211,7 +211,7 @@ public class Menu {
         towerComboTable.setName("Combo Tower");
         towerComboTable.add(comboBar).minWidth(1).expandX().fill();
         towerComboTable.add(comboLabel).width(25).spaceLeft(2).row();
-        towerComboTable.add(currentCombo).expandX().fill().row();
+        towerComboTable.add(currentCombo).colspan(2).expandX().fill().row();
         Table temp = new Table(Main.skin);
         temp.top();
         towerComboPane = new ScrollPane(temp, Main.skin);
@@ -463,9 +463,11 @@ public class Menu {
             Table combos = (Table) towerComboPane.getWidget();
             combos.clearChildren();
             for (Combo combo : tower.getCombos()) {
-                combos.add(combo.table).spaceBottom(2).expandX().fill().row();
+                combos.add(combo.getTable()).spaceBottom(2).expandX().fill().row();
             }
-            currentCombo.setText(tower.getCurrentCombo() == null ? "No Current Combo" : "Current Combo: " + tower.getCurrentCombo().name().replaceAll("_", " "));
+            Combo combo = tower.getCurrentCombo();
+            if (combo != null) comboBar.setRange(0, Main.COMBO_TIME * (combo.red + combo.blue + combo.yellow));
+            currentCombo.setText(combo == null ? "No Current Combo" : "Current Combo: " + combo.name().replaceAll("_", " "));
         } else {
             Generator generator = ((Generator) level.selectedBuilding);
             Color color = generator.type == Level.Resource.RED ? Color.RED : generator.type == Level.Resource.BLUE ? Color.BLUE : Color.YELLOW;
@@ -496,9 +498,10 @@ public class Menu {
             Tower tower = ((Tower) level.selectedBuilding);
             towerKillsLabel.setText("" + tower.kills);
             towerShotsLabel.setText("" + tower.shots);
-            if (((Tower) level.selectedBuilding).comboUpgrade) {
-                float time = ((Tower) level.selectedBuilding).comboTimer;
-                comboLabel.setText(time >= Main.COMBO_TIME ? "READY" : (int) (100 * time / Main.COMBO_TIME) + "%");
+            if (tower.comboUpgrade) {
+                float time = tower.comboTimer;
+                Combo combo = tower.getCurrentCombo();
+                comboLabel.setText(combo == null ? "" : time >= Main.COMBO_TIME * (combo.red + combo.blue + combo.yellow) ? "READY" : (int) (100 * time / (Main.COMBO_TIME * (combo.red + combo.blue + combo.yellow))) + "%");
                 comboBar.setValue(time);
             }
         } else if (level.selectedBuilding != null){

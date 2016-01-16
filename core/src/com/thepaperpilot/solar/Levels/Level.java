@@ -26,10 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.thepaperpilot.solar.Entities.Building;
-import com.thepaperpilot.solar.Entities.Enemy;
-import com.thepaperpilot.solar.Entities.Generator;
-import com.thepaperpilot.solar.Entities.Tower;
+import com.thepaperpilot.solar.Entities.*;
 import com.thepaperpilot.solar.Interface.HUD;
 import com.thepaperpilot.solar.Interface.Menu;
 import com.thepaperpilot.solar.Interface.StatsCircle;
@@ -110,6 +107,8 @@ public class Level implements Screen {
         gameOver.setAlignment(Align.center);
         gameOver.setFontScale(2);
         gameOver.setTouchable(Touchable.disabled);
+
+        stage.addActor(Lightning.instance);
 
         bg = new Image(Main.getDrawable("bg"));
         float scale = Math.min(prototype.width / Gdx.graphics.getWidth(), prototype.height / Gdx.graphics.getHeight());

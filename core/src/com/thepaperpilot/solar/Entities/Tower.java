@@ -20,7 +20,6 @@ public class Tower extends Building {
     private static final ParticleEffectPool redPool;
     private static final ParticleEffectPool red2Pool;
     private static final ParticleEffectPool yellowPool;
-    private static final ParticleEffectPool bluePool;
 
     private static final float[] damages = new float[]{1, 2, 3, 5, 7, 10, 15, 20, 30, 50, 75, 100};
     private static final int[] damageCosts = new int[]{25, 50, 100, 175, 275, 400, 550, 725, 925, 1150, 1400};
@@ -41,10 +40,6 @@ public class Tower extends Building {
         particleEffect = new ParticleEffect();
         particleEffect.load(Gdx.files.internal("particles/yellow.p"), Gdx.files.internal("particles/"));
         yellowPool = new ParticleEffectPool(particleEffect, 0, 100);
-
-        particleEffect = new ParticleEffect();
-        particleEffect.load(Gdx.files.internal("particles/blue.p"), Gdx.files.internal("particles/"));
-        bluePool = new ParticleEffectPool(particleEffect, 0, 100);
     }
 
     public final ArrayList<Tower> neighbors = new ArrayList<>();
@@ -56,11 +51,11 @@ public class Tower extends Building {
     public float comboParticleTimer;
     public ParticleEffect comboEffect;
     private float time;
-    private boolean ability = false;
-    private int range;
+    protected boolean ability = false;
+    public int range;
     private int damage;
     private int speed;
-    private int missiles;
+    protected int missiles;
     private ParticleEffect effect;
     private Combo combo;
 
@@ -142,15 +137,14 @@ public class Tower extends Building {
         if (comboUpgrade && getCurrentCombo() != null) {
             comboTimer += delta * getSpeed();
             comboParticleTimer += delta * getSpeed();
-            if (comboTimer >= Main.COMBO_TIME && targeting.target(this, new Vector2(getX(), getY())) != null) {
-                Combo combo = getCurrentCombo();
+            Combo combo = getCurrentCombo();
+            if (comboTimer >= Main.COMBO_TIME * (combo.red + combo.blue + combo.yellow) && targeting.target(this, new Vector2(getX(), getY())) != null) {
                 if(combo.fire(this)) {
                     getNewCombo();
                     comboTimer = 0;
                 }
             }
-            if (comboTimer < Main.COMBO_TIME && comboParticleTimer >= 1) {
-                Combo combo = getCurrentCombo();
+            if (comboTimer < Main.COMBO_TIME * (combo.red + combo.blue + combo.yellow) && comboParticleTimer >= 1) {
                 comboParticleTimer -= 1;
                 int red = combo.red;
                 int blue = combo.blue;
@@ -188,6 +182,7 @@ public class Tower extends Building {
                     effect.setPosition(getX() + Main.TOWER_RADIUS, getY() + Main.TOWER_RADIUS);
                     level.particles.add(effect);
                     effect = ability ? red2Pool.obtain() : redPool.obtain();
+                    if (ability) effect.getEmitters().first().getLife().setHigh(range * 2, range * 3);
                     effect.setPosition(target.getX() + Main.ENEMY_SIZE / 2, target.getY() + Main.ENEMY_SIZE / 2);
                     level.particles.add(effect);
                     if (target.hit(getDamage())) {
@@ -197,7 +192,7 @@ public class Tower extends Building {
                     if (ability) {
                         Circle area = new Circle(target.getX(), target.getY(), range / 2);
                         effect.getEmitters().first().getLife().setHigh(range);
-                        int maxHit = (int) getSpeed() * 10;
+                        int maxHit = (int) getSpeed();
                         for (int i = 0; i < level.enemies.size(); ) {
                             Enemy enemy = level.enemies.get(i);
                             if (area.contains(enemy.getPosition())) {
@@ -219,54 +214,7 @@ public class Tower extends Building {
                 while (time >= Main.TOWER_SPEED && missiles < getSpeed()) {
                     Main.getSound("blue").play(Main.volume);
                     time -= Main.TOWER_SPEED;
-                    ParticleEffect effect = bluePool.obtain();
-                    effect.setPosition(getX() + Main.TOWER_RADIUS, getY() + Main.TOWER_RADIUS);
-                    level.particles.add(effect);
-                    final Enemy finalTarget = target;
-                    level.stage.addActor(new ParticleEffectActor(effect, getX() + Main.TOWER_RADIUS, getY() + Main.TOWER_RADIUS) {
-                        float angle = new Vector2(finalTarget == null ? MathUtils.random() : finalTarget.getX() - getX(), finalTarget == null ? MathUtils.random() : finalTarget.getY() - getY()).angle();
-
-                        public void act(float delta) {
-                            if (getX() < 0 || getX() > level.prototype.width || getY() < 0 || getY() > level.prototype.height) {
-                                remove();
-                                missiles--;
-                                effect.allowCompletion();
-                                return;
-                            }
-                            Enemy target;
-                            if (finalTarget == null) target = targeting.target(Tower.this, new Vector2(getX(), getY()));
-                            else {
-                                float length = finalTarget.getPosition().cpy().sub(getX(), getY()).len();
-                                if (level.enemies.contains(finalTarget) && length <= getRange()) {
-                                    target = finalTarget;
-                                } else target = targeting.target(Tower.this, new Vector2(getX(), getY()));
-                            }
-                            if (target != null) {
-                                float dist = target.getPosition().cpy().sub(getX(), getY()).len();
-                                if (dist < Main.BULLET_SPEED * delta) {
-                                    if (target.hit(getDamage())) {
-                                        kills++;
-                                        level.totalKills++;
-                                    }
-                                    remove();
-                                    missiles--;
-                                    effect.allowCompletion();
-                                    return;
-                                }
-                                float newAngle = new Vector2(target.getX() - getX(), target.getY() - getY()).angle();
-                                while (newAngle > angle + 180) newAngle -= 360;
-                                while (newAngle < angle - 180) newAngle += 360;
-                                if (Math.abs(newAngle - angle) < Main.TURN_RADIUS)
-                                    angle = newAngle;
-                                else if (newAngle > angle)
-                                    angle += Main.TURN_RADIUS;
-                                else angle -= Main.TURN_RADIUS;
-                            } else if (ability) angle += Main.TURN_RADIUS / 4f;
-                            setPosition(getX() + Main.BULLET_SPEED * MathUtils.cosDeg(angle) * delta, getY() + Main.BULLET_SPEED * MathUtils.sinDeg(angle) * delta);
-                            super.act(delta);
-                            effect.getEmitters().first().getAngle().setLow(angle);
-                        }
-                    });
+                    new Missile(Rocket.bluePool, getX() + Main.TOWER_RADIUS, getY() + Main.TOWER_RADIUS, level, this, getDamage(), ability);
                     shots++;
                     missiles++;
                 }
