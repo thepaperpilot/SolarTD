@@ -44,7 +44,7 @@ public class Wave extends Actor{
 
     public Enemy getEnemy(Level level) {
         Enemy enemy = new Enemy(enemies[currEnemyType], level);
-        enemy.health = enemy.totalHealth = MathUtils.ceil(enemy.health * (float) Math.pow(level.wave, Level.getHealthRate()));
+        enemy.health = enemy.totalHealth = MathUtils.ceil(enemy.getHealth() * (float) Math.pow(level.wave, Level.getHealthRate()));
         currEnemyCount++;
         if (currEnemyCount == enemies[currEnemyType].count) {
             currEnemyType++;

@@ -415,13 +415,13 @@ public class Tower extends Building {
         STRONGEST {
             @Override
             public int compare(Enemy enemy, Enemy oEnemy) {
-                return MathUtils.round(oEnemy.health - enemy.health);
+                return MathUtils.round(oEnemy.getHealth() - enemy.getHealth());
             }
         },
         WEAKEST {
             @Override
             public int compare(Enemy enemy, Enemy oEnemy) {
-                return MathUtils.round(enemy.health - oEnemy.health);
+                return MathUtils.round(enemy.getHealth() - oEnemy.getHealth());
             }
         };
 
@@ -433,6 +433,7 @@ public class Tower extends Building {
             this.point = point;
             ArrayList<Enemy> potential = new ArrayList<>();
             for (Enemy enemy : tower.level.enemies) {
+                if (enemy.dead) continue;
                 float length = enemy.getPosition().cpy().sub(point).len();
                 if (length <= tower.getRange()) {
                     potential.add(enemy);

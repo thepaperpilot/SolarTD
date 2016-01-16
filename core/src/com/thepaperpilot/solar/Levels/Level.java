@@ -52,9 +52,9 @@ public class Level implements Screen {
     public Building selectedBuilding;
     public boolean placingBuilding;
     public boolean movingBuilding;
-    public int redResource = 100;
-    public int blueResource = 100;
-    public int yellowResource = 100;
+    public int redResource = 10000;
+    public int blueResource = 10000;
+    public int yellowResource = 10000;
     public int population = 10;
     public boolean paused;
     public float time;
@@ -280,7 +280,7 @@ public class Level implements Screen {
         if (enemyHealth) {
             shapeRenderer.setColor(1, 1, 1, .25f);
             for (Enemy enemy : enemies)
-                shapeRenderer.arc(enemy.getX() + Main.ENEMY_SIZE / 2, enemy.getY() + Main.ENEMY_SIZE / 2, 3 * Main.ENEMY_SIZE / 4, 90, 360 * enemy.health / enemy.totalHealth);
+                shapeRenderer.arc(enemy.getX() + Main.ENEMY_SIZE / 2, enemy.getY() + Main.ENEMY_SIZE / 2, 3 * Main.ENEMY_SIZE / 4, 90, 360 * enemy.getHealth() / enemy.totalHealth);
         }
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);

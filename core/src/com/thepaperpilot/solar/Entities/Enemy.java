@@ -5,11 +5,15 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.FloatAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Main;
+
+import java.util.ArrayList;
 
 public class Enemy extends Image {
     private static final ParticleEffectPool deathPool;
@@ -34,6 +38,8 @@ public class Enemy extends Image {
     public float health;
     public float totalHealth;
     private int path;
+    private ArrayList<FloatAction> damages = new ArrayList<>();
+    public boolean dead;
 
     public Enemy(EnemyPrototype enemyPrototype, Level level) {
         setDrawable(Main.getDrawable(enemyPrototype.name));
@@ -61,18 +67,18 @@ public class Enemy extends Image {
         return table;
     }
 
-    public boolean hit(float damage) {
-        health -= damage;
-        if (health <= 0) {
-            level.enemies.remove(this);
-            remove();
-            Main.getSound("death").play(Main.volume);
-            ParticleEffect effect = deathPool.obtain();
-            effect.setPosition(getX() + Main.ENEMY_SIZE / 2, getY() + Main.ENEMY_SIZE / 2);
-            level.particles.add(effect);
-            return true;
-        }
-        return false;
+    public boolean hit(final float damage) {
+        final FloatAction action = new FloatAction(0, damage);
+        action.setDuration(.5f);
+        addAction(Actions.sequence(action, Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                health -= damage;
+                damages.remove(action);
+            }
+        })));
+        damages.add(action);
+        return getEndHealth() <= damage;
     }
 
     public Vector2 getPosition() {
@@ -80,6 +86,7 @@ public class Enemy extends Image {
     }
 
     public void act(float delta) {
+        super.act(delta);
         float tempSpeed = speed * Main.ENEMY_SPEED;
         if (slowed > 0) {
             slowed -= delta;
@@ -107,6 +114,30 @@ public class Enemy extends Image {
             } else setPosition(level.path[path].x - Main.ENEMY_SIZE / 2, level.path[path].y - Main.ENEMY_SIZE / 2);
         } else
             setPosition(getX() + tempSpeed * MathUtils.cosDeg(angle) * delta, getY() + tempSpeed * MathUtils.sinDeg(angle) * delta);
+        if (getEndHealth() <= 0) dead = true;
+        if (getHealth() <= 0) {
+            remove();
+            Main.getSound("death").play(Main.volume);
+            ParticleEffect effect = deathPool.obtain();
+            effect.setPosition(getX() + Main.ENEMY_SIZE / 2, getY() + Main.ENEMY_SIZE / 2);
+            level.particles.add(effect);
+        }
+    }
+
+    public float getHealth() {
+        float hp = health;
+        for (FloatAction action : damages) {
+            hp -= action.getValue();
+        }
+        return hp;
+    }
+
+    private float getEndHealth() {
+        float hp = health;
+        for (FloatAction action : damages) {
+            hp -= action.getEnd();
+        }
+        return hp;
     }
 
     public float getDistance() {
