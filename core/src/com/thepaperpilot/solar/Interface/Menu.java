@@ -130,7 +130,7 @@ public class Menu {
         damageBar.setAnimateDuration(.5f);
         upgradesTable.add(damageBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         damageUpgrade.setColor(1, 0, 0, 1);
-        upgradesTable.add(damageUpgrade).row();
+        upgradesTable.add(damageUpgrade).width(40).row();
         upgradesTable.add(new Label("Range: ", Main.skin)).right();
         rangeLabel.setColor(0, 0, 1, 1);
         upgradesTable.add(rangeLabel).right();
@@ -138,7 +138,7 @@ public class Menu {
         rangeBar.setAnimateDuration(.5f);
         upgradesTable.add(rangeBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         rangeUpgrade.setColor(0, 0, 1, 1);
-        upgradesTable.add(rangeUpgrade).row();
+        upgradesTable.add(rangeUpgrade).width(40).row();
         upgradesTable.add(new Label("Speed: ", Main.skin)).right();
         speedLabel.setColor(1, 1, 0, 1);
         upgradesTable.add(speedLabel).right();
@@ -146,7 +146,7 @@ public class Menu {
         speedBar.setAnimateDuration(.5f);
         upgradesTable.add(speedBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         speedUpgrade.setColor(1, 1, 0, 1);
-        upgradesTable.add(speedUpgrade).row();
+        upgradesTable.add(speedUpgrade).width(40).row();
         towerTable.add(upgradesTable).row();
         Table targetingTableTop = new Table(Main.skin);
         targetingTableTop.add(nearestButton);
@@ -184,12 +184,12 @@ public class Menu {
         generatorUpgrades.add(extractorsLabel).right();
         extractorsBar.setAnimateDuration(.5f);
         generatorUpgrades.add(extractorsBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
-        generatorUpgrades.add(extractorsUpgrade).row();
+        generatorUpgrades.add(extractorsUpgrade).width(40).row();
         generatorUpgrades.add(new Label("Efficiency: ", Main.skin)).right();
         generatorUpgrades.add(efficiencyLabel).right();
         efficiencyBar.setAnimateDuration(.5f);
         generatorUpgrades.add(efficiencyBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
-        generatorUpgrades.add(efficiencyUpgrade).row();
+        generatorUpgrades.add(efficiencyUpgrade).width(40).row();
         generatorTable.add(generatorUpgrades).row();
         Table generatorStatsTable = new Table(Main.skin);
         generatorStatsTable.add(new Label("Generated Resources: ", Main.skin));
