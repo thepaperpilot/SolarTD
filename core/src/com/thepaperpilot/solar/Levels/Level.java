@@ -381,9 +381,9 @@ public class Level implements Screen {
     }
 
     public void nextWave() {
-        resourceTime += (currWave.getTime() - time) * 1.5f;
+        resourceTime += (Main.WAVE_INTERVAL + currWave.getTime() - time) * 1.5f;
         for (Building building : buildings) {
-            if (building instanceof Generator) ((Generator) building).time += (currWave.getTime() - time) * 1.5f;
+            if (building instanceof Generator) ((Generator) building).time += (Main.WAVE_INTERVAL + currWave.getTime() - time) * 1.5f;
         }
         time = 0;
         wave++;
