@@ -127,6 +127,7 @@ public class Menu {
         damageLabel.setColor(1, 0, 0, 1);
         upgradesTable.add(damageLabel).right();
         damageBar.setColor(1, 0, 0, 1);
+        damageBar.setAnimateDuration(.5f);
         upgradesTable.add(damageBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         damageUpgrade.setColor(1, 0, 0, 1);
         upgradesTable.add(damageUpgrade).row();
@@ -134,6 +135,7 @@ public class Menu {
         rangeLabel.setColor(0, 0, 1, 1);
         upgradesTable.add(rangeLabel).right();
         rangeBar.setColor(0, 0, 1, 1);
+        rangeBar.setAnimateDuration(.5f);
         upgradesTable.add(rangeBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         rangeUpgrade.setColor(0, 0, 1, 1);
         upgradesTable.add(rangeUpgrade).row();
@@ -141,6 +143,7 @@ public class Menu {
         speedLabel.setColor(1, 1, 0, 1);
         upgradesTable.add(speedLabel).right();
         speedBar.setColor(1, 1, 0, 1);
+        speedBar.setAnimateDuration(.5f);
         upgradesTable.add(speedBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         speedUpgrade.setColor(1, 1, 0, 1);
         upgradesTable.add(speedUpgrade).row();
@@ -179,10 +182,12 @@ public class Menu {
         Table generatorUpgrades = new Table(Main.skin);
         generatorUpgrades.add(new Label("Extractors: ", Main.skin)).right();
         generatorUpgrades.add(extractorsLabel).right();
+        extractorsBar.setAnimateDuration(.5f);
         generatorUpgrades.add(extractorsBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         generatorUpgrades.add(extractorsUpgrade).row();
         generatorUpgrades.add(new Label("Efficiency: ", Main.skin)).right();
         generatorUpgrades.add(efficiencyLabel).right();
+        efficiencyBar.setAnimateDuration(.5f);
         generatorUpgrades.add(efficiencyBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         generatorUpgrades.add(efficiencyUpgrade).row();
         generatorTable.add(generatorUpgrades).row();
@@ -209,6 +214,7 @@ public class Menu {
         comboTable.add(comboPane).spaceTop(2).expand().fill();
 
         towerComboTable.setName("Combo Tower");
+        comboBar.setAnimateDuration(.1f);
         towerComboTable.add(comboBar).minWidth(1).expandX().fill();
         towerComboTable.add(comboLabel).width(25).spaceLeft(2).row();
         towerComboTable.add(currentCombo).colspan(2).expandX().fill().row();
