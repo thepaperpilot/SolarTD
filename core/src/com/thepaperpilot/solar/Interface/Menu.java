@@ -125,7 +125,8 @@ public class Menu {
         Table upgradesTable = new Table(Main.skin);
         upgradesTable.add(new Label("Damage: ", Main.skin)).right();
         damageLabel.setColor(1, 0, 0, 1);
-        upgradesTable.add(damageLabel).right();
+        damageLabel.setAlignment(Align.right);
+        upgradesTable.add(damageLabel).width(16);
         damageBar.setColor(1, 0, 0, 1);
         damageBar.setAnimateDuration(.5f);
         upgradesTable.add(damageBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
@@ -133,7 +134,8 @@ public class Menu {
         upgradesTable.add(damageUpgrade).width(40).row();
         upgradesTable.add(new Label("Range: ", Main.skin)).right();
         rangeLabel.setColor(0, 0, 1, 1);
-        upgradesTable.add(rangeLabel).right();
+        rangeLabel.setAlignment(Align.right);
+        upgradesTable.add(rangeLabel).width(16);
         rangeBar.setColor(0, 0, 1, 1);
         rangeBar.setAnimateDuration(.5f);
         upgradesTable.add(rangeBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
@@ -141,7 +143,8 @@ public class Menu {
         upgradesTable.add(rangeUpgrade).width(40).row();
         upgradesTable.add(new Label("Speed: ", Main.skin)).right();
         speedLabel.setColor(1, 1, 0, 1);
-        upgradesTable.add(speedLabel).right();
+        speedLabel.setAlignment(Align.right);
+        upgradesTable.add(speedLabel).width(16);
         speedBar.setColor(1, 1, 0, 1);
         speedBar.setAnimateDuration(.5f);
         upgradesTable.add(speedBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
@@ -181,12 +184,12 @@ public class Menu {
         generatorTable.pad(2);
         Table generatorUpgrades = new Table(Main.skin);
         generatorUpgrades.add(new Label("Extractors: ", Main.skin)).right();
-        generatorUpgrades.add(extractorsLabel).right();
+        generatorUpgrades.add(extractorsLabel).width(20).right();
         extractorsBar.setAnimateDuration(.5f);
         generatorUpgrades.add(extractorsBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         generatorUpgrades.add(extractorsUpgrade).width(40).row();
         generatorUpgrades.add(new Label("Efficiency: ", Main.skin)).right();
-        generatorUpgrades.add(efficiencyLabel).right();
+        generatorUpgrades.add(efficiencyLabel).width(20).right();
         efficiencyBar.setAnimateDuration(.5f);
         generatorUpgrades.add(efficiencyBar).minWidth(1).space(0, 2, 0, 2).expandX().fill();
         generatorUpgrades.add(efficiencyUpgrade).width(40).row();
