@@ -138,13 +138,13 @@ public enum Combo {
     },
     NUKE(2, 0, 0, Level.Resource.BLUE) {
         public boolean fire(final Tower tower) {
-            new Missile(Rocket.bigPool, tower.getX() + Main.TOWER_RADIUS / 2, tower.getY() + Main.TOWER_RADIUS / 2, tower.level, tower, 0, true) {
+            new Missile(Rocket.bigPool, tower.getX() + Main.TOWER_RADIUS / 2, tower.getY() + Main.TOWER_RADIUS / 2, tower.level, tower, tower.getDamage() * 4, true) {
                 public void hit() {
                     ParticleEffect effect = Rocket.boomPool.obtain();
                     effect.getEmitters().first().getLife().setHigh(tower.getRange() * 4, tower.getRange() * 6);
-                    effect.setPosition(getX() + getWidth() / 2, getY() + getHeight() / 2);
+                    effect.setPosition(getX() + Main.TOWER_RADIUS / 2, getY() + Main.TOWER_RADIUS / 2);
                     level.particles.add(effect);
-                    Circle area = new Circle(getX() + getWidth() / 2, getY() + getHeight() / 2, tower.getRange());
+                    Circle area = new Circle(getX() + Main.TOWER_RADIUS / 2, getY() + Main.TOWER_RADIUS / 2, tower.getRange());
                     for (int i = 0; i < level.enemies.size(); ) {
                         Enemy enemy = level.enemies.get(i);
                         if (area.contains(enemy.getPosition())) {
