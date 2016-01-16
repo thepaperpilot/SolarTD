@@ -97,6 +97,7 @@ public class Main extends Game implements Screen {
         manager.load("audio/lose.wav", Sound.class);
         manager.load("audio/red.wav", Sound.class);
         manager.load("audio/select.wav", Sound.class);
+        manager.load("tutorial/HUD.png", Texture.class);
 
         // show this screen while it loads
         setScreen(this);

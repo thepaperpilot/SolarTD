@@ -1,6 +1,7 @@
 package com.thepaperpilot.solar;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.thepaperpilot.solar.Entities.Enemy;
+import com.thepaperpilot.solar.Interface.Tutorial;
 import com.thepaperpilot.solar.Levels.Level;
 import com.thepaperpilot.solar.Levels.Wave;
 
@@ -17,12 +19,15 @@ public class MenuScreen implements Screen{
     public static final MenuScreen instance = new MenuScreen();
 
     private final Stage stage;
+    private final Stage ui;
     private final ParticleEffect stars;
 
     private int level = 1;
 
     public MenuScreen() {
         stage = new Stage(new StretchViewport(320, 180));
+        ui = new Stage(new StretchViewport(480, 270));
+        ui.addActor(Tutorial.tutorial);
 
         Image bg = new Image(Main.getDrawable("title"));
         bg.setScale(.25f);
@@ -108,6 +113,15 @@ public class MenuScreen implements Screen{
         ui.add(new Label("Difficulty:", Main.skin)).left().row();
         ui.add(difficulty).spaceBottom(4).row();
 
+        Button tutorial = new TextButton("Tutorial", Main.skin);
+        tutorial.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                Tutorial.tutorial.setVisible(true);
+                Main.getSound("select").play(Main.volume);
+            }
+        });
+        ui.add(tutorial).spaceBottom(4).row();
+
         Button start = new TextButton("Start Game", Main.skin, "large");
         start.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -186,7 +200,7 @@ public class MenuScreen implements Screen{
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(stage);
+        Gdx.input.setInputProcessor(new InputMultiplexer(ui, stage));
     }
 
     @Override
@@ -198,11 +212,15 @@ public class MenuScreen implements Screen{
 
         stage.act();
         stage.draw();
+
+        ui.act();
+        ui.draw();
     }
 
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height);
+        ui.getViewport().update(width, height);
     }
 
     @Override
