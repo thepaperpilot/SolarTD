@@ -72,15 +72,15 @@ public class HUD {
         Table redTable = new Table(Main.skin);
         redRes.setColor(.5f, 0, 0, 1);
         redTable.add(redRes);
-        resourcesTable.add(redTable).height(28).pad(2);
+        resourcesTable.add(redTable).minWidth(40).height(28).pad(2);
         Table blueTable = new Table(Main.skin);
         blueRes.setColor(0, 0, .5f, 1);
         blueTable.add(blueRes);
-        resourcesTable.add(blueTable).height(28).pad(2);
+        resourcesTable.add(blueTable).minWidth(40).height(28).pad(2);
         Table yellowTable = new Table(Main.skin);
         yellowRes.setColor(.5f, .5f, 0, 1);
         yellowTable.add(yellowRes);
-        resourcesTable.add(yellowTable).height(28).pad(2);
+        resourcesTable.add(yellowTable).minWidth(40).height(28).pad(2);
         ui.add(resourcesTable).spaceLeft(8).uniformY();
 
         Table lifeTable = new Table(Main.skin);
