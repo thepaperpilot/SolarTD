@@ -68,6 +68,7 @@ public class Enemy extends Image {
     }
 
     public boolean hit(final float damage) {
+        if (dead) return false;
         final FloatAction action = new FloatAction(0, damage);
         action.setDuration(.5f);
         addAction(Actions.sequence(action, Actions.run(new Runnable() {
