@@ -108,23 +108,23 @@ public class Generator extends Building {
         if (amount < 9) {
             switch (type) {
                 case RED:
-                    if (level.redResource >= extractorCosts[amount]) {
-                        redValue += Main.SELL_RATE * extractorCosts[amount];
-                        level.redResource -= extractorCosts[amount];
+                    if (level.redResource >= balancedCost(extractorCosts[amount])) {
+                        redValue += Main.SELL_RATE * balancedCost(extractorCosts[amount]);
+                        level.redResource -= balancedCost(extractorCosts[amount]);
                         amount++;
                     }
                     break;
                 case BLUE:
-                    if (level.blueResource >= extractorCosts[amount]) {
-                        blueValue += Main.SELL_RATE * extractorCosts[amount];
-                        level.blueResource -= extractorCosts[amount];
+                    if (level.blueResource >= balancedCost(extractorCosts[amount])) {
+                        blueValue += Main.SELL_RATE * balancedCost(extractorCosts[amount]);
+                        level.blueResource -= balancedCost(extractorCosts[amount]);
                         amount++;
                     }
                     break;
                 case YELLOW:
-                    if (level.yellowResource >= extractorCosts[amount]) {
-                        yellowValue += Main.SELL_RATE * extractorCosts[amount];
-                        level.yellowResource -= extractorCosts[amount];
+                    if (level.yellowResource >= balancedCost(extractorCosts[amount])) {
+                        yellowValue += Main.SELL_RATE * balancedCost(extractorCosts[amount]);
+                        level.yellowResource -= balancedCost(extractorCosts[amount]);
                         amount++;
                     }
                     break;
