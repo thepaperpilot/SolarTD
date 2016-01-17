@@ -182,7 +182,7 @@ public class Tower extends Building {
                     effect.setPosition(getX() + Main.TOWER_RADIUS, getY() + Main.TOWER_RADIUS);
                     level.particles.add(effect);
                     effect = ability ? red2Pool.obtain() : redPool.obtain();
-                    if (ability) effect.getEmitters().first().getLife().setHigh(range * 2, range * 3);
+                    if (ability) effect.getEmitters().first().getLife().setHigh(getRange() * 2, getRange() * 3);
                     effect.setPosition(target.getX() + Main.ENEMY_SIZE / 2, target.getY() + Main.ENEMY_SIZE / 2);
                     level.particles.add(effect);
                     if (target.hit(getDamage())) {
@@ -190,8 +190,7 @@ public class Tower extends Building {
                         level.totalKills++;
                     }
                     if (ability) {
-                        Circle area = new Circle(target.getX(), target.getY(), range / 2);
-                        effect.getEmitters().first().getLife().setHigh(range);
+                        Circle area = new Circle(target.getX() + Main.ENEMY_SIZE / 2, target.getY() + Main.ENEMY_SIZE / 2, getRange() / 2);
                         int maxHit = (int) getSpeed();
                         for (int i = 0; i < level.enemies.size(); ) {
                             Enemy enemy = level.enemies.get(i);
