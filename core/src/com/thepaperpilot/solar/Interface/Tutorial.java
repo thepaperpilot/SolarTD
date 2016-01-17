@@ -71,8 +71,7 @@ public class Tutorial {
 
         // hudP1
         hudP1Table.top().add(new Label("HUD", Main.skin, "large")).left().spaceBottom(4).row();
-        hudP1Table.add(new Image(Main.getDrawable("tutorial/HUD"))).expandX().fill().row();
-        Label hudLabel = new Label("This is the Heads Up Display that appears at the bottom of the screen in the game.\n\n" +
+        Label hudLabel = new Label("While playing a Heads Up Display will appear at the bottom of the screen. It will have several important buttons and monitors.\n\n" +
                 "The menu button opens and closes the menu. The pause button toggles whether the game is paused or resumed. You can also use the ESC or SPACE keys instead of those buttons, respectively.\n\n" +
                 "The towers and generators allow you to select what building you are currently placing. Similarly you can press the number keys 1-6 instead.\n\n" +
                 "The resources show you how much you have of each of the three resource types. The lives and wave displays show you how many lives you have, and what wave you're on.\n\n" +
