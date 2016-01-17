@@ -245,10 +245,10 @@ public class Level implements Screen {
     public void render(float delta) {
         if (!paused && population > 0) {
             time += delta;
-            resourceTime += delta;
+            resourceTime += delta * 4; //Base Generator speed
         }
-        while (resourceTime > 2) {
-            resourceTime -= 2;
+        while (resourceTime > Main.GENERATOR_SPEED) {
+            resourceTime -= Main.GENERATOR_SPEED;
             redResource++;
             blueResource++;
             yellowResource++;
@@ -381,6 +381,7 @@ public class Level implements Screen {
     }
 
     public void nextWave() {
+        if (population <= 0) return;
         resourceTime += (Main.WAVE_INTERVAL + currWave.getTime() - time) * 1.5f;
         for (Building building : buildings) {
             if (building instanceof Generator) ((Generator) building).time += (Main.WAVE_INTERVAL + currWave.getTime() - time) * 1.5f;

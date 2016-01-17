@@ -25,7 +25,7 @@ public class Main extends Game implements Screen {
     public static final float TURN_RADIUS = 6;
     public static final float UI_WIDTH = 720;
     public static final float SELL_RATE = .75f;
-    public static final float GENERATOR_SPEED = 8;
+    public static final float GENERATOR_SPEED = 6;
     public static final float WAVE_INTERVAL = 10;
     public static final float HEALTH_RATE = 1.15f;
     public static final float COMBO_TIME = 40;

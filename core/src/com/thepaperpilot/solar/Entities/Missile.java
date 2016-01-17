@@ -18,7 +18,7 @@ public class Missile extends Rocket{
         this.target = tower.targeting.target(tower, new Vector2(x, y));
         this.hold = hold;
         if (target != null)
-            angle = target.getPosition().angle();
+            angle = target.getPosition().cpy().sub(new Vector2(x, y)).angle();
     }
 
     public void noTarget() {

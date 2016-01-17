@@ -166,8 +166,8 @@ public class Tower extends Building {
                 }
             }
         } else comboTimer = comboParticleTimer = 0;
-        Enemy target = targeting.target(this, new Vector2(getX(), getY()));
-        if ((target == null && !(type == Level.Resource.BLUE && ability)) || (type == Level.Resource.BLUE && missiles >= getSpeed())) {
+        Enemy target = targeting.target(this, new Vector2(getX() + Main.TOWER_RADIUS, getY() + Main.TOWER_RADIUS));
+        if (target == null && !(type == Level.Resource.BLUE && ability && missiles <= getSpeed())) {
             time = Math.min(time, Main.TOWER_SPEED);
             if (type == Level.Resource.YELLOW) {
                 effect.allowCompletion();

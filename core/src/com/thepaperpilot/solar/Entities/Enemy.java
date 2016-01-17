@@ -78,7 +78,11 @@ public class Enemy extends Image {
             }
         })));
         damages.add(action);
-        return getEndHealth() <= damage;
+        if (getEndHealth() <= 0) {
+            dead = true;
+            return true;
+        }
+        return false;
     }
 
     public Vector2 getPosition() {
@@ -114,7 +118,6 @@ public class Enemy extends Image {
             } else setPosition(level.path[path].x - Main.ENEMY_SIZE / 2, level.path[path].y - Main.ENEMY_SIZE / 2);
         } else
             setPosition(getX() + tempSpeed * MathUtils.cosDeg(angle) * delta, getY() + tempSpeed * MathUtils.sinDeg(angle) * delta);
-        if (getEndHealth() <= 0) dead = true;
         if (getHealth() <= 0) {
             level.enemies.remove(this);
             remove();
