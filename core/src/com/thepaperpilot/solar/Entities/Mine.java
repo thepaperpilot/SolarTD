@@ -43,6 +43,7 @@ public class Mine extends Image{
             i++;
         }
         Vector2 target = new Vector2(level.path[i + 1].x - level.path[i].x, level.path[i + 1].y - level.path[i].y).setLength(targetLength).add(new Vector2(level.path[i].x, level.path[i].y));
+        target.sub(Main.TOWER_RADIUS / 2, Main.TOWER_RADIUS / 2);
         addAction(Actions.moveTo(target.x, target.y, target.cpy().sub(pos).len() / 600));
 
         setPosition(pos.x, pos.y);
