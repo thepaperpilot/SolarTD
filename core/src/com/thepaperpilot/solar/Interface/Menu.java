@@ -99,7 +99,9 @@ public class Menu {
         Button restart = new TextButton("Restart Level", Main.skin);
         settingsTable.top().add(restart).expandX().fill().row();
         Button main = new TextButton("Main Menu", Main.skin);
-        settingsTable.add(main).expandX().fill().spaceBottom(4).row();
+        settingsTable.add(main).expandX().fill().row();
+        final TextButton fullscreen = new TextButton("Toggle Fullscreen", Main.skin);
+        settingsTable.add(fullscreen).expandX().fill().spaceBottom(4).row();
         final CheckBox enemyHealth = new CheckBox("Show Enemy Health", Main.skin);
         enemyHealth.getLabelCell().spaceLeft(4);
         enemyHealth.setChecked(true);
@@ -277,6 +279,14 @@ public class Menu {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 level.enemyHealth = enemyHealth.isChecked();
+                Main.getSound("select").play(Main.volume);
+            }
+        });
+        fullscreen.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (Gdx.graphics.isFullscreen()) Gdx.graphics.setDisplayMode(1280, 720, false);
+                else Gdx.graphics.setDisplayMode(Gdx.graphics.getDesktopDisplayMode().width, Gdx.graphics.getDesktopDisplayMode().height, true);
                 Main.getSound("select").play(Main.volume);
             }
         });
