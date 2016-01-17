@@ -148,23 +148,23 @@ public class Generator extends Building {
         if (getEfficiencyIndex() < 9) {
             switch (type) {
                 case RED:
-                    if (level.redResource >= efficiencyCosts[getEfficiencyIndex()]) {
-                        redValue += Main.SELL_RATE * efficiencyCosts[getEfficiencyIndex()];
-                        level.redResource -= efficiencyCosts[getEfficiencyIndex()];
+                    if (level.redResource >= balancedCost(efficiencyCosts[getEfficiencyIndex()])) {
+                        redValue += Main.SELL_RATE * balancedCost(efficiencyCosts[getEfficiencyIndex()]);
+                        level.redResource -= balancedCost(efficiencyCosts[getEfficiencyIndex()]);
                         speed++;
                     }
                     break;
                 case BLUE:
-                    if (level.blueResource >= efficiencyCosts[getEfficiencyIndex()]) {
-                        blueValue += Main.SELL_RATE * efficiencyCosts[getEfficiencyIndex()];
-                        level.blueResource -= efficiencyCosts[getEfficiencyIndex()];
+                    if (level.blueResource >= balancedCost(efficiencyCosts[getEfficiencyIndex()])) {
+                        blueValue += Main.SELL_RATE * balancedCost(efficiencyCosts[getEfficiencyIndex()]);
+                        level.blueResource -= balancedCost(efficiencyCosts[getEfficiencyIndex()]);
                         speed++;
                     }
                     break;
                 case YELLOW:
-                    if (level.yellowResource >= efficiencyCosts[getEfficiencyIndex()]) {
-                        yellowValue += Main.SELL_RATE * efficiencyCosts[getEfficiencyIndex()];
-                        level.yellowResource -= efficiencyCosts[getEfficiencyIndex()];
+                    if (level.yellowResource >= balancedCost(efficiencyCosts[getEfficiencyIndex()])) {
+                        yellowValue += Main.SELL_RATE * balancedCost(efficiencyCosts[getEfficiencyIndex()]);
+                        level.yellowResource -= balancedCost(efficiencyCosts[getEfficiencyIndex()]);
                         speed++;
                     }
                     break;
