@@ -1,6 +1,5 @@
 package com.thepaperpilot.solar.Entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
@@ -18,7 +17,6 @@ public class Lightning extends Actor{
     public void draw(Batch batch, float parentAlpha) {
         if (lightning.isEmpty()) return;
         batch.end();
-        Gdx.gl.glLineWidth(2);
         shape.begin(ShapeRenderer.ShapeType.Line);
         shape.setProjectionMatrix(batch.getProjectionMatrix());
         shape.setColor(1, 1, .5f, parentAlpha * .25f);
@@ -27,7 +25,6 @@ public class Lightning extends Actor{
         }
         shape.end();
         lightning.clear();
-        Gdx.gl.glLineWidth(1);
         batch.begin();
     }
 

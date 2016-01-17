@@ -82,7 +82,7 @@ public class StatsCircle extends Table {
         shape.begin(ShapeRenderer.ShapeType.Line);
         drawTop(shape, coords);
         shape.end();
-        Gdx.gl.glLineWidth(1);
+        Gdx.gl.glLineWidth(Main.LINE_WIDTH);
         Gdx.gl.glDisable(GL20.GL_BLEND);
         batch.begin();
         super.draw(batch, parentAlpha);

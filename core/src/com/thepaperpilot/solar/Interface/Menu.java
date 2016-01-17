@@ -69,7 +69,8 @@ public class Menu {
     private static final ScrollPane nextWavePane;
     private static final Table nextWaveTable = new Table(Main.skin);
     private static final Window menu = new Window("Settings", Main.skin, "large");
-    private static Table currentTab;
+
+    private static Table currentTab = settingsTable;
 
     private static Level level;
 
@@ -117,7 +118,6 @@ public class Menu {
         statsTable.add(new Label("FPS: ", Main.skin));
         statsTable.add(fpsLabel).row();
         settingsTable.add(statsTable);
-        currentTab = settingsTable;
 
         Button sellButton = new TextButton("Sell Tower", Main.skin);
         Button moveButton = new TextButton("Move Tower", Main.skin);
@@ -255,13 +255,21 @@ public class Menu {
         menu.addListener(new ClickListener());
         restart.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                Main.changeScreen(new Level(level.prototype));
+                new ConfirmDialog("restart", level.ui) {
+                    public void ok() {
+                        Main.changeScreen(new Level(level.prototype));
+                    }
+                };
                 Main.getSound("select").play(Main.volume);
             }
         });
         main.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                Main.changeScreen(MenuScreen.instance);
+                new ConfirmDialog("quit", level.ui) {
+                    public void ok() {
+                        Main.changeScreen(MenuScreen.instance);
+                    }
+                };
                 Main.getSound("select").play(Main.volume);
             }
         });

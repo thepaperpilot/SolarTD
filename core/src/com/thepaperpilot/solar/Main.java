@@ -29,6 +29,7 @@ public class Main extends Game implements Screen {
     public static final float WAVE_INTERVAL = 10;
     public static final float HEALTH_RATE = 1.15f;
     public static final float COMBO_TIME = 40;
+    public static final float LINE_WIDTH = 2;
     private static final AssetManager manager = new AssetManager();
     public static Skin skin;
     public static float volume = 1;
@@ -131,6 +132,8 @@ public class Main extends Game implements Screen {
             skin = manager.get("skin.json", Skin.class);
             skin.getFont("large").getData().setScale(.5f);
             skin.getFont("font").getData().setScale(.25f);
+
+            Gdx.gl.glLineWidth(2);
 
             // go to the menu screen
             setScreen(MenuScreen.instance);
