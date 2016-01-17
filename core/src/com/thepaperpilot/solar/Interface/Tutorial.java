@@ -83,6 +83,7 @@ public class Tutorial {
         menuP1Table.top().add(new Label("Menu", Main.skin, "large")).left().spaceBottom(4).row();
         Label menuLabel = new Label("The menu is where you can change your game settings, look at all the combos, monitor and configure your towers, and more. It is incredibly useful, and should be open most of the time. You can open and close it using the menu button in the HUD, or by pressing the ESC button on your keyboard.\n\n" +
                 "The menu has tabs on the left for the various things you can do in the menu, similar to this tutorial.\n\n" +
+                "You can move the menu around the screen by dragging the top part where the window title is.\n\n" +
                 "The settings tab is where you can restart or quit a level, as well as change the game settings, and look at your game statistics.\n\n" +
                 "The combos tab shows you a list of all the combos in the game, as a reference.\n\n" +
                 "If you have a building selected, you will see a tab for it where you can configure the building, upgrade it, and see its statistics.\n\n" +
