@@ -396,31 +396,41 @@ public class Tower extends Building {
             public int compare(Enemy enemy, Enemy oEnemy) {
                 float length = enemy.getPosition().cpy().sub(point).len();
                 float olength = oEnemy.getPosition().cpy().sub(point).len();
-                return MathUtils.round(length - olength);
+                float comp = length - olength;
+                if (MathUtils.isZero(comp)) return 0;
+                return comp > 0 ? 1 : -1;
             }
         },
         FIRST {
             @Override
             public int compare(Enemy enemy, Enemy oEnemy) {
-                return MathUtils.round(enemy.getDistance() - oEnemy.getDistance());
+                float comp = enemy.getDistance() - oEnemy.getDistance();
+                if (MathUtils.isZero(comp)) return 0;
+                return comp > 0 ? 1 : -1;
             }
         },
         LAST {
             @Override
             public int compare(Enemy enemy, Enemy oEnemy) {
-                return MathUtils.round(oEnemy.getDistance() - enemy.getDistance());
+                float comp = oEnemy.getDistance() - enemy.getDistance();
+                if (MathUtils.isZero(comp)) return 0;
+                return comp > 0 ? 1 : -1;
             }
         },
         STRONGEST {
             @Override
             public int compare(Enemy enemy, Enemy oEnemy) {
-                return MathUtils.round(oEnemy.getHealth() - enemy.getHealth());
+                float comp = oEnemy.getHealth() - enemy.getHealth();
+                if (MathUtils.isZero(comp)) return 0;
+                return comp > 0 ? 1 : -1;
             }
         },
         WEAKEST {
             @Override
             public int compare(Enemy enemy, Enemy oEnemy) {
-                return MathUtils.round(enemy.getHealth() - oEnemy.getHealth());
+                float comp = enemy.getHealth() - oEnemy.getHealth();
+                if (MathUtils.isZero(comp)) return 0;
+                return comp > 0 ? 1 : -1;
             }
         };
 
