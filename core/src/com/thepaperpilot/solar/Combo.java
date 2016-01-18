@@ -227,7 +227,7 @@ public enum Combo {
                         time = 0;
                         Enemy enemy = level.enemies.get(MathUtils.random(level.enemies.size() - 1));
                         Lightning.add(new Vector2(getX(), getY()), new Vector2(enemy.getX(), enemy.getY()));
-                        enemy.hit(tower.getDamage() / 4f);
+                        enemy.hit(tower.getDamage());
                     }
                 }
             }.speed = .4f;
