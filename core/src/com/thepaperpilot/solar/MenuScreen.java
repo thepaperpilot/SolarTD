@@ -132,7 +132,7 @@ public class MenuScreen implements Screen{
                 enemyPrototype.health = 1;
                 Enemy.EnemyPrototype enemyPrototype2 = new Enemy.EnemyPrototype();
                 enemyPrototype2.name = "speed";
-                enemyPrototype2.speed = 1.75f;
+                enemyPrototype2.speed = 1.5f;
                 enemyPrototype2.count = 16;
                 enemyPrototype2.health = .5f;
                 Enemy.EnemyPrototype enemyPrototype3 = new Enemy.EnemyPrototype();
