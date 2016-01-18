@@ -18,16 +18,16 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 public class Main extends Game implements Screen {
     public static final float TOWER_RADIUS = 16;
-    public static final float ENEMY_SIZE = 8;
+    public static final float ENEMY_SIZE = 12;
     public static final float ENEMY_SPEED = 32;
-    public static final float TOWER_SPEED = 4;
+    public static final float TOWER_SPEED = 2.5f;
     public static final float BULLET_SPEED = 96;
     public static final float TURN_RADIUS = 6;
     public static final float UI_WIDTH = 720;
     public static final float SELL_RATE = .75f;
     public static final float GENERATOR_SPEED = 6;
     public static final float WAVE_INTERVAL = 10;
-    public static final float HEALTH_RATE = 1.15f;
+    public static final float HEALTH_RATE = 1.2f;
     public static final float COMBO_TIME = 40;
     public static final float LINE_WIDTH = 2;
     private static final AssetManager manager = new AssetManager();

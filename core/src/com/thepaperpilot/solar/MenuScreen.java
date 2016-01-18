@@ -128,18 +128,18 @@ public class MenuScreen implements Screen{
                 Enemy.EnemyPrototype enemyPrototype = new Enemy.EnemyPrototype();
                 enemyPrototype.name = "alien";
                 enemyPrototype.speed = 1;
-                enemyPrototype.count = 8;
+                enemyPrototype.count = 12;
                 enemyPrototype.health = 1;
                 Enemy.EnemyPrototype enemyPrototype2 = new Enemy.EnemyPrototype();
                 enemyPrototype2.name = "speed";
-                enemyPrototype2.speed = 1.5f;
-                enemyPrototype2.count = 12;
+                enemyPrototype2.speed = 1.75f;
+                enemyPrototype2.count = 16;
                 enemyPrototype2.health = .5f;
                 Enemy.EnemyPrototype enemyPrototype3 = new Enemy.EnemyPrototype();
                 enemyPrototype3.name = "angry";
                 enemyPrototype3.speed = .5f;
-                enemyPrototype3.count = 1;
-                enemyPrototype3.health = 10;
+                enemyPrototype3.count = 2;
+                enemyPrototype3.health = 8;
                 Wave.WavePrototype wavePrototype = new Wave.WavePrototype();
                 wavePrototype.enemies = new Enemy.EnemyPrototype[]{enemyPrototype};
                 wavePrototype.enemyDistance = 1;
@@ -148,7 +148,7 @@ public class MenuScreen implements Screen{
                 wavePrototype2.enemyDistance = .5f;
                 Wave.WavePrototype wavePrototype3 = new Wave.WavePrototype();
                 wavePrototype3.enemies = new Enemy.EnemyPrototype[]{enemyPrototype3};
-                wavePrototype3.enemyDistance = 1;
+                wavePrototype3.enemyDistance = 4;
                 Level.LevelPrototype levelPrototype = new Level.LevelPrototype();
                 levelPrototype.waves = new Wave.WavePrototype[]{wavePrototype, wavePrototype2, wavePrototype3};
                 switch (level) {
