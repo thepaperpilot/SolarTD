@@ -449,7 +449,11 @@ public class Tower extends Building {
                 }
             }
             if (potential.isEmpty()) return null;
-            Collections.sort(potential, this);
+            try {
+                Collections.sort(potential, this);
+            } catch (IllegalArgumentException ignored) {
+                Gdx.app.log("ERROR", "Targeting System Failed", ignored);
+            }
             return potential.get(0);
         }
     }
