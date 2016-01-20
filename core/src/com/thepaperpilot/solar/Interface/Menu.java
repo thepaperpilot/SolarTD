@@ -515,7 +515,10 @@ public class Menu {
             towerComboButton.setVisible(false);
         }
         generalTable.setName(level.selectedBuilding.getName());
-        if (currentTab == generalTable) menu.getTitleLabel().setText(level.selectedBuilding.getName());
+        if (menu.isVisible() && currentTab != towerComboTable) {
+            switchTab(generalTable);
+            generalButton.setChecked(true);
+        }
     }
 
     public static void update() {
