@@ -256,8 +256,8 @@ public class HUD {
 
     public static void updateWaves() {
         Wave wave = new Wave(level.waves[(level.wave) % level.waves.length], level);
-        if (wave.enemies.length > 0)
-            enemyTable.setBackground(Main.getDrawable(wave.enemies[0].name));
+        if (wave.enemies.size() > 0)
+            enemyTable.setBackground(Main.getDrawable(wave.enemies.get(0).name));
     }
 
     public static void pause() {

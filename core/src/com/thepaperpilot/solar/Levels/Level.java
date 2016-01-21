@@ -32,6 +32,7 @@ import com.thepaperpilot.solar.Interface.StatsCircle;
 import com.thepaperpilot.solar.Main;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Level implements Screen {
     public static int difficulty = 0;
@@ -198,7 +199,7 @@ public class Level implements Screen {
         Menu.init(this);
         HUD.deselect();
         Menu.deselect();
-        Menu.updateWaves();
+        Menu.updateWaves(new Wave(waves[0], this));
         HUD.updateWaves();
 
         stage.addListener(new InputListener() {
@@ -390,10 +391,17 @@ public class Level implements Screen {
         wave++;
         population += 10;
         Wave newWave = new Wave(waves[(wave - 1) % waves.length], this);
+        for (int i = 0; i < MathUtils.ceil(wave / 100); i++) {
+            Collections.addAll(newWave.enemies, waves[(wave + i) % waves.length].enemies);
+        }
         newWave.setPosition(path[0].x, path[0].y);
+        Wave next = new Wave(waves[wave % waves.length], this);
+        for (int i = 0; i < MathUtils.ceil((wave + 1) / 100); i++) {
+            Collections.addAll(next.enemies, waves[(wave + 1 + i) % waves.length].enemies);
+        }
         stage.addActor(newWave);
         currWave = newWave;
-        Menu.updateWaves();
+        Menu.updateWaves(next);
         HUD.updateWaves();
     }
 

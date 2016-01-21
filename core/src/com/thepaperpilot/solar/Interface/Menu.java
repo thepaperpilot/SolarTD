@@ -568,7 +568,7 @@ public class Menu {
         }
     }
 
-    public static void updateWaves() {
+    public static void updateWaves(Wave nextWave) {
         Table current = (Table) currentWavePane.getWidget();
         current.clearChildren();
         for (Enemy.EnemyPrototype enemy : level.currWave.enemies) {
@@ -576,7 +576,6 @@ public class Menu {
         }
         Table next = (Table) nextWavePane.getWidget();
         next.clearChildren();
-        Wave nextWave = new Wave(level.waves[(level.wave) % level.waves.length], level);
         for (Enemy.EnemyPrototype enemy : nextWave.enemies) {
             next.add(Enemy.getTable(enemy, level.wave + 1)).expandX().fill().row();
         }
