@@ -427,6 +427,34 @@ public class Menu {
                 Main.getSound("select").play(Main.volume);
             }
         });
+        comboPane.addListener(new ClickListener() {
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (currentTab == comboTable)
+                    level.ui.setScrollFocus(comboPane);
+                super.enter(event, x, y, pointer, fromActor);
+            }
+        });
+        towerComboPane.addListener(new ClickListener() {
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (currentTab == towerComboTable)
+                    level.ui.setScrollFocus(towerComboPane);
+                super.enter(event, x, y, pointer, fromActor);
+            }
+        });
+        currentWavePane.addListener(new ClickListener() {
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (currentTab == nextWaveTable)
+                    level.ui.setScrollFocus(currentWavePane);
+                super.enter(event, x, y, pointer, fromActor);
+            }
+        });
+        nextWavePane.addListener(new ClickListener() {
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (currentTab == nextWaveTable)
+                    level.ui.setScrollFocus(nextWavePane);
+                super.enter(event, x, y, pointer, fromActor);
+            }
+        });
     }
 
     private static void switchTab(Table tab) {
